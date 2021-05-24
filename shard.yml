@@ -1,0 +1,13 @@
+name: cb
+version: 0.1.0
+
+authors:
+  - Will Leinweber
+
+targets:
+  cb:
+    main: src/cli.cr
+
+crystal: 1.0.0
+
+license: GPLv3
