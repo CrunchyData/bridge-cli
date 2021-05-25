@@ -5,6 +5,8 @@ class IO
   end
 end
 
+require "colorize"
+
 class CB::Program
   class Error < Exception
   end
@@ -16,6 +18,11 @@ class CB::Program
   property token : CB::Token?
 
   def initialize(@host = "api.crunchybridge.com", @input = STDIN, @output = STDOUT)
+    if output == STDOUT && input == STDIN
+      Colorize.on_tty_only!
+    else
+      Colorize.enabled = false
+    end
   end
 
   def login
@@ -45,5 +52,22 @@ class CB::Program
     end
     t = Token.for_host(host) || Client.get_token(creds)
     @token = t
+  end
+
+  def client
+    Client.new token
+  end
+
+  def teams
+    teams = client.get_teams
+    name_max = teams.map(&.name.size).max
+    teams.each do |team|
+      output << team.id.colorize.light_cyan
+      output << "\t"
+      output << team.name.ljust(name_max).colorize.cyan
+      output << "\t"
+      output << team.human_roles.join ", "
+      output << "\n"
+    end
   end
 end

@@ -18,4 +18,34 @@ struct CB::Client
 
     Token.new(creds.host, token, expires).store
   end
+
+  property host : String
+  property headers : HTTP::Headers
+
+  def initialize(token : Token)
+    @host = token.host
+    @headers = HTTP::Headers{"Accept" => "application/json", "Authorization" => "Bearer #{token.token}"}
+  end
+
+  record Team, id : String, team_name : String, is_personal : Bool, roles : Array(Int32) do
+    include JSON::Serializable
+    enum Role
+      Member
+      Manager
+      Administrator
+    end
+
+    def name
+      is_personal ? "personal" : team_name
+    end
+
+    def human_roles
+      roles.map { |i| Role.new i }
+    end
+  end
+
+  def get_teams
+    resp = HTTP::Client.get("https://#{host}/teams", headers: headers)
+    Array(Team).from_json resp.body, root: "teams"
+  end
 end

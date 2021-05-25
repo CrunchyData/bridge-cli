@@ -19,6 +19,10 @@ begin
     parser.on("token", "return a bearar token for use in the api") do
       puts PROG.token.token
     end
+
+    parser.on("teams", "list teams you belong to") do
+      PROG.teams
+    end
   end
 rescue e : CB::Program::Error
   print "error: #{e.message}"
