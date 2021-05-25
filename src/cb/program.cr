@@ -70,4 +70,20 @@ class CB::Program
       output << "\n"
     end
   end
+
+  def clusters
+    clusters = client.get_clusters
+    teams = client.get_teams
+    cluster_max = clusters.map(&.name.size).max
+
+    clusters.each do |cluster|
+      output << cluster.id.colorize.light_cyan
+      output << "\t"
+      output << cluster.name.ljust(cluster_max).colorize.cyan
+      output << "\t"
+      team_name = teams.find { |t| t.id == cluster.team_id }.try &.name || cluster.team_id
+      output << team_name
+      output << "\n"
+    end
+  end
 end

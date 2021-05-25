@@ -23,6 +23,21 @@ begin
     parser.on("teams", "list teams you belong to") do
       PROG.teams
     end
+
+    parser.on("clusters", "list clusters") do
+      PROG.clusters
+    end
+
+    parser.on("-h", "--help", "Show this help") do
+      puts parser
+      exit
+    end
+
+    parser.invalid_option do |flag|
+      STDERR.puts "ERROR: #{flag} is not a valid option."
+      STDERR.puts parser
+      exit(1)
+    end
   end
 rescue e : CB::Program::Error
   print "error: #{e.message}"

@@ -44,8 +44,21 @@ struct CB::Client
     end
   end
 
+  record Cluster, id : String, team_id : String, name : String do
+    include JSON::Serializable
+  end
+
   def get_teams
-    resp = HTTP::Client.get("https://#{host}/teams", headers: headers)
+    resp = get "teams"
     Array(Team).from_json resp.body, root: "teams"
+  end
+
+  def get_clusters
+    resp = get "clusters"
+    Array(Cluster).from_json resp.body, root: "clusters"
+  end
+
+  private def get(path)
+    HTTP::Client.get("https://#{host}/#{path}", headers: headers)
   end
 end
