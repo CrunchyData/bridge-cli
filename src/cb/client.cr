@@ -1,7 +1,7 @@
 require "http/client"
 require "json"
 
-struct CB::Client
+class CB::Client
   def self.get_token(creds : Creds) : Token
     req = {
       "grant_type"    => "client_credential",
@@ -58,7 +58,34 @@ struct CB::Client
     Array(Cluster).from_json resp.body, root: "clusters"
   end
 
-  private def get(path)
-    HTTP::Client.get("https://#{host}/#{path}", headers: headers)
+  def get_cluster(id)
+    resp = get "clusters/#{id}"
+    JSON.parse resp.body
+  end
+
+  record Plan, id : String, display_name : String do
+    include JSON::Serializable
+  end
+
+  record Region, id : String, display_name : String, location : String do
+    include JSON::Serializable
+  end
+
+  record Provider, id : String, display_name : String,
+    regions : Array(Region), plans : Array(Plan) do
+    include JSON::Serializable
+  end
+
+  def get_providers
+    resp = get "providers"
+    Array(Provider).from_json resp.body, root: "providers"
+  end
+
+  def get(path)
+    resp = HTTP::Client.get("https://#{host}/#{path}", headers: headers)
+    if resp.success?
+      return resp
+    end
+    raise "error: #{path} #{resp.status}"
   end
 end

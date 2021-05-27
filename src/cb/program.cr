@@ -86,4 +86,8 @@ class CB::Program
       output << "\n"
     end
   end
+
+  def info(id)
+    pp client.get_cluster id
+  end
 end
