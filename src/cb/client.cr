@@ -2,6 +2,15 @@ require "http/client"
 require "json"
 
 class CB::Client
+  class Error < ::Exception
+    property method : String
+    property path : String
+    property resp : HTTP::Client::Response
+
+    def initialize(@method, @path, @resp)
+    end
+  end
+
   def self.get_token(creds : Creds) : Token
     req = {
       "grant_type"    => "client_credential",
@@ -63,6 +72,21 @@ class CB::Client
     JSON.parse resp.body
   end
 
+  def create_cluster(cc)
+    body = {
+      ha:            cc.ha,
+      major_version: 13,
+      name:          cc.name,
+      plan_id:       cc.plan,
+      provider_id:   cc.platform,
+      region_id:     cc.region,
+      storage:       cc.storage,
+      team_id:       cc.team,
+    }
+    resp = post "clusters", body
+    Cluster.from_json resp.body, root: "cluster"
+  end
+
   record Plan, id : String, display_name : String do
     include JSON::Serializable
   end
@@ -83,9 +107,17 @@ class CB::Client
 
   def get(path)
     resp = HTTP::Client.get("https://#{host}/#{path}", headers: headers)
-    if resp.success?
-      return resp
-    end
-    raise "error: #{path} #{resp.status}"
+    return resp if resp.success?
+    raise Error.new("get", path, resp)
+  end
+
+  def post(path, body)
+    post path, body.to_json
+  end
+
+  def post(path, body : String)
+    resp = HTTP::Client.post("https://#{host}/#{path}", headers: headers, body: body)
+    return resp if resp.success?
+    raise Error.new("post", path, resp)
   end
 end

@@ -63,6 +63,10 @@ class CB::Completion
       return ["aws\tAmazon Web Services", "gcp\tGoogle Cloud Platform", "azr\tMicrosoft Azure"]
     end
 
+    if last_arg? "-n", "--name"
+      return [] of String
+    end
+
     if last_arg? "aws", "gcp", "azr"
       return ["--region", "--plan"]
     end
@@ -85,7 +89,7 @@ class CB::Completion
       end
     end
 
-    if last_arg? "--size", "-s"
+    if last_arg? "--storage", "-s"
       return [100, 256, 512, 1024].map { |s| "#{s}\t#{s} GiB" }
     end
 
@@ -102,8 +106,9 @@ class CB::Completion
     suggest << "--help\tshow help" if args.size == 2
     suggest << "--platform\tcloud provider" unless has_full_flag? :platform
     suggest << "--team\tcrunchy bridge team" unless has_full_flag? :team
-    suggest << "--size\tstorage size in GiB" unless has_full_flag? :size
+    suggest << "--storage\tstorage size in GiB" unless has_full_flag? :storage
     suggest << "--ha\thigh availability" unless has_full_flag? :ha
+    suggest << "--name\tcluster name" unless has_full_flag? :name
     return suggest
   end
 
@@ -131,12 +136,13 @@ class CB::Completion
   # only return the long version, but search for long and short
   def find_full_flags
     full = Set(Symbol).new
-    full << :platform if has_full_flag? "--platform", "-p"
-    full << :region if has_full_flag? "--region", "-r"
-    full << :plan if has_full_flag? "--plan"
-    full << :size if has_full_flag? "--size", "-s"
-    full << :team if has_full_flag? "--team", "-t"
     full << :ha if has_full_flag? "--ha"
+    full << :plan if has_full_flag? "--plan"
+    full << :name if has_full_flag? "--name", "-n"
+    full << :team if has_full_flag? "--team", "-t"
+    full << :region if has_full_flag? "--region", "-r"
+    full << :storage if has_full_flag? "--storage", "-s"
+    full << :platform if has_full_flag? "--platform", "-p"
     return full
   end
 

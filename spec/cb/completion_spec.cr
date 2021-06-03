@@ -1,6 +1,6 @@
 require "../spec_helper"
 
-private class TestClient < CB::Client
+private class CompletionTestClient < CB::Client
   def get_clusters
     [Cluster.new("abc", "def", "my cluster")]
   end
@@ -51,7 +51,7 @@ module Spec
 end
 
 private def parse(str)
-  CB::Completion.new(TestClient.new(TEST_TOKEN), str).parse
+  CB::Completion.new(CompletionTestClient.new(TEST_TOKEN), str).parse
 end
 
 describe CB::Completion do
@@ -129,7 +129,7 @@ describe CB::Completion do
     result.should_not have_option "--plan"
     result.should have_option "--region"
 
-    result = parse("cb create --size ")
+    result = parse("cb create --storage ")
     result.should have_option "100"
     result.should have_option "512"
 
@@ -151,5 +151,15 @@ describe CB::Completion do
 
     result = parse("cb create --help ")
     result.should eq [] of String
+
+    result = parse("cb create --name ")
+    result.should eq [] of String
+
+    result = parse("cb create --name \"some name\" ")
+    result.should_not be_empty
+    result.should_not have_option "--name"
+
+    result = parse("cb create --name \"some name\" -s  ")
+    result.should have_option "512"
   end
 end

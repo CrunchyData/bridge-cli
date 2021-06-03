@@ -9,6 +9,7 @@ require "colorize"
 
 class CB::Program
   class Error < Exception
+    property show_usage : Bool = false
   end
 
   property input : IO
@@ -41,7 +42,7 @@ class CB::Program
 
   def creds : CB::Creds
     if c = @creds
-      return creds
+      return c
     end
     @cred = Creds.for_host(host) || login
   end
