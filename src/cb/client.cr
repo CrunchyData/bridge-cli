@@ -72,7 +72,7 @@ class CB::Client
     Cluster.from_json resp.body, root: "cluster"
   rescue e : Error
     raise e unless e.resp.status == HTTP::Status::FORBIDDEN
-    raise Program::Error.new "cluster #{id.colorize.light_cyan} does not exist, or you do not have access to it"
+    raise Program::Error.new "cluster #{id.colorize.t_id} does not exist, or you do not have access to it"
   end
 
   def create_cluster(cc)

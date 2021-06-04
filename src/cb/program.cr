@@ -5,8 +5,6 @@ class IO
   end
 end
 
-require "colorize"
-
 class CB::Program
   class Error < Exception
     property show_usage : Bool = false
@@ -19,11 +17,7 @@ class CB::Program
   property token : CB::Token?
 
   def initialize(@host = "api.crunchybridge.com", @input = STDIN, @output = STDOUT)
-    if output == STDOUT && input == STDIN
-      Colorize.on_tty_only!
-    else
-      Colorize.enabled = false
-    end
+    Colorize.enabled = false unless output == STDOUT && input == STDIN
   end
 
   def login
@@ -63,9 +57,9 @@ class CB::Program
     teams = client.get_teams
     name_max = teams.map(&.name.size).max
     teams.each do |team|
-      output << team.id.colorize.light_cyan
+      output << team.id.colorize.t_id
       output << "\t"
-      output << team.name.ljust(name_max).colorize.cyan
+      output << team.name.ljust(name_max).colorize.t_name
       output << "\t"
       output << team.human_roles.join ", "
       output << "\n"
@@ -78,26 +72,26 @@ class CB::Program
     cluster_max = clusters.map(&.name.size).max
 
     clusters.each do |cluster|
-      output << cluster.id.colorize.light_cyan
+      output << cluster.id.colorize.t_id
       output << "\t"
-      output << cluster.name.ljust(cluster_max).colorize.cyan
+      output << cluster.name.ljust(cluster_max).colorize.t_name
       output << "\t"
       team_name = teams.find { |t| t.id == cluster.team_id }.try &.name || cluster.team_id
-      output << team_name
+      output << team_name.colorize.t_alt
       output << "\n"
     end
   end
 
   def destroy_cluster(id)
     c = client.get_cluster id
-    team_name = client.get_teams.find { |t| t.id == c.team_id }.try &.name.colorize.green
-    output << "About to " << "delete".colorize.red << " cluster " << c.name.colorize.cyan
+    team_name = client.get_teams.find { |t| t.id == c.team_id }.try &.name.colorize.t_alt
+    output << "About to " << "delete".colorize.t_warn << " cluster " << c.name.colorize.t_name
     output << " from team #{team_name}" if team_name
     output << ".\n  Type the cluster's name to confirm: "
     response = input.gets
     if c.name == response
       client.destroy_cluster id
-      output.puts "Cluster #{c.id.colorize.light_cyan} destroyed"
+      output.puts "Cluster #{c.id.colorize.t_id} destroyed"
     else
       output.puts "Reponse did not match, did not destroy the cluster"
     end
