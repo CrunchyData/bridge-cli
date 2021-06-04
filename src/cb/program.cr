@@ -88,6 +88,21 @@ class CB::Program
     end
   end
 
+  def destroy_cluster(id)
+    c = client.get_cluster id
+    team_name = client.get_teams.find { |t| t.id == c.team_id }.try &.name.colorize.green
+    output << "About to " << "delete".colorize.red << " cluster " << c.name.colorize.cyan
+    output << " from team #{team_name}" if team_name
+    output << ".\n  Type the cluster's name to confirm: "
+    response = input.gets
+    if c.name == response
+      client.destroy_cluster id
+      output.puts "Cluster #{c.id.colorize.light_cyan} destroyed"
+    else
+      output.puts "Reponse did not match, did not destroy the cluster"
+    end
+  end
+
   def info(id)
     pp client.get_cluster id
   end

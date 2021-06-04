@@ -19,6 +19,8 @@ class CB::Completion
       case args.first
       when "info"
         return info
+      when "destroy"
+        return info
       when "create"
         return create
       else
@@ -39,6 +41,7 @@ class CB::Completion
       "teams\tList teams",
       "info\tDetailed cluster info",
       "create\tProvision a new cluster",
+      "destroy\tDestroy a cluster",
     ]
   end
 

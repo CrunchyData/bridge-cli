@@ -53,6 +53,13 @@ op = OptionParser.new do |parser|
     end
   end
 
+  parser.on("destroy", "destroy a cluster") do
+    parser.unknown_args do |args|
+      id = args.first
+      PROG.destroy_cluster id
+    end
+  end
+
   parser.on("create", "create a new cluster") do
     action = create = CB::CreateCluster.new(PROG.client)
     parser.banner = "Usage: cb create <--platform|-p> <--region|-r> <--plan> <--team|-t> [--size|-s] [--name|-n] [--ha]"

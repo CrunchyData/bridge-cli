@@ -69,7 +69,10 @@ class CB::Client
 
   def get_cluster(id)
     resp = get "clusters/#{id}"
-    JSON.parse resp.body
+    Cluster.from_json resp.body, root: "cluster"
+  rescue e : Error
+    raise e unless e.resp.status == HTTP::Status::FORBIDDEN
+    raise Program::Error.new "cluster #{id.colorize.light_cyan} does not exist, or you do not have access to it"
   end
 
   def create_cluster(cc)
@@ -85,6 +88,10 @@ class CB::Client
     }
     resp = post "clusters", body
     Cluster.from_json resp.body, root: "cluster"
+  end
+
+  def destroy_cluster(id)
+    delete "clusters/#{id}"
   end
 
   record Plan, id : String, display_name : String do
@@ -106,7 +113,7 @@ class CB::Client
   end
 
   def get(path)
-    resp = HTTP::Client.get("https://#{host}/#{path}", headers: headers)
+    resp = HTTP::Client.get "https://#{host}/#{path}", headers: headers
     return resp if resp.success?
     raise Error.new("get", path, resp)
   end
@@ -116,8 +123,14 @@ class CB::Client
   end
 
   def post(path, body : String)
-    resp = HTTP::Client.post("https://#{host}/#{path}", headers: headers, body: body)
+    resp = HTTP::Client.post "https://#{host}/#{path}", headers: headers, body: body
     return resp if resp.success?
     raise Error.new("post", path, resp)
+  end
+
+  def delete(path)
+    resp = HTTP::Client.delete "https://#{host}/#{path}", headers: headers
+    return resp if resp.success?
+    raise Error.new("delete", path, resp)
   end
 end
