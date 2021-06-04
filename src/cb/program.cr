@@ -84,8 +84,8 @@ class CB::Program
 
   def destroy_cluster(id)
     c = client.get_cluster id
-    team_name = client.get_teams.find { |t| t.id == c.team_id }.try &.name.colorize.t_alt
     output << "About to " << "delete".colorize.t_warn << " cluster " << c.name.colorize.t_name
+    team_name = team_name_for_cluster c
     output << " from team #{team_name}" if team_name
     output << ".\n  Type the cluster's name to confirm: "
     response = input.gets
@@ -98,6 +98,30 @@ class CB::Program
   end
 
   def info(id)
-    pp client.get_cluster id
+    c = client.get_cluster id
+    team_name = team_name_for_cluster c
+    output << team_name << "/" if team_name
+    output << c.name.colorize.t_name << "\n"
+
+    details = {
+      "state"    => c.state,
+      "created"  => c.created_at,
+      "memory"   => "#{c.memory}GiB",
+      "cpu"      => c.cpu,
+      "storage"  => "#{c.storage}GiB",
+      "ha"       => (c.is_ha ? "on" : "off"),
+      "platform" => c.provider_id,
+      "regoin"   => c.region_id,
+    }
+    pad = details.keys.map(&.size).max + 2
+    details.each do |k, v|
+      output << k.rjust(pad).colorize.bold << ": "
+      output << v << "\n"
+    end
+  end
+
+  private def team_name_for_cluster(c)
+    # no way to look up a single team yet
+    client.get_teams.find { |t| t.id == c.team_id }.try &.name.colorize.t_alt
   end
 end

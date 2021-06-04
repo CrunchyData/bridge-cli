@@ -46,7 +46,6 @@ op = OptionParser.new do |parser|
   end
 
   parser.on("info", "detailed cluster information") do
-    puts "info"
     parser.unknown_args do |args|
       id = args.first
       PROG.info id

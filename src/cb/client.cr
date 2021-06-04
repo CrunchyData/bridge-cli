@@ -57,6 +57,23 @@ class CB::Client
     include JSON::Serializable
   end
 
+  record ClusterDetail,
+    id : String,
+    team_id : String,
+    name : String,
+    state : String,
+    created_at : Time,
+    cpu : Int32,
+    is_ha : Bool,
+    major_version : Int32,
+    memory : Int32,
+    oldest_backup : Time,
+    provider_id : String,
+    region_id : String,
+    storage : Int32 do
+    include JSON::Serializable
+  end
+
   def get_teams
     resp = get "teams"
     Array(Team).from_json resp.body, root: "teams"
@@ -69,7 +86,7 @@ class CB::Client
 
   def get_cluster(id)
     resp = get "clusters/#{id}"
-    Cluster.from_json resp.body, root: "cluster"
+    ClusterDetail.from_json resp.body, root: "cluster"
   rescue e : Error
     raise e unless e.resp.status == HTTP::Status::FORBIDDEN
     raise Program::Error.new "cluster #{id.colorize.t_id} does not exist, or you do not have access to it"
