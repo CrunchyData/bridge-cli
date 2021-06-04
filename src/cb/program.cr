@@ -66,7 +66,7 @@ class CB::Program
     end
   end
 
-  def clusters
+  def list_clusters
     clusters = client.get_clusters
     teams = client.get_teams
     cluster_max = clusters.map(&.name.size).max

@@ -37,7 +37,7 @@ class CB::Completion
       "--version\tShow version information",
       "login\tStore API key",
       "token\tGet current API token",
-      "clusters\tList clusters",
+      "list\tList clusters",
       "teams\tList teams",
       "info\tDetailed cluster info",
       "create\tProvision a new cluster",

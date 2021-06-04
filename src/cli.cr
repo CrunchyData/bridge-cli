@@ -37,8 +37,8 @@ op = OptionParser.new do |parser|
     PROG.teams
   end
 
-  parser.on("clusters", "list clusters") do
-    PROG.clusters
+  parser.on("list", "list clusters") do
+    PROG.list_clusters
   end
 
   parser.on("whoami", "information on current user") do
