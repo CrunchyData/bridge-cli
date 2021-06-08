@@ -129,6 +129,15 @@ class CB::Client
     Array(Provider).from_json resp.body, root: "providers"
   end
 
+  record FirewallRule, id : String, rule : String do
+    include JSON::Serializable
+  end
+
+  def get_firewall_rules(cluster_id)
+    resp = get "clusters/#{cluster_id}/firewall"
+    Array(FirewallRule).from_json resp.body, root: "firewall_rules"
+  end
+
   def get(path)
     resp = HTTP::Client.get "https://#{host}/#{path}", headers: headers
     return resp if resp.success?

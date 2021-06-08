@@ -113,11 +113,20 @@ class CB::Program
       "platform" => c.provider_id,
       "regoin"   => c.region_id,
     }
-    pad = details.keys.map(&.size).max + 2
+    pad = 10
     details.each do |k, v|
       output << k.rjust(pad).colorize.bold << ": "
       output << v << "\n"
     end
+
+    firewall_rules = client.get_firewall_rules id
+    output << "firewall".rjust(pad).colorize.bold << ": "
+    if firewall_rules.empty?
+      output << "no rules\n"
+    else
+      output << "allowed cidrs".colorize.underline << "\n"
+    end
+    firewall_rules.each { |fr| output << " "*(pad + 4) << fr.rule << "\n" }
   end
 
   private def team_name_for_cluster(c)
