@@ -21,3 +21,17 @@ module Colorize
 end
 
 Colorize.on_tty_only!
+
+class IO
+  # no-op for non-file descriptor IOs, e.g. specs
+  def noecho
+    yield
+  end
+end
+
+macro jrecord(name, *properties)
+  record({{name}}, {{*properties}}) do
+    include JSON::Serializable
+    {{yield}}
+  end
+end

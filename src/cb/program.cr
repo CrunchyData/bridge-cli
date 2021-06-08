@@ -1,9 +1,5 @@
-class IO
-  # no-op for non-file descriptor IOs, e.g. specs
-  def noecho
-    yield
-  end
-end
+require "./creds"
+require "./token"
 
 class CB::Program
   class Error < Exception

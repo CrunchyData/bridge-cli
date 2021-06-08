@@ -1,5 +1,6 @@
 require "http/client"
 require "json"
+require "../stdlib_ext"
 
 class CB::Client
   class Error < ::Exception
@@ -36,8 +37,7 @@ class CB::Client
     @headers = HTTP::Headers{"Accept" => "application/json", "Authorization" => "Bearer #{token.token}"}
   end
 
-  record Team, id : String, team_name : String, is_personal : Bool, roles : Array(Int32) do
-    include JSON::Serializable
+  jrecord Team, id : String, team_name : String, is_personal : Bool, roles : Array(Int32) do
     enum Role
       Member
       Manager
@@ -53,11 +53,9 @@ class CB::Client
     end
   end
 
-  record Cluster, id : String, team_id : String, name : String do
-    include JSON::Serializable
-  end
+  jrecord Cluster, id : String, team_id : String, name : String
 
-  record ClusterDetail,
+  jrecord ClusterDetail,
     id : String,
     team_id : String,
     name : String,
@@ -70,9 +68,7 @@ class CB::Client
     oldest_backup : Time,
     provider_id : String,
     region_id : String,
-    storage : Int32 do
-    include JSON::Serializable
-  end
+    storage : Int32
 
   def get_teams
     resp = get "teams"
@@ -111,27 +107,17 @@ class CB::Client
     delete "clusters/#{id}"
   end
 
-  record Plan, id : String, display_name : String do
-    include JSON::Serializable
-  end
-
-  record Region, id : String, display_name : String, location : String do
-    include JSON::Serializable
-  end
-
-  record Provider, id : String, display_name : String,
-    regions : Array(Region), plans : Array(Plan) do
-    include JSON::Serializable
-  end
+  jrecord Plan, id : String, display_name : String
+  jrecord Region, id : String, display_name : String, location : String
+  jrecord Provider, id : String, display_name : String,
+    regions : Array(Region), plans : Array(Plan)
 
   def get_providers
     resp = get "providers"
     Array(Provider).from_json resp.body, root: "providers"
   end
 
-  record FirewallRule, id : String, rule : String do
-    include JSON::Serializable
-  end
+  jrecord FirewallRule, id : String, rule : String
 
   def get_firewall_rules(cluster_id)
     resp = get "clusters/#{cluster_id}/firewall"
