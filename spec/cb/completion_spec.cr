@@ -204,6 +204,10 @@ describe CB::Completion do
     result = parse("cb firewall --cluster abc --remove 4.5.6.7/24 --remove ")
     result.should eq ["1.2.3.4/32"]
 
+    result = parse("cb firewall --cluster abc --remove 4.5.6.7/24 --remove 1.2.3.4/32 ")
+    result.should have_option "--add"
+    result.should_not have_option "--remove"
+
     result = parse("cb firewall --cluster abc --remove 4.5.6.7/24 --remove 1.2.3.4/32 --remove ")
     result.should eq [] of String
   end

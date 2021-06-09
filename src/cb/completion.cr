@@ -142,7 +142,9 @@ class CB::Completion
     end
 
     if has_full_flag? :cluster
-      return ["--add\tcidr of rule to add", "--remove\tcidr of rule to remove"]
+      suggestions = ["--add\tcidr of rule to add"]
+      suggestions << "--remove\tcidr of rule to remove" unless firewall_rules(cluster).empty?
+      return suggestions
     else
       return ["--cluster\tcluster id"]
     end
