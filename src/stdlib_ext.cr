@@ -17,6 +17,10 @@ module Colorize
     def t_alt
       green
     end
+
+    def t_success
+      green
+    end
   end
 end
 

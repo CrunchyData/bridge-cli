@@ -23,6 +23,8 @@ class CB::Completion
         return info
       when "create"
         return create
+      when "firewall"
+        return firewall
       else
         STDERR.puts
         STDERR.puts commandline.inspect
@@ -42,10 +44,15 @@ class CB::Completion
       "info\tDetailed cluster info",
       "create\tProvision a new cluster",
       "destroy\tDestroy a cluster",
+      "firewall\tManage firewall rules",
     ]
   end
 
   def info
+    cluster_suggestions
+  end
+
+  def cluster_suggestions
     teams = @client.get_teams
     @client.get_clusters.map do |c|
       team_name = teams.find { |t| t.id == c.team_id }.try(&.name) || "unknown_team"
@@ -74,7 +81,7 @@ class CB::Completion
       return ["--region", "--plan"]
     end
 
-    platform = find_platform
+    platform = find_arg_value "--platform", "-p"
 
     if last_arg? "-r", "--region"
       return platform ? region(platform) : [] of String
@@ -115,11 +122,45 @@ class CB::Completion
     return suggest
   end
 
-  def find_platform : String?
-    platform_idx = @args.index("--platform") || @args.index("-p")
-    platform = platform_idx ? @args[platform_idx + 1] : nil
-    platform = "azure" if platform == "azr"
-    platform
+  def firewall
+    cluster = find_arg_value "--cluster"
+
+    if last_arg?("--cluster")
+      return cluster.nil? ? cluster_suggestions : [] of String
+    end
+
+    if last_arg?("--add")
+      return [] of String
+    end
+
+    if last_arg?("--remove")
+      if cluster
+        return firewall_rules(cluster)
+      else
+        return [] of String
+      end
+    end
+
+    if has_full_flag? :cluster
+      return ["--add\tcidr of rule to add", "--remove\tcidr of rule to remove"]
+    else
+      return ["--cluster\tcluster id"]
+    end
+  end
+
+  def firewall_rules(cluster_id)
+    rules = @client.get_firewall_rules(cluster_id)
+    rules.map { |r| r.rule } - @args
+  rescue Client::Error
+    [] of String
+  end
+
+  def find_arg_value(arg1 : String, arg2 : String? = nil) : String?
+    idx = @args.index(arg1)
+    idx = @args.index(arg2) if idx.nil? && arg2
+    value = idx ? @args[idx + 1] : nil
+    value = nil if value == ""
+    value
   rescue IndexError
     nil
   end
@@ -144,6 +185,7 @@ class CB::Completion
     full << :name if has_full_flag? "--name", "-n"
     full << :team if has_full_flag? "--team", "-t"
     full << :region if has_full_flag? "--region", "-r"
+    full << :cluster if has_full_flag? "--cluster"
     full << :storage if has_full_flag? "--storage", "-s"
     full << :platform if has_full_flag? "--platform", "-p"
     return full

@@ -52,6 +52,15 @@ op = OptionParser.new do |parser|
     end
   end
 
+  parser.on("firewall", "manage firewall rules") do
+    action = manage = CB::ManageFirewall.new(PROG.client)
+    parser.banner = "Usage: cb firewall <--cluster> [--add] [--remove]"
+
+    parser.on("--cluster ID", "choose cluster") { |arg| manage.cluster_id = arg }
+    parser.on("--add CIDR", "add a firewall rule") { |arg| manage.add arg }
+    parser.on("--remove CIDR", "remove a firewall rule") { |arg| manage.remove arg }
+  end
+
   parser.on("destroy", "destroy a cluster") do
     parser.unknown_args do |args|
       id = args.first
@@ -93,17 +102,6 @@ rescue e : CB::Program::Error
 
   exit 1
 rescue e : CB::Client::Error
-  STDERR.puts "#{"error".colorize.red.bold}: #{e.resp.status.code.colorize.cyan} #{e.resp.status.description.colorize.red}"
-  indent = "       "
-  STDERR.puts "#{indent}#{e.method.upcase.colorize.green} to /#{e.path.colorize.green}"
-
-  begin
-    JSON.parse(e.resp.body).as_h.each do |k, v|
-      STDERR.puts "#{indent}#{"#{k}:".colorize.light_cyan} #{v}"
-    end
-  rescue JSON::ParseException
-    STDERR.puts "#{indent}#{e.resp.body}"
-  end
-
+  STDERR.puts e
   exit 2
 end

@@ -10,6 +10,20 @@ class CB::Client
 
     def initialize(@method, @path, @resp)
     end
+
+    def to_s(io : IO)
+      io.puts "#{"error".colorize.red.bold}: #{resp.status.code.colorize.cyan} #{resp.status.description.colorize.red}"
+      indent = "       "
+      io.puts "#{indent}#{method.upcase.colorize.green} to /#{path.colorize.green}"
+
+      begin
+        JSON.parse(resp.body).as_h.each do |k, v|
+          io.puts "#{indent}#{"#{k}:".colorize.light_cyan} #{v}"
+        end
+      rescue JSON::ParseException
+        io.puts "#{indent}#{resp.body}" unless resp.body == ""
+      end
+    end
   end
 
   def self.get_token(creds : Creds) : Token
@@ -124,6 +138,14 @@ class CB::Client
     Array(FirewallRule).from_json resp.body, root: "firewall_rules"
   end
 
+  def delete_firewall_rule(cluster_id, firewall_rule_id)
+    delete "clusters/#{cluster_id}/firewall/#{firewall_rule_id}"
+  end
+
+  def add_firewall_rule(cluster_id, cidr)
+    post "clusters/#{cluster_id}/firewall", {rule: cidr}
+  end
+
   def get(path)
     resp = HTTP::Client.get "https://#{host}/#{path}", headers: headers
     return resp if resp.success?
@@ -138,6 +160,16 @@ class CB::Client
     resp = HTTP::Client.post "https://#{host}/#{path}", headers: headers, body: body
     return resp if resp.success?
     raise Error.new("post", path, resp)
+  end
+
+  def put(path, body)
+    put path, body.to_json
+  end
+
+  def put(path, body : String)
+    resp = HTTP::Client.put "https://#{host}/#{path}", headers: headers, body: body
+    return resp if resp.success?
+    raise Error.new("put", path, resp)
   end
 
   def delete(path)

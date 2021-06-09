@@ -9,6 +9,10 @@ private class CompletionTestClient < CB::Client
     [Team.new("def", "my team", false, [1])]
   end
 
+  def get_firewall_rules(id)
+    [FirewallRule.new("f1", "1.2.3.4/32"), FirewallRule.new("f2", "4.5.6.7/24")]
+  end
+
   def get_providers
     [
       Provider.new(
@@ -65,7 +69,7 @@ describe CB::Completion do
     result.should eq ["abc\tmy team/my cluster"]
   end
 
-  it "create suggests platform" do
+  it "create" do
     result = parse("cb create ")
     result.should have_option "--platform"
     result.should have_option "--help"
@@ -161,5 +165,46 @@ describe CB::Completion do
 
     result = parse("cb create --name \"some name\" -s  ")
     result.should have_option "512"
+  end
+
+  it "firewall" do
+    result = parse("cb firewall ")
+    result.should have_option "--cluster"
+    result.should_not have_option "--add"
+    result.should_not have_option "--remove"
+
+    result = parse("cb firewall --cluster abc ")
+    result.should_not have_option "--cluster"
+    result.should have_option "--add"
+    result.should have_option "--remove"
+
+    result = parse("cb firewall --cluster ")
+    result.should eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb firewall --cluster abc --cluster ")
+    result.should eq [] of String
+
+    result = parse("cb firewall --cluster abc --add 1.2.3/4 --remove 1.2.3.4/5 ")
+    result.should_not have_option "--cluster"
+    result.should have_option "--add"
+    result.should have_option "--remove"
+
+    result = parse("cb firewall --add ")
+    result.should eq [] of String
+
+    result = parse("cb firewall --cluster abc --add ")
+    result.should eq [] of String
+
+    result = parse("cb firewall --remove ")
+    result.should eq [] of String
+
+    result = parse("cb firewall --cluster abc --remove ")
+    result.should eq ["1.2.3.4/32", "4.5.6.7/24"]
+
+    result = parse("cb firewall --cluster abc --remove 4.5.6.7/24 --remove ")
+    result.should eq ["1.2.3.4/32"]
+
+    result = parse("cb firewall --cluster abc --remove 4.5.6.7/24 --remove 1.2.3.4/32 --remove ")
+    result.should eq [] of String
   end
 end
