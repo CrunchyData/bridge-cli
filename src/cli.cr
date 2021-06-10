@@ -13,10 +13,18 @@ class OptionParser
 end
 
 action = nil
-
 op = OptionParser.new do |parser|
+  get_id_arg = ->(args : Array(String)) do
+    if args.empty?
+      puts parser
+      exit 1
+    end
+    args.first
+  end
+
   parser.banner = "Usage: cb [arguments]"
   parser.on("version", "Show the version") do
+    parser.banner = "Usage: cb version"
     puts "cb v#{CB::VERSION}"
     exit
   end
@@ -26,29 +34,34 @@ op = OptionParser.new do |parser|
   end
 
   parser.on("login", "Store API key") do
-    PROG.login
+    parser.banner = "Usage: cb login"
+    action = ->{ PROG.login }
   end
 
   parser.on("token", "return a bearar token for use in the api") do
-    puts PROG.token.token
+    parser.banner = "Usage: cb token"
+    action = ->{ puts PROG.token.token }
   end
 
   parser.on("teams", "list teams you belong to") do
-    PROG.teams
+    parser.banner = "Usage: cb teams"
+    action = ->{ PROG.teams }
   end
 
   parser.on("list", "list clusters") do
-    PROG.list_clusters
+    parser.banner = "Usage: cb list"
+    action = ->{ PROG.list_clusters }
   end
 
   parser.on("whoami", "information on current user") do
-    PROG.client.get "users/info"
+    action = ->{ PROG.client.get "users/info" }
   end
 
   parser.on("info", "detailed cluster information") do
+    parser.banner = "Usage: cb info <cluster id>"
     parser.unknown_args do |args|
-      id = args.first
-      PROG.info id
+      id = get_id_arg.call(args)
+      action = ->{ PROG.info id }
     end
   end
 
@@ -62,9 +75,10 @@ op = OptionParser.new do |parser|
   end
 
   parser.on("destroy", "destroy a cluster") do
+    parser.banner = "Usage: cb destroy <cluster id>"
     parser.unknown_args do |args|
-      id = args.first
-      PROG.destroy_cluster id
+      id = get_id_arg.call(args)
+      action = ->{ PROG.destroy_cluster id }
     end
   end
 
@@ -95,13 +109,24 @@ end
 
 begin
   op.parse
-  action.try &.run
+  if a = action
+    a.call
+  else
+    puts op
+    exit
+  end
 rescue e : CB::Program::Error
   STDERR.puts "#{"error".colorize.red.bold}: #{e.message}"
   STDERR.puts op if e.show_usage
 
   exit 1
 rescue e : CB::Client::Error
+  if e.unauthorized?
+    if PROG.ensure_token_still_good
+      STDERR << "error".colorize.t_warn << ": Token expired, but has been refreshed. Please try again.\n"
+      exit 1
+    end
+  end
   STDERR.puts e
   exit 2
 end

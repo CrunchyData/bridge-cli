@@ -41,8 +41,41 @@ class CB::Program
     if t = @token
       return t
     end
-    t = Token.for_host(host) || Client.get_token(creds)
+    t = Token.for_host(host) || get_token
     @token = t
+  end
+
+  private def get_token
+    Client.get_token(creds)
+  rescue e : Client::Error
+    if e.unauthorized?
+      STDERR << "error".colorize.t_warn << ": Credentials invalid. Please login again.\n"
+      exit 1
+    end
+    raise e
+  end
+
+  # api may lose the token before it's actually expired
+  # returns false if the token didn't need to be refreshed
+  #         true if refreshing the token worked and the user should retry
+  # it is assumed that the token will work after a refresh
+  def ensure_token_still_good : Bool
+    return false if test_token # token already works
+    @token = get_token
+    return true if test_token # token was fixed after refresh
+
+    STDERR << "error".colorize.t_warn << ": Could not refresh token. Please login again.\n"
+    exit 1
+  end
+
+  private def test_token
+    token_works = false
+    begin
+      client.get_teams
+      token_works = true
+    rescue Client::Error
+    end
+    token_works
   end
 
   def client

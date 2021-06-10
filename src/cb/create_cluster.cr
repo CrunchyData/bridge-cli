@@ -17,7 +17,7 @@ class CB::CreateCluster
     @name = "Cluster #{Time.utc.to_s("%F %H_%M_%S")}"
   end
 
-  def run
+  def call
     validate
     cluster = @client.create_cluster self
     @output.puts %(Created cluster #{cluster.id.colorize.light_cyan} "#{cluster.name.colorize.cyan}")

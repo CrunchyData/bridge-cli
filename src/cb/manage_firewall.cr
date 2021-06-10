@@ -17,7 +17,7 @@ class CB::ManageFirewall
     to_remove << cidr
   end
 
-  def run
+  def call
     raise Error.new "--cluster not set" unless cluster_id
     remove_all
     add_all

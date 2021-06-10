@@ -24,6 +24,10 @@ class CB::Client
         io.puts "#{indent}#{resp.body}" unless resp.body == ""
       end
     end
+
+    def unauthorized?
+      resp.status == HTTP::Status::UNAUTHORIZED
+    end
   end
 
   def self.get_token(creds : Creds) : Token
@@ -33,7 +37,7 @@ class CB::Client
       "client_secret" => creds.secret,
     }
     resp = HTTP::Client.post("https://#{creds.host}/token", form: req)
-    raise resp.status.to_s + resp.body unless resp.status.success?
+    raise Error.new("post", "/token", resp) unless resp.status.success?
 
     parsed = JSON.parse(resp.body)
     token = parsed["access_token"].as_s
@@ -79,7 +83,7 @@ class CB::Client
     is_ha : Bool,
     major_version : Int32,
     memory : Int32,
-    oldest_backup : Time,
+    oldest_backup : Time?,
     provider_id : String,
     region_id : String,
     storage : Int32
