@@ -16,7 +16,7 @@ action = nil
 op = OptionParser.new do |parser|
   get_id_arg = ->(args : Array(String)) do
     if args.empty?
-      puts parser
+      STDERR.puts parser
       exit 1
     end
     args.first
@@ -31,6 +31,7 @@ op = OptionParser.new do |parser|
 
   parser.on("--_completion CMDSTRING") do |cmdstring|
     CB::Completion.parse(PROG.client, cmdstring).each { |opt| puts opt }
+    exit
   end
 
   parser.on("login", "Store API key") do

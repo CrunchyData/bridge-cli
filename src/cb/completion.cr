@@ -13,6 +13,16 @@ class CB::Completion
   end
 
   def parse : Array(String)
+    result = _parse
+    # File.open("completion.log", "a") do |f|
+    #  f.puts @args.inspect
+    #  f.puts result.inspect
+    #  f.puts
+    # end
+    result
+  end
+
+  def _parse : Array(String)
     if args.size < 2
       return top_level
     else
