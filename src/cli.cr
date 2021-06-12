@@ -65,6 +65,14 @@ op = OptionParser.new do |parser|
     end
   end
 
+  parser.on("psql", "connect to the dabase using `psql`") do
+    parser.banner = "Usage: cb psql <cluster id>"
+    parser.unknown_args do |args|
+      id = get_id_arg.call(args)
+      action = ->{ PROG.psql id }
+    end
+  end
+
   parser.on("firewall", "manage firewall rules") do
     action = manage = CB::ManageFirewall.new(PROG.client)
     parser.banner = "Usage: cb firewall <--cluster> [--add] [--remove]"

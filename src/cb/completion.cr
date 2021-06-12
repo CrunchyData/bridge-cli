@@ -19,6 +19,8 @@ class CB::Completion
       case args.first
       when "info"
         return info
+      when "psql"
+        return info
       when "destroy"
         return info
       when "create"
@@ -26,9 +28,6 @@ class CB::Completion
       when "firewall"
         return firewall
       else
-        STDERR.puts
-        STDERR.puts commandline.inspect
-        STDERR.puts args.inspect
         [] of String
       end
     end
@@ -45,6 +44,7 @@ class CB::Completion
       "create\tProvision a new cluster",
       "destroy\tDestroy a cluster",
       "firewall\tManage firewall rules",
+      "psql\tInteractive psql console",
     ]
   end
 

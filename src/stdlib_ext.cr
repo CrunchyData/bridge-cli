@@ -39,3 +39,9 @@ macro jrecord(name, *properties)
     {{yield}}
   end
 end
+
+class URI
+  def self.new(pull : JSON::PullParser)
+    parse pull.read_string
+  end
+end

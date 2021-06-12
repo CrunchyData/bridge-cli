@@ -106,6 +106,13 @@ class CB::Client
     raise Program::Error.new "cluster #{id.colorize.t_id} does not exist, or you do not have access to it"
   end
 
+  jrecord Role, name : String, password : String, uri : URI
+
+  def get_cluster_default_role(id)
+    resp = get "clusters/#{id}/roles/default"
+    Role.from_json resp.body
+  end
+
   def create_cluster(cc)
     body = {
       ha:            cc.ha,
