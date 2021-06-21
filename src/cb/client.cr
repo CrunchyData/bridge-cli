@@ -55,7 +55,7 @@ class CB::Client
     @headers = HTTP::Headers{"Accept" => "application/json", "Authorization" => "Bearer #{token.token}"}
   end
 
-  jrecord Team, id : String, team_name : String, is_personal : Bool, roles : Array(Int32) do
+  jrecord Team, id : String, name : String, is_personal : Bool, roles : Array(Int32) do
     enum Role
       Member
       Manager
@@ -63,7 +63,7 @@ class CB::Client
     end
 
     def name
-      is_personal ? "personal" : team_name
+      is_personal ? "personal" : @name
     end
 
     def human_roles
