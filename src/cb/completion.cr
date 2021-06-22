@@ -1,4 +1,7 @@
 class CB::Completion
+  class NoClientError < RuntimeError
+  end
+
   def self.parse(client, commandline)
     new(client, commandline).parse
   end
@@ -7,9 +10,15 @@ class CB::Completion
   getter args : Array(String)
   getter full_flags : Set(Symbol)
 
-  def initialize(@client : Client, @commandline : String)
+  def initialize(@client : Client?, @commandline : String)
     @args = @commandline.split(/\s+/)[1..-1]
     @full_flags = find_full_flags
+  end
+
+  def client : Client
+    c = @client
+    raise NoClientError.new unless c
+    c
   end
 
   def parse : Array(String)
@@ -41,10 +50,13 @@ class CB::Completion
         [] of String
       end
     end
+  rescue NoClientError
+    [] of String
   end
 
   def top_level
-    [
+    options = [
+      "--help\tShow help and usage",
       "--version\tShow version information",
       "login\tStore API key",
       "token\tGet current API token",
@@ -56,6 +68,11 @@ class CB::Completion
       "firewall\tManage firewall rules",
       "psql\tInteractive psql console",
     ]
+    if @client
+      options
+    else
+      options.first 3
+    end
   end
 
   def info
@@ -63,15 +80,15 @@ class CB::Completion
   end
 
   def cluster_suggestions
-    teams = @client.get_teams
-    @client.get_clusters.map do |c|
+    teams = client.get_teams
+    client.get_clusters.map do |c|
       team_name = teams.find { |t| t.id == c.team_id }.try(&.name) || "unknown_team"
       "#{c.id}\t#{team_name}/#{c.name}"
     end
   end
 
   def teams
-    @client.get_teams.map { |t| "#{t.id}\t#{t.name}" }
+    client.get_teams.map { |t| "#{t.id}\t#{t.name}" }
   end
 
   def create
@@ -161,7 +178,7 @@ class CB::Completion
   end
 
   def firewall_rules(cluster_id)
-    rules = @client.get_firewall_rules(cluster_id)
+    rules = client.get_firewall_rules(cluster_id)
     rules.map { |r| r.rule } - @args
   rescue Client::Error
     [] of String
@@ -178,13 +195,13 @@ class CB::Completion
   end
 
   def region(platform)
-    platform = @client.get_providers.find { |p| p.id == platform }
+    platform = client.get_providers.find { |p| p.id == platform }
     return [] of String unless platform
     platform.regions.map { |r| "#{r.id}\t#{r.display_name} [#{r.location}]" }
   end
 
   def plan(platform)
-    platform = @client.get_providers.find { |p| p.id == platform }
+    platform = client.get_providers.find { |p| p.id == platform }
     return [] of String unless platform
     platform.plans.map { |r| "#{r.id}\t#{r.display_name}" }
   end

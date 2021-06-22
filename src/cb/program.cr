@@ -17,6 +17,7 @@ class CB::Program
   end
 
   def login
+    raise Error.new "No valid credentials found. Please login." unless output.tty?
     output.puts "add credentials for #{host} >"
     output.print "  application ID: "
     id = input.gets

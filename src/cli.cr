@@ -30,7 +30,8 @@ op = OptionParser.new do |parser|
   end
 
   parser.on("--_completion CMDSTRING") do |cmdstring|
-    CB::Completion.parse(PROG.client, cmdstring).each { |opt| puts opt }
+    client = PROG.client rescue nil # in case not logged in
+    CB::Completion.parse(client, cmdstring).each { |opt| puts opt }
     exit
   end
 
