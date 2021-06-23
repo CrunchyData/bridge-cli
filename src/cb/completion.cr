@@ -46,6 +46,8 @@ class CB::Completion
         return create
       when "firewall"
         return firewall
+      when "logdest"
+        return logdest
       else
         [] of String
       end
@@ -67,6 +69,7 @@ class CB::Completion
       "destroy\tDestroy a cluster",
       "firewall\tManage firewall rules",
       "psql\tInteractive psql console",
+      "logdest\tManage log destinations",
     ]
     if @client
       options
@@ -184,6 +187,73 @@ class CB::Completion
     [] of String
   end
 
+  def logdest
+    case @args[1]
+    when "list"
+      logdest_list
+    when "destroy"
+      logdest_destroy
+    when "add"
+      logdest_add
+    else
+      [
+        "list\tlist all log destinations for a cluster",
+        "add\tadd a new log destination to a cluster",
+        "destroy\tremove a new destination from a cluster",
+      ]
+    end
+  end
+
+  def logdest_list
+    return ["--cluster\tcluster id"] if @args.size == 3
+
+    cluster = find_arg_value "--cluster"
+
+    if last_arg?("--cluster")
+      return cluster.nil? ? cluster_suggestions : [] of String
+    end
+
+    [] of String
+  end
+
+  def logdest_destroy
+    return ["--cluster\tcluster id"] if @args.size == 3
+
+    cluster = find_arg_value "--cluster"
+    logdest = find_arg_value "--logdest"
+
+    if last_arg?("--cluster")
+      return cluster.nil? ? cluster_suggestions : [] of String
+    end
+
+    if last_arg?("--logdest")
+      return [] of String unless logdest.nil? && cluster
+      return client.get_logdests(cluster).map { |d| "#{d.id}\t#{d.description}" }
+    end
+
+    if cluster && !logdest
+      ["--logdest\tlog destination id"]
+    else
+      [] of String
+    end
+  end
+
+  def logdest_add
+    if last_arg?("--cluster")
+      return cluster_suggestions
+    end
+
+    # return missing args
+    suggest = [] of String
+    suggest << "--help\tshow help" if args.size == 3
+    suggest << "--cluster\tcluster id" unless has_full_flag? :cluster
+    suggest << "--host\thostname" unless has_full_flag? :host
+    suggest << "--port\tport number" unless has_full_flag? :port
+    suggest << "--desc\tdescription" unless has_full_flag? :desc
+    suggest << "--template\ttemptale" unless has_full_flag? :template
+    return suggest
+  end
+
   def find_arg_value(arg1 : String, arg2 : String? = nil) : String?
     idx = @args.index(arg1)
     idx = @args.index(arg2) if idx.nil? && arg2
@@ -217,6 +287,10 @@ class CB::Completion
     full << :cluster if has_full_flag? "--cluster"
     full << :storage if has_full_flag? "--storage", "-s"
     full << :platform if has_full_flag? "--platform", "-p"
+    full << :port if has_full_flag? "--port"
+    full << :desc if has_full_flag? "--desc"
+    full << :template if has_full_flag? "--template"
+    full << :host if has_full_flag? "--host"
     return full
   end
 

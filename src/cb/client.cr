@@ -157,6 +157,32 @@ class CB::Client
     post "clusters/#{cluster_id}/firewall", {rule: cidr}
   end
 
+  jrecord Logdest, logger_id : String, host : String, port : Int32, template : String, description : String do
+    def id
+      logger_id
+    end
+  end
+
+  def get_logdests(cluster_id)
+    resp = get "clusters/#{cluster_id}/loggers"
+    Array(Logdest).from_json resp.body, root: "loggers"
+  end
+
+  def add_logdest(lda : CB::LogdestAdd)
+    resp = post "clusters/#{lda.cluster_id}/loggers", {
+      host:        lda.host,
+      port:        lda.port,
+      template:    lda.template,
+      description: lda.desc,
+    }
+    resp.body
+  end
+
+  def destroy_logdest(cluster_id, logdest_id)
+    resp = delete "clusters/#{cluster_id}/loggers/#{logdest_id}"
+    resp.body
+  end
+
   def get(path)
     resp = HTTP::Client.get "https://#{host}/#{path}", headers: headers
     return resp if resp.success?

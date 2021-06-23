@@ -10,10 +10,6 @@ private def make_cc
   CB::CreateCluster.new(CreateClusterTestClient.new(TEST_TOKEN))
 end
 
-private def expect_cb_error(message, file = __FILE__, line = __LINE__)
-  expect_raises(CB::Program::Error, message, file: file, line: line) { yield }
-end
-
 describe CB::CreateCluster do
   it "#run prints info about the cluster that was created" do
     cc = make_cc
@@ -23,7 +19,7 @@ describe CB::CreateCluster do
     cc.region = "east"
     cc.team = "afpvoqooxzdrriu6w3bhqo55c4"
 
-    cc.run
+    cc.call
     output.to_s.should eq "Created cluster abc \"my cluster\"\n"
   end
 

@@ -20,7 +20,7 @@ class CB::CreateCluster
   def call
     validate
     cluster = @client.create_cluster self
-    @output.puts %(Created cluster #{cluster.id.colorize.light_cyan} "#{cluster.name.colorize.cyan}")
+    @output.puts %(Created cluster #{cluster.id.colorize.t_id} "#{cluster.name.colorize.t_name}")
   end
 
   def validate
@@ -74,7 +74,7 @@ class CB::CreateCluster
   end
 
   def storage=(str : String)
-    i = str.to_i(base: 10, whitespace: true, underscore: true, prefix: false, strict: true, leading_zero_is_octal: false)
+    i = str.to_i_cb
 
     self.storage = i
   rescue ArgumentError
@@ -87,7 +87,7 @@ class CB::CreateCluster
   end
 
   def team=(str : String)
-    raise_arg_error "team id", str unless str =~ /\A[a-z0-9]{25}[4aeimquy]\z/
+    raise_arg_error "team id", str unless str =~ EID_PATTERN
     @team = str
   end
 

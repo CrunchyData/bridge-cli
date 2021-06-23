@@ -27,6 +27,10 @@ private class CompletionTestClient < CB::Client
       ),
     ]
   end
+
+  def get_logdests(id)
+    [Logdest.new("logid", "host", 2020, "template", "logdest descr")]
+  end
 end
 
 module Spec
@@ -210,5 +214,78 @@ describe CB::Completion do
 
     result = parse("cb firewall --cluster abc --remove 4.5.6.7/24 --remove 1.2.3.4/32 --remove ")
     result.should eq [] of String
+  end
+
+  it "logdest" do
+    result = parse("cb logdest ")
+    result.should have_option "list"
+    result.should have_option "destroy"
+    result.should have_option "add"
+
+    result = parse("cb logdest l")
+    result.should have_option "list"
+
+    result = parse("cb logdest list ")
+    result.should have_option "--cluster"
+
+    result = parse("cb logdest list --cluster ")
+    result.should eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb logdest list --cluster abc ")
+    result.should eq [] of String
+
+    result = parse("cb logdest list --cluster abc --cluster ")
+    result.should eq [] of String
+
+    result = parse("cb logdest d")
+    result.should have_option "destroy"
+
+    result = parse("cb logdest destroy ")
+    result.should have_option "--cluster"
+
+    result = parse("cb logdest destroy --cluster ")
+    result.should eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb logdest destroy --cluster abc ")
+    result.should have_option "--logdest"
+
+    result = parse("cb logdest destroy --cluster abc --logdest ")
+    result.should eq ["logid\tlogdest descr"]
+
+    result = parse("cb logdest destroy --cluster abc --logdest logid ")
+    result.should eq [] of String
+
+    result = parse("cb logdest add ")
+    result.should have_option "--cluster"
+    result.should have_option "--port"
+    result.should have_option "--desc"
+    result.should have_option "--template"
+    result.should have_option "--host"
+
+    result = parse("cb logdest add --cluster ")
+    result.should eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb logdest add --cluster abc ")
+    result.should_not have_option "--cluster"
+    result.should have_option "--port"
+    result.should have_option "--desc"
+    result.should have_option "--template"
+    result.should have_option "--host"
+
+    result = parse("cb logdest add --port 3 ")
+    result.should_not have_option "--port"
+    result.should have_option "--cluster"
+
+    result = parse("cb logdest add --desc 'some name' ")
+    result.should_not have_option "--desc"
+    result.should have_option "--cluster"
+
+    result = parse("cb logdest add --template 'some template' ")
+    result.should_not have_option "--template"
+    result.should have_option "--cluster"
+
+    result = parse("cb logdest add --host something.com ")
+    result.should_not have_option "--host"
+    result.should have_option "--cluster"
   end
 end

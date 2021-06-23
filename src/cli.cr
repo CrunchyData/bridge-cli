@@ -105,15 +105,48 @@ op = OptionParser.new do |parser|
     parser.on("-t ID", "--team ID", "Team") { |arg| create.team = arg }
   end
 
-  parser.on("-h", "--help", "Show this help") do
+  parser.on("logdest", "manage log destinations") do
+    parser.banner = "Usage: cb logdest <list|add|destroy>"
+
+    parser.on("list", "list log destinations for a cluster") do
+      action = list = CB::LogdestList.new PROG.client
+      parser.banner = "Usage: cb logdest list <--cluster>"
+      parser.on("--cluster ID", "choose cluster") { |arg| list.cluster_id = arg }
+    end
+
+    parser.on("add", "add a new log destination to a cluster") do
+      action = add = CB::LogdestAdd.new PROG.client
+      parser.banner = "Usage: cb logdest add <--cluster> <--host> <--port> <--template> [--desc]"
+      parser.on("--cluster ID", "choose cluster") { |arg| add.cluster_id = arg }
+      parser.on("--host HOST", "hostname") { |arg| add.host = arg }
+      parser.on("--port PORT", "port number") { |arg| add.port = arg }
+      parser.on("--template STR", "log tempalte") { |arg| add.template = arg }
+      parser.on("--desc STR", "description") { |arg| add.desc = arg }
+    end
+
+    parser.on("destroy", "remove an existing log destination from a cluster") do
+      action = destroy = CB::LogdestDestroy.new PROG.client
+      parser.banner = "Usage: cb logdest destroy <--cluster> <--logdest>"
+      parser.on("--cluster ID", "choose cluster") { |arg| destroy.cluster_id = arg }
+      parser.on("--logdest ID", "choose log destination") { |arg| destroy.logdest_id = arg }
+    end
+  end
+
+  parser.on("-h", "--help", "show this help") do
     puts parser
     exit
   end
 
   parser.invalid_option do |flag|
-    STDERR.puts "ERROR: #{flag} is not a valid option."
+    STDERR << "error".colorize.t_warn << ": " << flag.colorize.t_name << " is not a valid option.\n"
     STDERR.puts parser
-    exit(1)
+    exit 1
+  end
+
+  parser.missing_option do |flag|
+    STDERR << "error".colorize.t_warn << ": " << flag.colorize.t_name << " requires a value.\n"
+    STDERR.puts parser
+    exit 1
   end
 end
 
@@ -133,7 +166,7 @@ rescue e : CB::Program::Error
 rescue e : CB::Client::Error
   if e.unauthorized?
     if PROG.ensure_token_still_good
-      STDERR << "error".colorize.t_warn << ": Token expired, but has been refreshed. Please try again.\n"
+      STDERR << "error".colorize.t_warn << ": Token had expired, but has been refreshed. Please try again.\n"
       exit 1
     end
   end
