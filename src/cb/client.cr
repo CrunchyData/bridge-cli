@@ -157,11 +157,7 @@ class CB::Client
     post "clusters/#{cluster_id}/firewall", {rule: cidr}
   end
 
-  jrecord Logdest, logger_id : String, host : String, port : Int32, template : String, description : String do
-    def id
-      logger_id
-    end
-  end
+  jrecord Logdest, id : String, host : String, port : Int32, template : String, description : String
 
   def get_logdests(cluster_id)
     resp = get "clusters/#{cluster_id}/loggers"
