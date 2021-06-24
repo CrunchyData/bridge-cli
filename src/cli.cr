@@ -23,11 +23,6 @@ op = OptionParser.new do |parser|
   end
 
   parser.banner = "Usage: cb [arguments]"
-  parser.on("version", "Show the version") do
-    parser.banner = "Usage: cb version"
-    puts "cb v#{CB::VERSION}"
-    exit
-  end
 
   parser.on("--_completion CMDSTRING") do |cmdstring|
     client = PROG.client rescue nil # in case not logged in
@@ -40,26 +35,12 @@ op = OptionParser.new do |parser|
     action = ->{ PROG.login }
   end
 
-  parser.on("token", "return a bearar token for use in the api") do
-    parser.banner = "Usage: cb token"
-    action = ->{ puts PROG.token.token }
-  end
-
-  parser.on("teams", "list teams you belong to") do
-    parser.banner = "Usage: cb teams"
-    action = ->{ PROG.teams }
-  end
-
-  parser.on("list", "list clusters") do
+  parser.on("list", "List clusters") do
     parser.banner = "Usage: cb list"
     action = ->{ PROG.list_clusters }
   end
 
-  parser.on("whoami", "information on current user") do
-    action = ->{ puts PROG.creds.id.colorize.t_id }
-  end
-
-  parser.on("info", "detailed cluster information") do
+  parser.on("info", "Detailed cluster information") do
     parser.banner = "Usage: cb info <cluster id>"
     parser.unknown_args do |args|
       id = get_id_arg.call(args)
@@ -67,7 +48,7 @@ op = OptionParser.new do |parser|
     end
   end
 
-  parser.on("psql", "connect to the dabase using `psql`") do
+  parser.on("psql", "Connect to the dabase using `psql`") do
     parser.banner = "Usage: cb psql <cluster id>"
     parser.unknown_args do |args|
       id = get_id_arg.call(args)
@@ -75,24 +56,16 @@ op = OptionParser.new do |parser|
     end
   end
 
-  parser.on("firewall", "manage firewall rules") do
+  parser.on("firewall", "Manage firewall rules") do
     action = manage = CB::ManageFirewall.new(PROG.client)
     parser.banner = "Usage: cb firewall <--cluster> [--add] [--remove]"
 
-    parser.on("--cluster ID", "choose cluster") { |arg| manage.cluster_id = arg }
-    parser.on("--add CIDR", "add a firewall rule") { |arg| manage.add arg }
-    parser.on("--remove CIDR", "remove a firewall rule") { |arg| manage.remove arg }
+    parser.on("--cluster ID", "Choose cluster") { |arg| manage.cluster_id = arg }
+    parser.on("--add CIDR", "Add a firewall rule") { |arg| manage.add arg }
+    parser.on("--remove CIDR", "Remove a firewall rule") { |arg| manage.remove arg }
   end
 
-  parser.on("destroy", "destroy a cluster") do
-    parser.banner = "Usage: cb destroy <cluster id>"
-    parser.unknown_args do |args|
-      id = get_id_arg.call(args)
-      action = ->{ PROG.destroy_cluster id }
-    end
-  end
-
-  parser.on("create", "create a new cluster") do
+  parser.on("create", "Create a new cluster") do
     action = create = CB::CreateCluster.new(PROG.client)
     parser.banner = "Usage: cb create <--platform|-p> <--region|-r> <--plan> <--team|-t> [--size|-s] [--name|-n] [--ha]"
 
@@ -105,34 +78,62 @@ op = OptionParser.new do |parser|
     parser.on("-t ID", "--team ID", "Team") { |arg| create.team = arg }
   end
 
-  parser.on("logdest", "manage log destinations") do
-    parser.banner = "Usage: cb logdest <list|add|destroy>"
-
-    parser.on("list", "list log destinations for a cluster") do
-      action = list = CB::LogdestList.new PROG.client
-      parser.banner = "Usage: cb logdest list <--cluster>"
-      parser.on("--cluster ID", "choose cluster") { |arg| list.cluster_id = arg }
-    end
-
-    parser.on("add", "add a new log destination to a cluster") do
-      action = add = CB::LogdestAdd.new PROG.client
-      parser.banner = "Usage: cb logdest add <--cluster> <--host> <--port> <--template> [--desc]"
-      parser.on("--cluster ID", "choose cluster") { |arg| add.cluster_id = arg }
-      parser.on("--host HOST", "hostname") { |arg| add.host = arg }
-      parser.on("--port PORT", "port number") { |arg| add.port = arg }
-      parser.on("--template STR", "log tempalte") { |arg| add.template = arg }
-      parser.on("--desc STR", "description") { |arg| add.desc = arg }
-    end
-
-    parser.on("destroy", "remove an existing log destination from a cluster") do
-      action = destroy = CB::LogdestDestroy.new PROG.client
-      parser.banner = "Usage: cb logdest destroy <--cluster> <--logdest>"
-      parser.on("--cluster ID", "choose cluster") { |arg| destroy.cluster_id = arg }
-      parser.on("--logdest ID", "choose log destination") { |arg| destroy.logdest_id = arg }
+  parser.on("destroy", "Destroy a cluster") do
+    parser.banner = "Usage: cb destroy <cluster id>"
+    parser.unknown_args do |args|
+      id = get_id_arg.call(args)
+      action = ->{ PROG.destroy_cluster id }
     end
   end
 
-  parser.on("-h", "--help", "show this help") do
+  parser.on("logdest", "Manage log destinations") do
+    parser.banner = "Usage: cb logdest <list|add|destroy>"
+
+    parser.on("list", "List log destinations for a cluster") do
+      action = list = CB::LogdestList.new PROG.client
+      parser.banner = "Usage: cb logdest list <--cluster>"
+      parser.on("--cluster ID", "Choose cluster") { |arg| list.cluster_id = arg }
+    end
+
+    parser.on("add", "Add a new log destination to a cluster") do
+      action = add = CB::LogdestAdd.new PROG.client
+      parser.banner = "Usage: cb logdest add <--cluster> <--host> <--port> <--template> [--desc]"
+      parser.on("--cluster ID", "Choose cluster") { |arg| add.cluster_id = arg }
+      parser.on("--host HOST", "Hostname") { |arg| add.host = arg }
+      parser.on("--port PORT", "Port number") { |arg| add.port = arg }
+      parser.on("--template STR", "Log tempalte") { |arg| add.template = arg }
+      parser.on("--desc STR", "Description") { |arg| add.desc = arg }
+    end
+
+    parser.on("destroy", "Remove an existing log destination from a cluster") do
+      action = destroy = CB::LogdestDestroy.new PROG.client
+      parser.banner = "Usage: cb logdest destroy <--cluster> <--logdest>"
+      parser.on("--cluster ID", "Choose cluster") { |arg| destroy.cluster_id = arg }
+      parser.on("--logdest ID", "Choose log destination") { |arg| destroy.logdest_id = arg }
+    end
+  end
+
+  parser.on("teams", "List teams you belong to") do
+    parser.banner = "Usage: cb teams"
+    action = ->{ PROG.teams }
+  end
+
+  parser.on("whoami", "Information on current user") do
+    action = ->{ puts PROG.creds.id.colorize.t_id }
+  end
+
+  parser.on("token", "Return a bearar token for use in the api") do
+    parser.banner = "Usage: cb token"
+    action = ->{ puts PROG.token.token }
+  end
+
+  parser.on("version", "Show the version") do
+    parser.banner = "Usage: cb version"
+    puts "cb v#{CB::VERSION}"
+    exit
+  end
+
+  parser.on("-h", "--help", "Show this help") do
     puts parser
     exit
   end

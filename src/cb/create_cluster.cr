@@ -1,4 +1,6 @@
-class CB::CreateCluster
+require "./action"
+
+class CB::CreateCluster < CB::Action
   Error = Program::Error
 
   property ha : Bool
@@ -24,20 +26,15 @@ class CB::CreateCluster
   end
 
   def validate
-    missing = [] of String
-    missing << "ha" if ha.nil?
-    missing << "name" unless name
-    missing << "plan" unless plan
-    missing << "platform" unless platform
-    missing << "region" unless region
-    missing << "storage" unless storage
-    missing << "team" unless team
-
-    unless missing.empty?
-      raise Error.new "Missing required argument: #{missing.map(&.colorize.red).join(", ")}"
+    check_required_args do |missing|
+      missing << "ha" if ha.nil?
+      missing << "name" unless name
+      missing << "plan" unless plan
+      missing << "platform" unless platform
+      missing << "region" unless region
+      missing << "storage" unless storage
+      missing << "team" unless team
     end
-
-    return true
   end
 
   def ha=(str : String)
@@ -74,9 +71,7 @@ class CB::CreateCluster
   end
 
   def storage=(str : String)
-    i = str.to_i_cb
-
-    self.storage = i
+    self.storage = str.to_i_cb
   rescue ArgumentError
     raise_arg_error "storage", str
   end
@@ -89,9 +84,5 @@ class CB::CreateCluster
   def team=(str : String)
     raise_arg_error "team id", str unless str =~ EID_PATTERN
     @team = str
-  end
-
-  private def raise_arg_error(field, value)
-    raise Error.new "Invalid #{field.colorize.bold}: '#{value.to_s.colorize.red}'"
   end
 end
