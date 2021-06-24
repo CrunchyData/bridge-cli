@@ -56,7 +56,7 @@ op = OptionParser.new do |parser|
   end
 
   parser.on("whoami", "information on current user") do
-    action = ->{ PROG.client.get "users/info" }
+    action = ->{ puts PROG.creds.id.colorize.t_id }
   end
 
   parser.on("info", "detailed cluster information") do
