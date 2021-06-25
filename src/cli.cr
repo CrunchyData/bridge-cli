@@ -49,10 +49,11 @@ op = OptionParser.new do |parser|
   end
 
   parser.on("psql", "Connect to the dabase using `psql`") do
-    parser.banner = "Usage: cb psql <cluster id>"
+    parser.banner = "Usage: cb psql <cluster id> [-- [args for psql such as -c or -f]]"
+    action = psql = CB::Psql.new(PROG.client)
+
     parser.unknown_args do |args|
-      id = get_id_arg.call(args)
-      action = ->{ PROG.psql id }
+      psql.cluster_id = get_id_arg.call(args)
     end
   end
 

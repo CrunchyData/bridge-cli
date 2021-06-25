@@ -1,5 +1,6 @@
 require "./creds"
 require "./token"
+require "./display"
 
 class CB::Program
   class Error < Exception
@@ -11,9 +12,11 @@ class CB::Program
   property host : String
   property creds : CB::Creds?
   property token : CB::Token?
+  getter display : CB::Display
 
   def initialize(@host = "api.crunchybridge.com", @input = STDIN, @output = STDOUT)
     Colorize.enabled = false unless output == STDOUT && input == STDIN
+    @display = Display.new client
   end
 
   def login
@@ -115,7 +118,7 @@ class CB::Program
   def destroy_cluster(id)
     c = client.get_cluster id
     output << "About to " << "delete".colorize.t_warn << " cluster " << c.name.colorize.t_name
-    team_name = team_name_for_cluster c
+    team_name = display.team_name_for_cluster c
     output << " from team #{team_name}" if team_name
     output << ".\n  Type the cluster's name to confirm: "
     response = input.gets
@@ -127,16 +130,9 @@ class CB::Program
     end
   end
 
-  private def print_team_slash_cluster(c)
-    team_name = team_name_for_cluster c
-    output << team_name << "/" if team_name
-    output << c.name.colorize.t_name << "\n"
-    team_name
-  end
-
   def info(id)
     c = client.get_cluster id
-    print_team_slash_cluster c
+    display.print_team_slash_cluster c, output
 
     details = {
       "state"    => c.state,
@@ -162,41 +158,5 @@ class CB::Program
       output << "allowed cidrs".colorize.underline << "\n"
     end
     firewall_rules.each { |fr| output << " "*(pad + 4) << fr.rule << "\n" }
-  end
-
-  def psql(id)
-    c = client.get_cluster id
-    role = client.get_cluster_default_role id
-    uri = role.uri
-
-    output << "connecting to "
-    team_name = print_team_slash_cluster c
-
-    psqlpromptname = String.build do |s|
-      s << "%[%033[32m%]#{team_name}%[%033m%]" << "/" if team_name
-      s << "%[%033[36m%]#{c.name}%[%033m%]"
-    end
-
-    psqlrc = File.tempfile(c.id, "pslrc")
-    File.copy("~/.psqlrc", psqlrc.path) if File.exists?("~/.psqlrc")
-    File.open(psqlrc.path, "a") do |f|
-      f.puts "\\set ON_ERROR_ROLLBACK interactive"
-      f.puts "\\set x auto"
-      f.puts "\\set PROMPT1 '#{psqlpromptname}/%[%033[33;1m%]%x%x%x%[%033[0m%]%[%033[1m%]%/%[%033[0m%]%R%# '"
-    end
-
-    Process.exec("psql", env: {
-      "PGHOST"     => uri.hostname,
-      "PGUSER"     => uri.user,
-      "PGPASSWORD" => uri.password,
-      "PGDATABASE" => uri.path.lchop('/'),
-      "PGPORT"     => uri.port.to_s,
-      "PSQLRC"     => psqlrc.path.to_s,
-    })
-  end
-
-  private def team_name_for_cluster(c)
-    # no way to look up a single team yet
-    client.get_teams.find { |t| t.id == c.team_id }.try &.name.colorize.t_alt
   end
 end
