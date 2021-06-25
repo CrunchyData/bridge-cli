@@ -136,9 +136,8 @@ class CB::Program
 
     details = {
       "state"    => c.state,
-      "created"  => c.created_at,
-      "memory"   => "#{c.memory}GiB",
-      "cpu"      => c.cpu,
+      "created"  => c.created_at.to_rfc3339,
+      "plan"     => "#{c.plan_id} (#{c.memory}GiB ram, #{c.cpu}vCPU)",
       "storage"  => "#{c.storage}GiB",
       "ha"       => (c.is_ha ? "on" : "off"),
       "platform" => c.provider_id,

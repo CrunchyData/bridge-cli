@@ -79,6 +79,20 @@ op = OptionParser.new do |parser|
     parser.on("-t ID", "--team ID", "Team") { |arg| create.team = arg }
   end
 
+  parser.on("fork", "Create a new fork of an existing cluster") do
+    action = cfork = CB::ClusterFork.new(PROG.client)
+    parser.banner = "Usage: cb fork <--cluster> [--at] [--ha] [--platform|-p] [--region|-r] [--plan] [--size|-s] [--name|-n]"
+
+    parser.on("--cluster ID", "Choose source cluster") { |arg| cfork.cluster_id = arg }
+    parser.on("--at TIME", "Recovery point-in-time in RFC3339 (default: now)") { |arg| cfork.at = arg }
+    parser.on("--ha <true|false>", "High Availability (default: false)") { |arg| cfork.ha = arg }
+    parser.on("--plan NAME", "Plan (server vCPU+memory) (default same as source)") { |arg| cfork.plan = arg }
+    parser.on("-n NAME", "--name NAME", "Cluster name (default: Fork of (source name))") { |arg| cfork.name = arg }
+    parser.on("-p NAME", "--platform NAME", "Cloud provider (default: same as source)") { |arg| cfork.platform = arg }
+    parser.on("-r NAME", "--region NAME", "Region/Location (default: same as source)") { |arg| cfork.region = arg }
+    parser.on("-s GiB", "--storage GiB", "Storage size (default: same as source)") { |arg| cfork.storage = arg }
+  end
+
   parser.on("destroy", "Destroy a cluster") do
     parser.banner = "Usage: cb destroy <cluster id>"
     parser.unknown_args do |args|

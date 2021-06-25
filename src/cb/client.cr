@@ -86,6 +86,7 @@ class CB::Client
     cpu : Int32,
     is_ha : Bool,
     major_version : Int32,
+    plan_id : String,
     memory : Int32,
     oldest_backup : Time?,
     provider_id : String,

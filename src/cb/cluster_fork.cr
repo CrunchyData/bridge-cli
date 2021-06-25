@@ -1,38 +1,59 @@
 require "./action"
 
-class CB::CreateCluster < CB::Action
-  property ha : Bool = false
+class CB::ClusterFork < CB::Action
+  property cluster_id : String?
+  property at : Time?
   property name : String?
   property plan : String?
   property platform : String?
   property region : String?
-  property storage : Int32 = 100
-  property team : String?
-
-  property output : IO
-
-  def initialize(@client : Client, @output = STDOUT)
-    @name = "Cluster #{Time.utc.to_s("%F %H_%M_%S")}"
-  end
+  property storage : Int32?
+  property ha : Bool = false
 
   def call
+    pre_validate
     validate
-    cluster = @client.create_cluster self
-    @output.puts %(Created cluster #{cluster.id.colorize.t_id} "#{cluster.name.colorize.t_name}")
+    resp = client.post "clusters/#{cluster_id}/forks", {
+      name:        name,
+      plan_id:     plan,
+      storage:     storage,
+      provider_id: platform,
+      region_id:   region,
+      target_time: at.try(&.to_rfc3339),
+      is_ha:       ha,
+    }
+    pp! resp
+  end
+
+  def pre_validate
+    check_required_args { |missing| missing << "cluster" unless cluster_id }
+    source = client.get_cluster cluster_id
+
+    self.name ||= "Fork of #{source.name}"
+    self.platform ||= source.provider_id
+    self.region ||= source.region_id
+    self.storage ||= source.storage
+    self.plan ||= source.plan_id
   end
 
   def validate
     check_required_args do |missing|
-      missing << "ha" if ha.nil?
+      missing << "cluster" unless cluster_id
       missing << "name" unless name
       missing << "plan" unless plan
       missing << "platform" unless platform
       missing << "region" unless region
       missing << "storage" unless storage
-      missing << "team" unless team
     end
   end
 
+  def at=(str : String)
+    self.at = Time.parse_rfc3339(str).to_utc
+  rescue Time::Format::Error
+    raise_arg_error "at (not RFC3339)", str
+  end
+
+  # all below copied from create cluster, TODO: remove dupe
   def ha=(str : String)
     case str.downcase
     when "true"
@@ -75,10 +96,5 @@ class CB::CreateCluster < CB::Action
   def storage=(i : Int32)
     raise_arg_error "storage", i unless 25 <= i < 100_000
     @storage = i
-  end
-
-  def team=(str : String)
-    raise_arg_error "team id", str unless str =~ EID_PATTERN
-    @team = str
   end
 end
