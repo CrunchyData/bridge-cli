@@ -28,6 +28,10 @@ class CB::Client
     def unauthorized?
       resp.status == HTTP::Status::UNAUTHORIZED
     end
+
+    def not_found?
+      resp.status == HTTP::Status::NOT_FOUND
+    end
   end
 
   def self.get_token(creds : Creds) : Token

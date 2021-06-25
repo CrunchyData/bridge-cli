@@ -119,6 +119,14 @@ op = OptionParser.new do |parser|
     action = ->{ PROG.teams }
   end
 
+  parser.on("teamcert", "Show public TLS cert for a team") do
+    parser.banner = "Usage: cb teamcert <team id>"
+    parser.unknown_args do |args|
+      id = get_id_arg.call(args)
+      action = ->{ PROG.team_cert id }
+    end
+  end
+
   parser.on("whoami", "Information on current user") do
     action = ->{ puts PROG.creds.id.colorize.t_id }
   end

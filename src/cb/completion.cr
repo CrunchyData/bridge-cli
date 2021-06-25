@@ -48,6 +48,8 @@ class CB::Completion
         return firewall
       when "logdest"
         return logdest
+      when "teamcert"
+        return teams
       else
         [] of String
       end
@@ -64,6 +66,7 @@ class CB::Completion
       "token\tGet current API token",
       "list\tList clusters",
       "teams\tList teams",
+      "teamcert\tGet team public cert",
       "info\tDetailed cluster info",
       "create\tProvision a new cluster",
       "destroy\tDestroy a cluster",
