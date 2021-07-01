@@ -29,7 +29,7 @@ private def expect_validation_err(cf, part)
   expect_cb_error(/Missing required argument.+#{part}/) { cf.validate }
 end
 
-describe CB::CreateCluster do
+describe CB::ClusterFork do
   it "validates that required arguments are present" do
     cf = make_cf
     msg = /Missing required argument/

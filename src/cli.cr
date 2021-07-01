@@ -67,7 +67,7 @@ op = OptionParser.new do |parser|
   end
 
   parser.on("create", "Create a new cluster") do
-    action = create = CB::CreateCluster.new(PROG.client)
+    action = create = CB::ClusterCreate.new(PROG.client)
     parser.banner = "Usage: cb create <--platform|-p> <--region|-r> <--plan> <--team|-t> [--size|-s] [--name|-n] [--ha]"
 
     parser.on("--ha <true|false>", "High Availability (default: false)") { |arg| create.ha = arg }

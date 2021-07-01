@@ -1,6 +1,6 @@
 require "./action"
 
-class CB::CreateCluster < CB::Action
+class CB::ClusterCreate < CB::Action
   property ha : Bool = false
   property name : String?
   property plan : String?

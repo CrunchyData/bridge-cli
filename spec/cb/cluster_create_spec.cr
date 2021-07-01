@@ -1,16 +1,16 @@
 require "../spec_helper"
 
-private class CreateClusterTestClient < CB::Client
+private class ClusterCreateTestClient < CB::Client
   def create_cluster(arg)
     Cluster.new("abc", "def", "my cluster")
   end
 end
 
 private def make_cc
-  CB::CreateCluster.new(CreateClusterTestClient.new(TEST_TOKEN))
+  CB::ClusterCreate.new(ClusterCreateTestClient.new(TEST_TOKEN))
 end
 
-describe CB::CreateCluster do
+describe CB::ClusterCreate do
   it "#run prints info about the cluster that was created" do
     cc = make_cc
     cc.output = output = IO::Memory.new
