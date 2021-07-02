@@ -1,0 +1,165 @@
+name: Build and sign binaries
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build_linux_amd64:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Add Crystal repos
+      run: curl -sSL https://crystal-lang.org/install.sh | sudo bash
+
+    - name: Install crystal
+      run: sudo apt install -y crystal libevent-dev libpcre3-dev libreadline-dev libssl-dev
+
+    - name: Install dependencies
+      run: shards install
+
+    - name: Build release bundle
+      run: |
+        make release RELEASE=1 STATIC=1
+
+    - name: Upload release bundle artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: cb_linux_amd64
+        path: dist
+
+  build_linux_aarch64:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Add Crystal repos
+      run: curl -sSL https://crystal-lang.org/install.sh | sudo bash
+
+    - name: Install crystal
+      run: sudo apt install -y crystal libevent-dev libpcre3-dev libreadline-dev libssl-dev
+
+    - name: Install dependencies
+      run: shards install
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v1
+      with:
+        image: tonistiigi/binfmt:latest
+        platforms: arm64
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+      with:
+        version: latest
+
+    - name: Build release bundle
+      run: |
+        make release RELEASE=1 STATIC=1 TARGET_ARCH=aarch64
+
+    - name: Upload release bundle artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: cb_linux_aarch64
+        path: dist
+
+  build_macos_amd64:
+    runs-on: macos-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install crystal
+      run: brew install crystal
+
+    - name: Install gon via homebrew for code signing and app notarization
+      run: |
+        brew tap mitchellh/gon
+        brew install mitchellh/gon/gon
+
+    - name: Install dependencies
+      run: shards install
+
+    - name: Build
+      run: |
+        make release RELEASE=1 STATIC_LIBS=1
+
+    - name: Upload release bundle artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: cb_macos_amd64
+        path: dist
+
+  release:
+    needs: [build_linux_amd64, build_linux_aarch64, build_macos_amd64]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Determine version
+      id: version
+      run: "echo ::set-output name=version::${GITHUB_REF:11}"
+
+    - name: Download cb_linux_amd64.zip artifact
+      id: download_linux_amd64
+      uses: actions/download-artifact@v2
+      with:
+        name: cb_linux_amd64
+        path: dist-linux-amd64
+
+    - name: Download cb_linux_aarch64.zip artifact
+      id: download_linux_aarch64
+      uses: actions/download-artifact@v2
+      with:
+        name: cb_linux_aarch64
+        path: dist-linux-aarch64
+
+    - name: Download cb_macos_amd64.zip artifact
+      id: download_macos_amd64
+      uses: actions/download-artifact@v2
+      with:
+        name: cb_macos_amd64
+        path: dist-macos-amd64
+
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload release zip for linux amd64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist-linux-amd64/cb.zip
+        asset_name: cb-v${{ steps.version.outputs.version }}_linux_amd64.zip
+        asset_content_type: application/zip
+
+    - name: Upload release zip for linux aarch64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist-linux-aarch64/cb.zip
+        asset_name: cb-v${{ steps.version.outputs.version }}_linux_aarch64.zip
+        asset_content_type: application/zip
+
+    - name: Upload release zip for macos amd64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist-macos-amd64/cb.zip
+        asset_name: cb-v${{ steps.version.outputs.version }}_macos_amd64.zip
+        asset_content_type: application/zip

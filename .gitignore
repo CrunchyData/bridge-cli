@@ -4,3 +4,5 @@
 /.shards/
 *.dwarf
 completion.log
+/dist/
+/vendor/
