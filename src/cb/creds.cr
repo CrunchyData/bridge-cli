@@ -1,4 +1,8 @@
+require "json"
+
 struct CB::Creds
+  include JSON::Serializable
+
   getter host : String
   getter id : String
   getter secret : String
@@ -10,21 +14,23 @@ struct CB::Creds
 
   def self.for_host(host) : Creds?
     begin
-      id, secret = File.read(CONFIG/host).split("\n")
-    rescue File::Error
+      creds = from_json File.read(CONFIG/host)
+    rescue File::Error | JSON::ParseException
       return nil
     end
 
-    return nil unless id && secret
-
-    new(host, id, secret)
+    creds
   end
 
   def store
     Dir.mkdir_p CONFIG
     File.open(CONFIG/host, "w", perm: 0o600) do |f|
-      f << id << "\n" << secret
+      f << to_json
     end
     self
+  end
+
+  def delete
+    File.delete CONFIG/host
   end
 end

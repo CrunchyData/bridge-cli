@@ -1,6 +1,5 @@
 require "./creds"
 require "./token"
-require "./display"
 
 class CB::Program
   class Error < Exception
@@ -12,24 +11,29 @@ class CB::Program
   property host : String
   property creds : CB::Creds?
   property token : CB::Token?
-  getter display : CB::Display
 
   def initialize(@host = "api.crunchybridge.com", @input = STDIN, @output = STDOUT)
     Colorize.enabled = false unless output == STDOUT && input == STDIN
-    @display = Display.new client
   end
 
   def login
     raise Error.new "No valid credentials found. Please login." unless output.tty?
-    output.puts "add credentials for #{host} >"
+    hint = "from https://www.crunchybridge.com/settings/ " if host == "api.crunchybridge.com"
+    output.puts "add credentials for #{host.colorize.t_name} #{hint}>"
     output.print "  application ID: "
     id = input.gets
-    raise Error.new "applicaton ID must be present" if id.nil? || id.empty?
+    if id.nil? || id.empty?
+      STDERR.puts "#{"error".colorize.red.bold}: applicaton ID must be present"
+      exit 1
+    end
 
     print "  application secret: "
     secret = input.noecho { input.gets }
-    raise Error.new "applicatoin secret must be present" if secret.nil? || secret.empty?
     output.print "\n"
+    if secret.nil? || secret.empty?
+      STDERR.puts "#{"error".colorize.red.bold}: applicatoin secret must be present"
+      exit 1
+    end
 
     Creds.new(host, id, secret).store
   end
@@ -54,6 +58,7 @@ class CB::Program
   rescue e : Client::Error
     if e.unauthorized?
       STDERR << "error".colorize.t_warn << ": Credentials invalid. Please login again.\n"
+      creds.delete
       exit 1
     end
     raise e
@@ -118,7 +123,7 @@ class CB::Program
   def destroy_cluster(id)
     c = client.get_cluster id
     output << "About to " << "delete".colorize.t_warn << " cluster " << c.name.colorize.t_name
-    team_name = display.team_name_for_cluster c
+    team_name = team_name_for_cluster c
     output << " from team #{team_name}" if team_name
     output << ".\n  Type the cluster's name to confirm: "
     response = input.gets
@@ -132,7 +137,7 @@ class CB::Program
 
   def info(id)
     c = client.get_cluster id
-    display.print_team_slash_cluster c, output
+    print_team_slash_cluster c, output
 
     details = {
       "state"    => c.state,
@@ -168,5 +173,17 @@ class CB::Program
     else
       raise e
     end
+  end
+
+  private def print_team_slash_cluster(c, io : IO)
+    team_name = team_name_for_cluster c
+    io << team_name << "/" if team_name
+    io << c.name.colorize.t_name << "\n"
+    team_name
+  end
+
+  private def team_name_for_cluster(c)
+    # no way to look up a single team yet
+    client.get_teams.find { |t| t.id == c.team_id }.try &.name.colorize.t_alt
   end
 end

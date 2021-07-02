@@ -41,7 +41,7 @@ class CB::Client
       "client_secret" => creds.secret,
     }
     resp = HTTP::Client.post("https://#{creds.host}/token", form: req)
-    raise Error.new("post", "/token", resp) unless resp.status.success?
+    raise Error.new("post", "token", resp) unless resp.status.success?
 
     parsed = JSON.parse(resp.body)
     token = parsed["access_token"].as_s

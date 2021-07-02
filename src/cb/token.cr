@@ -7,7 +7,7 @@ struct CB::Token
   getter token : String
   getter expires : Int64
 
-  CONFIG = Path["~/.config/cb"].expand(home: true)
+  CONFIG = Creds::CONFIG
 
   def initialize(@host, @token, @expires)
   end
