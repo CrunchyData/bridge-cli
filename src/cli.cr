@@ -2,7 +2,7 @@
 require "./cb"
 require "option_parser"
 
-PROG = CB::Program.new
+PROG = CB::Program.new host: ENV["CB_HOST"]?
 
 class OptionParser
   # for hiding an option from help, omit description
