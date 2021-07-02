@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    paths-ignore:
+    - 'docs/**'
+    - '*.md'
+    - '*.yml'
+
+jobs:
+  macos-tests:
+    runs-on: macOS-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install crystal
+      run: brew install crystal
+
+    - name: Install dependencies
+      run: shards install
+
+    - name: Run tests
+      run: crystal spec --error-on-warnings
+
+  ubuntu-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Add Crystal repos
+      run: curl -sSL https://crystal-lang.org/install.sh | sudo bash
+
+    - name: Install crystal
+      run: sudo apt install -y crystal libevent-dev libpcre3-dev libreadline-dev libssl-dev
+
+    - name: Install dependencies
+      run: shards install
+
+    - name: Run tests
+      run: crystal spec --error-on-warnings
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Add Crystal repos
+      run: curl -sSL https://crystal-lang.org/install.sh | sudo bash
+
+    - name: Install crystal
+      run: sudo apt install -y crystal libevent-dev libpcre3-dev libreadline-dev libssl-dev
+
+    - name: Lint
+      run: crystal tool format --check
