@@ -152,7 +152,7 @@ op = OptionParser.new do |parser|
 
   parser.on("version", "Show the version") do
     parser.banner = "Usage: cb version"
-    puts "cb v#{CB::VERSION}"
+    puts "cb v#{CB::VERSION} (#{CB::BUILD_ID})"
     exit
   end
 
