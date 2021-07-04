@@ -4,7 +4,7 @@ module CB
   VERSION       = {{ `shards version "#{__DIR__}"`.chomp.stringify }}
   BUILD_RELEASE = {{ flag?(:release) }}
   BUILD_DATE    = {{ `date -u +"%Y%m%d%H%M"`.chomp.stringify }}
-  BUILD_ID = begin
+  BUILD_ID      = begin
     {% begin %}
       %(#{BUILD_DATE}#{"-dev" unless BUILD_RELEASE})
     {% end %}
