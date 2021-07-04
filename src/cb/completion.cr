@@ -63,7 +63,7 @@ class CB::Completion
   def top_level
     options = [
       "--help\tShow help and usage",
-      "--version\tShow version information",
+      "version\tShow version information",
       "login\tStore API key",
       "token\tGet current API token",
       "list\tList clusters",
