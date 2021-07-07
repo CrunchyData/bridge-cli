@@ -25,6 +25,11 @@ private class CompletionTestClient < CB::Client
         plans: [Plan.new("standard-128", "Standard-128")],
         regions: [Region.new("us-central1", "US Central 1", "Iowa")]
       ),
+      Provider.new(
+        "azure", "Azure",
+        plans: [Plan.new("standard-64", "Standard-64")],
+        regions: [Region.new("westus", "West US", "California")]
+      ),
     ]
   end
 
@@ -117,6 +122,11 @@ describe CB::Completion do
     result.should_not have_option "us-west-2"
     result.should have_option "us-central1"
 
+    result = parse("cb create --platform azr -r ")
+    result.should_not have_option "--plan"
+    result.should_not have_option "us-west-2"
+    result.should have_option "westus"
+
     result = parse("cb create --platform lol --region ")
     result.should eq ([] of String)
 
@@ -132,6 +142,11 @@ describe CB::Completion do
     result.should_not have_option "--plan"
     result.should_not have_option "memory-16"
     result.should have_option "standard-128"
+
+    result = parse("cb create --platform azr --plan ")
+    result.should_not have_option "--plan"
+    result.should_not have_option "memory-16"
+    result.should have_option "standard-64"
 
     result = parse("cb create --platform aws --plan hobby-4 ")
     result.should_not have_option "--plan"

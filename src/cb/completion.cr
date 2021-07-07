@@ -173,6 +173,7 @@ class CB::Completion
     end
 
     platform = find_arg_value "--platform", "-p"
+    platform = "azure" if platform == "azr"
 
     if last_arg? "-r", "--region"
       return platform ? region(platform) : [] of String
