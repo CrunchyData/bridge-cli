@@ -146,8 +146,11 @@ op = OptionParser.new do |parser|
   end
 
   parser.on("token", "Return a bearar token for use in the api") do
-    parser.banner = "Usage: cb token"
+    parser.banner = "Usage: cb token [-h]"
     action = ->{ puts PROG.token.token }
+    parser.on("-h", "Authorization header format") do
+      action = ->{ puts "Authorization: Bearer #{PROG.token.token}" }
+    end
   end
 
   parser.on("version", "Show the version") do
