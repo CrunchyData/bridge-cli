@@ -48,7 +48,7 @@ op = OptionParser.new do |parser|
     end
   end
 
-  parser.on("psql", "Connect to the dabase using `psql`") do
+  parser.on("psql", "Connect to the database using `psql`") do
     parser.banner = "Usage: cb psql <cluster id> [-- [args for psql such as -c or -f]]"
     action = psql = CB::Psql.new(PROG.client)
 
