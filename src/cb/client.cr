@@ -40,7 +40,7 @@ class CB::Client
       "client_id"     => creds.id,
       "client_secret" => creds.secret,
     }
-    resp = HTTP::Client.post("https://#{creds.host}/token", form: req)
+    resp = HTTP::Client.post("https://#{creds.host}/token", form: req, tls: tls)
     raise Error.new("post", "token", resp) unless resp.status.success?
 
     parsed = JSON.parse(resp.body)
@@ -57,6 +57,14 @@ class CB::Client
   def initialize(token : Token)
     @host = token.host
     @headers = HTTP::Headers{"Accept" => "application/json", "Authorization" => "Bearer #{token.token}"}
+    @http = nil.as(HTTP::Client?)
+  end
+
+  # memoize to avoid slow tests
+  def http : HTTP::Client
+    h = @http || HTTP::Client.new(host, tls: self.class.tls)
+    @http ||= h
+    h
   end
 
   jrecord Team, id : String, name : String, is_personal : Bool, roles : Array(Int32) do
@@ -185,7 +193,7 @@ class CB::Client
   end
 
   def get(path)
-    resp = HTTP::Client.get "https://#{host}/#{path}", headers: headers
+    resp = http.get "https://#{host}/#{path}", headers: headers
     return resp if resp.success?
     raise Error.new("get", path, resp)
   end
@@ -195,7 +203,7 @@ class CB::Client
   end
 
   def post(path, body : String)
-    resp = HTTP::Client.post "https://#{host}/#{path}", headers: headers, body: body
+    resp = http.post path, headers: headers, body: body
     return resp if resp.success?
     raise Error.new("post", path, resp)
   end
@@ -205,14 +213,26 @@ class CB::Client
   end
 
   def put(path, body : String)
-    resp = HTTP::Client.put "https://#{host}/#{path}", headers: headers, body: body
+    resp = http.post path, headers: headers, body: body
     return resp if resp.success?
     raise Error.new("put", path, resp)
   end
 
   def delete(path)
-    resp = HTTP::Client.delete "https://#{host}/#{path}", headers: headers
+    resp = http.delete path, headers: headers
     return resp if resp.success?
     raise Error.new("delete", path, resp)
+  end
+
+  def self.tls
+    OpenSSL::SSL::Context::Client.new.tap do |client|
+      {% if flag?(:darwin) %}
+        # workaround: Can't easily build for arm macs, so they use the
+        # staticlly linked x86 under rosetta. This however seems to hardcode
+        # the homebrew location of the tls certs, which will fail unless they
+        # have happened to install openssl with homebrew
+        client.ca_certificates = "/private/etc/ssl/cert.pem"
+      {% end %}
+    end
   end
 end
