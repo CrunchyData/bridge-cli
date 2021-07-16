@@ -408,4 +408,33 @@ describe CB::Completion do
     result = parse("cb fork --name \"some name\" -s  ")
     result.should have_option "512"
   end
+
+  it "completes scope" do
+    result = parse("cb scope ")
+    result.should have_option "--cluster"
+
+    result = parse("cb scope --cluster ")
+    result.should eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb scope --cluster a")
+    result.should eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb scope --cluster abc ")
+    result.should have_option "--suite"
+    result.should have_option "--mandelbrot"
+    result.should have_option "--tables"
+
+    result = parse("cb scope --cluster abc --suite ")
+    result.should have_option "all"
+    result.should have_option "quick"
+    result.should_not have_option "--mandelbrot"
+
+    result = parse("cb scope --cluster abc --suite quick ")
+    result.should_not have_option "--suite"
+    result.should have_option "--tables"
+
+    result = parse("cb scope --cluster abc --mandelbrot ")
+    result.should have_option "--tables"
+    result.should_not have_option "--mandelbrot"
+  end
 end

@@ -1,5 +1,9 @@
 name: cb
-version: 0.4.1
+version: 0.5.0-dev
+
+dependencies:
+  pg:
+    github: will/crystal-pg
 
 authors:
   - Will Leinweber

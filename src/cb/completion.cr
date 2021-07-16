@@ -36,11 +36,7 @@ class CB::Completion
       return top_level
     else
       case args.first
-      when "info"
-        return info
-      when "psql"
-        return info
-      when "destroy"
+      when "info", "psql", "destroy"
         return info
       when "create"
         return create
@@ -52,6 +48,8 @@ class CB::Completion
         return logdest
       when "teamcert"
         return teams
+      when "scope"
+        return scope
       else
         [] of String
       end
@@ -77,6 +75,7 @@ class CB::Completion
       "firewall\tManage firewall rules",
       "psql\tInteractive psql console",
       "logdest\tManage log destinations",
+      "scope\tRun diagnostic queries",
     ]
     if @client
       options
@@ -301,6 +300,23 @@ class CB::Completion
     suggest << "--port\tport number" unless has_full_flag? :port
     suggest << "--desc\tdescription" unless has_full_flag? :desc
     suggest << "--template\ttemptale" unless has_full_flag? :template
+    return suggest
+  end
+
+  def scope
+    return ["--cluster\tcluster id"] if @args.size == 2
+
+    if last_arg?("--cluster")
+      return cluster_suggestions
+    end
+
+    if last_arg?("--suite")
+      return ["all\tRun all scopes", "quick\tRun some scopes"]
+    end
+
+    suggest = ::Scope::Check.all.reject { |c| @args.includes? c.flag }.map { |c| "#{c.flag}\t#{c.desc}" }
+    suggest << "--suite\tRun predefined scopes" unless @args.includes? "--suite"
+
     return suggest
   end
 

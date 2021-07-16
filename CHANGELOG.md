@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `cb scope` to run diagnostic queries on your cluster
+
 ### Fixed
 - `cb list` no longer has an unhandled exception when you have no clusters
 - All requests now send the full absoluteURI on the Request-Line instead of the

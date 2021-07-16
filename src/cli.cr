@@ -101,6 +101,16 @@ op = OptionParser.new do |parser|
     end
   end
 
+  parser.on("scope", "Run diagnostic queries on a cluster") do
+    parser.banner = "Usage: cb scope <--cluster> [--(check),...]"
+    action = scope = CB::Scope.new PROG.client
+    parser.on("--cluster ID", "Choose cluster") { |arg| scope.cluster_id = arg }
+    parser.on("--suite <all|quick>", "Run suite of scopes (default: quick)") { |arg| scope.suite = arg }
+    Scope::Check.all.each do |ck|
+      parser.on(ck.flag, ck.desc) { scope.checks << ck.type }
+    end
+  end
+
   parser.on("logdest", "Manage log destinations") do
     parser.banner = "Usage: cb logdest <list|add|destroy>"
 
