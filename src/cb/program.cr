@@ -94,7 +94,7 @@ class CB::Program
 
   def teams
     teams = client.get_teams
-    name_max = teams.map(&.name.size).max
+    name_max = teams.map(&.name.size).max? || 0
     teams.each do |team|
       output << team.id.colorize.t_id
       output << "\t"
@@ -108,7 +108,7 @@ class CB::Program
   def list_clusters
     clusters = client.get_clusters
     teams = client.get_teams
-    cluster_max = clusters.map(&.name.size).max
+    cluster_max = clusters.map(&.name.size).max? || 0
 
     clusters.each do |cluster|
       output << cluster.id.colorize.t_id
