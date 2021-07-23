@@ -147,7 +147,7 @@ class CB::Program
       "storage"  => "#{c.storage}GiB",
       "ha"       => (c.is_ha ? "on" : "off"),
       "platform" => c.provider_id,
-      "regoin"   => c.region_id,
+      "region"   => c.region_id,
     }
     pad = 10
     details.each do |k, v|
