@@ -9,6 +9,7 @@ module CB
       %(#{BUILD_DATE}#{"-dev" unless BUILD_RELEASE})
     {% end %}
   end
+  VERSION_STR = "cb v#{CB::VERSION} (#{CB::BUILD_ID})"
 end
 
 require "./stdlib_ext"

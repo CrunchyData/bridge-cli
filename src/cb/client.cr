@@ -56,7 +56,11 @@ class CB::Client
 
   def initialize(token : Token)
     @host = token.host
-    @headers = HTTP::Headers{"Accept" => "application/json", "Authorization" => "Bearer #{token.token}"}
+    @headers = HTTP::Headers{
+      "Accept"        => "application/json",
+      "Authorization" => "Bearer #{token.token}",
+      "User-Agent"    => CB::VERSION_STR,
+    }
     @http = nil.as(HTTP::Client?)
   end
 
@@ -193,35 +197,29 @@ class CB::Client
   end
 
   def get(path)
-    resp = http.get "https://#{host}/#{path}", headers: headers
-    return resp if resp.success?
-    raise Error.new("get", path, resp)
+    exec "GET", path
   end
 
   def post(path, body)
-    post path, body.to_json
-  end
-
-  def post(path, body : String)
-    resp = http.post path, headers: headers, body: body
-    return resp if resp.success?
-    raise Error.new("post", path, resp)
+    exec "POST", path, body
   end
 
   def put(path, body)
-    put path, body.to_json
-  end
-
-  def put(path, body : String)
-    resp = http.post path, headers: headers, body: body
-    return resp if resp.success?
-    raise Error.new("put", path, resp)
+    exec "PUT", path, body
   end
 
   def delete(path)
-    resp = http.delete path, headers: headers
+    exec "DELETE", path
+  end
+
+  def exec(method, path, body)
+    exec method, path, body.to_json
+  end
+
+  def exec(method, path, body : String? = nil)
+    resp = http.exec method, "http://#{host}/#{path}", headers: headers, body: body
     return resp if resp.success?
-    raise Error.new("delete", path, resp)
+    raise Error.new(method, path, resp)
   end
 
   def self.tls

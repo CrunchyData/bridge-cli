@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - `cb list` no longer has an unhandled exception when you have no clusters
+- All requests now send the full absoluteURI on the Request-Line instead of the
+  abs_path which is REQUIRED when a request is being sent to a proxy per the
+  (http spec)[https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5]
 
 ## [0.4.0] - 2021-07-09
 ### Added
