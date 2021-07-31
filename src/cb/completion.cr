@@ -299,7 +299,7 @@ class CB::Completion
     suggest << "--host\thostname" unless has_full_flag? :host
     suggest << "--port\tport number" unless has_full_flag? :port
     suggest << "--desc\tdescription" unless has_full_flag? :desc
-    suggest << "--template\ttemptale" unless has_full_flag? :template
+    suggest << "--template\ttemplate" unless has_full_flag? :template
     return suggest
   end
 

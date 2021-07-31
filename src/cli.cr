@@ -126,7 +126,7 @@ op = OptionParser.new do |parser|
       parser.on("--cluster ID", "Choose cluster") { |arg| add.cluster_id = arg }
       parser.on("--host HOST", "Hostname") { |arg| add.host = arg }
       parser.on("--port PORT", "Port number") { |arg| add.port = arg }
-      parser.on("--template STR", "Log tempalte") { |arg| add.template = arg }
+      parser.on("--template STR", "Log template") { |arg| add.template = arg }
       parser.on("--desc STR", "Description") { |arg| add.desc = arg }
     end
 
@@ -155,7 +155,7 @@ op = OptionParser.new do |parser|
     action = ->{ puts PROG.creds.id.colorize.t_id }
   end
 
-  parser.on("token", "Return a bearar token for use in the api") do
+  parser.on("token", "Return a bearer token for use in the api") do
     parser.banner = "Usage: cb token [-h]"
     action = ->{ puts PROG.token.token }
     parser.on("-h", "Authorization header format") do
