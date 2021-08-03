@@ -81,7 +81,19 @@ describe CB::Completion do
   it "create" do
     result = parse("cb create ")
     result.should have_option "--platform"
+    result.should have_option "--fork"
     result.should have_option "--help"
+
+    result = parse("cb create --fork ")
+    result.should have_option "abc"
+
+    result = parse("cb create --fork abc ")
+    result.should have_option "--at"
+    result.should have_option "--platform"
+    result.should_not have_option "--team"
+
+    result = parse("cb create --fork abc --at ")
+    result.should eq ([] of String)
 
     result = parse("cb create -p ")
     result.should_not have_option "--platform"
@@ -299,114 +311,6 @@ describe CB::Completion do
     result = parse("cb logdest add --host something.com ")
     result.should_not have_option "--host"
     result.should have_option "--cluster"
-  end
-
-  it "fork" do
-    result = parse("cb fork ")
-    result.should have_option "--cluster"
-    result.should have_option "--help"
-
-    result = parse("cb fork --cluster ")
-    result.should eq ["abc\tmy team/my cluster"]
-
-    result = parse("cb fork --cluster a")
-    result.should eq ["abc\tmy team/my cluster"]
-
-    result = parse("cb fork --cluster abc ")
-    result.should have_option "--platform"
-    result.should have_option "--ha"
-    result.should have_option "--at"
-    result.should_not have_option "--region"
-    result.should_not have_option "--plan"
-
-    result = parse("cb fork -p ")
-    result.should_not have_option "--platform"
-    result.should have_option "aws"
-    result.should have_option "azr"
-    result.should have_option "gcp"
-
-    result = parse("cb fork --platform ")
-    result.should_not have_option "--platform"
-    result.should have_option "aws"
-    result.should have_option "azr"
-    result.should have_option "gcp"
-
-    result = parse("cb fork --platform aws ")
-    result.should_not have_option "aws"
-    result.should_not have_option "--platform"
-    result.should have_option "--region"
-    result.should have_option "--plan"
-
-    result = parse("cb fork --region ")
-    result.should eq ([] of String)
-
-    result = parse("cb fork --plan ")
-    result.should eq ([] of String)
-
-    result = parse("cb fork --platform aws --region ")
-    result.should_not have_option "--plan"
-    result.should_not have_option "us-central1"
-    result.should have_option "us-west-2"
-
-    result = parse("cb fork --platform gcp --region ")
-    result.should_not have_option "--plan"
-    result.should_not have_option "us-west-2"
-    result.should have_option "us-central1"
-
-    result = parse("cb fork --platform gcp -r ")
-    result.should_not have_option "--plan"
-    result.should_not have_option "us-west-2"
-    result.should have_option "us-central1"
-
-    result = parse("cb fork --platform lol --region ")
-    result.should eq ([] of String)
-
-    result = parse("cb fork --platform aws -r us-west-2 ")
-    result.should have_option "--plan"
-
-    result = parse("cb fork --platform aws --plan ")
-    result.should_not have_option "--plan"
-    result.should_not have_option "standard-128"
-    result.should have_option "memory-16"
-
-    result = parse("cb fork --platform gcp --plan ")
-    result.should_not have_option "--plan"
-    result.should_not have_option "memory-16"
-    result.should have_option "standard-128"
-
-    result = parse("cb fork --platform aws --plan hobby-4 ")
-    result.should_not have_option "--plan"
-    result.should have_option "--region"
-
-    result = parse("cb fork --platform aws --plan hobby-4 --region us-west-2 ")
-    result.should have_option "--cluster"
-
-    result = parse("cb fork --storage ")
-    result.should have_option "100"
-    result.should have_option "512"
-
-    result = parse("cb fork -s ")
-    result.should have_option "100"
-    result.should have_option "512"
-
-    result = parse("cb fork --ha ")
-    result.should have_option "true"
-    result.should have_option "false"
-
-    parse("cb fork --ha false -p") # no space at end, test for IndexError
-
-    result = parse("cb fork --help ")
-    result.should eq [] of String
-
-    result = parse("cb fork --name ")
-    result.should eq [] of String
-
-    result = parse("cb fork --name \"some name\" ")
-    result.should_not be_empty
-    result.should_not have_option "--name"
-
-    result = parse("cb fork --name \"some name\" -s  ")
-    result.should have_option "512"
   end
 
   it "completes scope" do

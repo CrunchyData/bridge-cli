@@ -4,6 +4,25 @@ private class ClusterCreateTestClient < CB::Client
   def create_cluster(arg)
     Cluster.new("abc", "def", "my cluster")
   end
+
+  def get_cluster(id : String)
+    ClusterDetail.new(
+      id: id,
+      team_id: "teamid",
+      name: "source cluster",
+      state: "na",
+      created_at: Time.utc(2016, 2, 15, 10, 20, 30),
+      is_ha: false,
+      major_version: 12,
+      plan_id: "memory-4",
+      cpu: 4,
+      memory: 111,
+      oldest_backup: nil,
+      provider_id: "aws",
+      region_id: "us-east-2",
+      storage: 1234
+    )
+  end
 end
 
 private def make_cc
@@ -44,16 +63,9 @@ describe CB::ClusterCreate do
     cc = make_cc
     msg = /Invalid storage/
 
-    cc.storage.should eq 100
-
     expect_cb_error(msg) { cc.storage = "hi" }
     expect_cb_error(msg) { cc.storage = "" }
-    expect_cb_error(msg) { cc.storage = "-20" }
-    expect_cb_error(msg) { cc.storage = -20 }
-    expect_cb_error(msg) { cc.storage = "0" }
-    expect_cb_error(msg) { cc.storage = 0 }
     expect_cb_error(msg) { cc.storage = "123mb" }
-    expect_cb_error(msg) { cc.storage = "100000" }
 
     cc.storage = "101"
     cc.storage.should eq 101
@@ -80,24 +92,6 @@ describe CB::ClusterCreate do
     cc.ha.should eq false
     cc.ha = "TRUE"
     cc.ha.should eq true
-  end
-
-  it "checks name input" do
-    cc = make_cc
-    msg = /Invalid name/
-    cc.name.should_not be_nil
-
-    expect_cb_error(msg) { cc.name = "../ok" }
-    expect_cb_error(msg) { cc.name = "<what" }
-
-    cc.name = "A new Cluster 3"
-    cc.name.should eq "A new Cluster 3"
-
-    cc.name = "A new_Cluster 3"
-    cc.name.should eq "A new_Cluster 3"
-
-    cc.name = "nab-c1-fork-aws"
-    cc.name.should eq "nab-c1-fork-aws"
   end
 
   it "checks team input" do
@@ -152,5 +146,62 @@ describe CB::ClusterCreate do
 
     cc.plan = "my-plan3"
     cc.plan.should eq "my-plan3"
+  end
+
+  context "fork" do
+    it "fills in defaults from the source cluster" do
+      cc = make_cc
+
+      cc.name.should be_nil
+      cc.platform.should be_nil
+      cc.region.should be_nil
+      cc.storage.should be_nil
+      cc.plan.should be_nil
+
+      cc.fork = "afpvoqooxzdrriu6w3bhqo55c4"
+      cc.pre_validate
+
+      cc.name.should eq "Fork of source cluster"
+      cc.platform.should eq "aws"
+      cc.region.should eq "us-east-2"
+      cc.storage.should eq 1234
+      cc.plan.should eq "memory-4"
+
+      cc.validate.should eq true
+    end
+
+    it "does not overwrite values given with defaults from source cluster" do
+      cc = make_cc
+      cc.fork = "afpvoqooxzdrriu6w3bhqo55c4"
+
+      cc.name = "given name"
+      cc.platform = "gcp"
+      cc.region = "centralus"
+      cc.plan = "cpu-100"
+      cc.storage = 4321
+
+      cc.pre_validate
+
+      cc.name.should eq "given name"
+      cc.platform.should eq "gcp"
+      cc.region.should eq "centralus"
+      cc.plan.should eq "cpu-100"
+      cc.storage.should eq 4321
+    end
+
+    it "can set the target time" do
+      cc = make_cc
+      msg = /Invalid at/
+
+      expect_cb_error(msg) { cc.at = "hi" }
+      expect_cb_error(msg) { cc.at = "" }
+      expect_cb_error(msg) { cc.at = "2021-03-06T00:00:00" }
+
+      cc.at = "2021-03-06T00:00:00Z"
+      cc.at.should eq Time.utc(2021, 3, 6)
+
+      cc.at = "2021-03-06T00:00:00+08:00"
+      cc.at.should eq Time.utc(2021, 3, 5, 16)
+    end
   end
 end

@@ -6,22 +6,43 @@ class CB::ClusterCreate < CB::Action
   property plan : String?
   property platform : String?
   property region : String?
-  property storage : Int32 = 100
+  property storage : Int32?
   property team : String?
+  property fork : String?
+  property at : Time?
 
   property output : IO
 
   def initialize(@client : Client, @output = STDOUT)
-    @name = "Cluster #{Time.utc.to_s("%F %H_%M_%S")}"
+  end
+
+  def pre_validate
+    if fork
+      source = client.get_cluster fork
+
+      self.name ||= "Fork of #{source.name}"
+      self.platform ||= source.provider_id
+      self.region ||= source.region_id
+      self.storage ||= source.storage
+      self.plan ||= source.plan_id
+    else
+      self.storage ||= 100
+      self.name ||= "Cluster #{Time.utc.to_s("%F %H_%M_%S")}"
+    end
   end
 
   def call
     validate
-    cluster = @client.create_cluster self
+    cluster = if fork
+                @client.fork_cluster self
+              else
+                @client.create_cluster self
+              end
     @output.puts %(Created cluster #{cluster.id.colorize.t_id} "#{cluster.name.colorize.t_name}")
   end
 
   def validate
+    pre_validate
     check_required_args do |missing|
       missing << "ha" if ha.nil?
       missing << "name" unless name
@@ -29,7 +50,7 @@ class CB::ClusterCreate < CB::Action
       missing << "platform" unless platform
       missing << "region" unless region
       missing << "storage" unless storage
-      missing << "team" unless team
+      missing << "team" unless team || fork
     end
   end
 
@@ -44,9 +65,10 @@ class CB::ClusterCreate < CB::Action
     end
   end
 
-  def name=(str : String)
-    raise_arg_error "name", str unless str =~ /\A[ \w-]+\z/
-    @name = str
+  def at=(str : String)
+    self.at = Time.parse_rfc3339(str).to_utc
+  rescue Time::Format::Error
+    raise_arg_error "at (not RFC3339)", str
   end
 
   def plan=(str : String)
@@ -70,11 +92,6 @@ class CB::ClusterCreate < CB::Action
     self.storage = str.to_i_cb
   rescue ArgumentError
     raise_arg_error "storage", str
-  end
-
-  def storage=(i : Int32)
-    raise_arg_error "storage", i unless 10 <= i <= 65_535
-    @storage = i
   end
 
   def team=(str : String)

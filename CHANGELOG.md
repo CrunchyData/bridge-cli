@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Clusters can now have hyphens
 
 ### Changed
-- Storage bounds lowered from 25-99,999GiB to 10-65,535GiB 
+- `cb fork` command removed. Forks can now be created with `cb create --fork`
 
 ## [0.5.0] - 2021-07-29
 ### Added

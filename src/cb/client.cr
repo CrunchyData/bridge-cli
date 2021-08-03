@@ -145,6 +145,19 @@ class CB::Client
     Cluster.from_json resp.body, root: "cluster"
   end
 
+  def fork_cluster(cc)
+    resp = post "clusters/#{cc.fork}/forks", {
+      name:        cc.name,
+      plan_id:     cc.plan,
+      storage:     cc.storage,
+      provider_id: cc.platform,
+      target_time: cc.at.try(&.to_rfc3339),
+      region_id:   cc.region,
+      is_ha:       cc.ha,
+    }
+    Cluster.from_json resp.body, root: "cluster"
+  end
+
   def destroy_cluster(id)
     delete "clusters/#{id}"
   end

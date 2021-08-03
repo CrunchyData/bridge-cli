@@ -40,8 +40,6 @@ class CB::Completion
         return info
       when "create"
         return create
-      when "fork"
-        return fork_cluster
       when "firewall"
         return firewall
       when "logdest"
@@ -69,8 +67,6 @@ class CB::Completion
       "teamcert\tGet team public cert",
       "info\tDetailed cluster info",
       "create\tProvision a new cluster",
-      "fork\tCreate a fork of a cluster",
-      "create\tFork a cluster",
       "destroy\tDestroy a cluster",
       "firewall\tManage firewall rules",
       "psql\tInteractive psql console",
@@ -109,8 +105,12 @@ class CB::Completion
       return [] of String
     end
 
-    platform_region_plan_suggest.tap { |s| return s if s }
+    if last_arg? "--at"
+      return [] of String
+    end
 
+    cluster_suggest("--fork").tap { |s| return s if s }
+    platform_region_plan_suggest.tap { |s| return s if s }
     storage_suggest.tap { |s| return s if s }
 
     if last_arg? "--team", "-t"
@@ -123,39 +123,11 @@ class CB::Completion
 
     # return missing args
     suggest = [] of String
+    suggest << "--fork\tcluster to fork"
+    suggest << "--at\tPITR time in RFC3339" if has_full_flag?(:fork) && !has_full_flag?(:at)
     suggest << "--help\tshow help" if args.size == 2
     suggest << "--platform\tcloud provider" unless has_full_flag? :platform
-    suggest << "--team\tcrunchy bridge team" unless has_full_flag? :team
-    suggest << "--storage\tstorage size in GiB" unless has_full_flag? :storage
-    suggest << "--ha\thigh availability" unless has_full_flag? :ha
-    suggest << "--name\tcluster name" unless has_full_flag? :name
-    return suggest
-  end
-
-  def fork_cluster
-    if args.includes? "--help"
-      return [] of String
-    end
-
-    if last_arg? "-n", "--name"
-      return [] of String
-    end
-
-    cluster_suggest.tap { |s| return s if s }
-    platform_region_plan_suggest.tap { |s| return s if s }
-    storage_suggest.tap { |s| return s if s }
-
-    if last_arg? "--ha"
-      return ["false", "true"]
-    end
-
-    unless has_full_flag? :cluster
-      return ["--help\tshow help", "--cluster\tsource cluster to fork"]
-    end
-
-    suggest = [] of String
-    suggest << "--at\tPITR time in RFC3339" unless has_full_flag? :at
-    suggest << "--platform\tcloud provider" unless has_full_flag? :platform
+    suggest << "--team\tcrunchy bridge team" unless has_full_flag?(:team) || has_full_flag?(:fork)
     suggest << "--storage\tstorage size in GiB" unless has_full_flag? :storage
     suggest << "--ha\thigh availability" unless has_full_flag? :ha
     suggest << "--name\tcluster name" unless has_full_flag? :name
@@ -197,8 +169,8 @@ class CB::Completion
     end
   end
 
-  private def cluster_suggest
-    if last_arg?("--cluster")
+  private def cluster_suggest(flag = "--cluster")
+    if last_arg?(flag)
       cluster_suggestions
     end
   end
@@ -357,6 +329,7 @@ class CB::Completion
     full << :desc if has_full_flag? "--desc"
     full << :template if has_full_flag? "--template"
     full << :host if has_full_flag? "--host"
+    full << :fork if has_full_flag? "--fork"
     return full
   end
 
