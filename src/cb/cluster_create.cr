@@ -8,6 +8,7 @@ class CB::ClusterCreate < CB::Action
   property region : String?
   property storage : Int32?
   property team : String?
+  property replica : String?
   property fork : String?
   property at : Time?
 
@@ -17,10 +18,10 @@ class CB::ClusterCreate < CB::Action
   end
 
   def pre_validate
-    if fork
-      source = client.get_cluster fork
+    if (id = fork || replica)
+      source = client.get_cluster id
 
-      self.name ||= "Fork of #{source.name}"
+      self.name ||= "#{fork ? "Fork" : "Replica"} of #{source.name}"
       self.platform ||= source.provider_id
       self.region ||= source.region_id
       self.storage ||= source.storage
@@ -35,6 +36,8 @@ class CB::ClusterCreate < CB::Action
     validate
     cluster = if fork
                 @client.fork_cluster self
+              elsif replica
+                @client.replicate_cluster self
               else
                 @client.create_cluster self
               end
@@ -50,7 +53,7 @@ class CB::ClusterCreate < CB::Action
       missing << "platform" unless platform
       missing << "region" unless region
       missing << "storage" unless storage
-      missing << "team" unless team || fork
+      missing << "team" unless team || fork || replica
     end
   end
 

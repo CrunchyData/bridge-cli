@@ -82,6 +82,7 @@ describe CB::Completion do
     result = parse("cb create ")
     result.should have_option "--platform"
     result.should have_option "--fork"
+    result.should have_option "--replica"
     result.should have_option "--help"
 
     result = parse("cb create --fork ")
@@ -91,9 +92,21 @@ describe CB::Completion do
     result.should have_option "--at"
     result.should have_option "--platform"
     result.should_not have_option "--team"
+    result.should_not have_option "--fork"
+    result.should_not have_option "--replica"
 
     result = parse("cb create --fork abc --at ")
     result.should eq ([] of String)
+
+    result = parse("cb create --replica ")
+    result.should have_option "abc"
+
+    result = parse("cb create --replica abc ")
+    result.should have_option "--platform"
+    result.should_not have_option "--at"
+    result.should_not have_option "--team"
+    result.should_not have_option "--fork"
+    result.should_not have_option "--replica"
 
     result = parse("cb create -p ")
     result.should_not have_option "--platform"

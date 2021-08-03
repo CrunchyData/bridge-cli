@@ -71,6 +71,7 @@ op = OptionParser.new do |parser|
     parser.banner = <<-EOB
       Usage: cb create <--platform|-p> <--region|-r> <--plan> <--team|-t> [--size|-s] [--name|-n] [--ha]
              cb create --fork ID [--at] [--platform|-p] [--region|-r] [--plan] [--size|-s] [--name|-n] [--ha] 
+             cb create --replica ID [--platform|-p] [--region|-r] [--plan] [--name|-n]
     EOB
 
     parser.on("--ha <true|false>", "High Availability (default: false)") { |arg| create.ha = arg }
@@ -81,6 +82,7 @@ op = OptionParser.new do |parser|
     parser.on("-s GiB", "--storage GiB", "Storage size (default: 100GiB, or same as source)") { |arg| create.storage = arg }
     parser.on("-t ID", "--team ID", "Team") { |arg| create.team = arg }
 
+    parser.on("--replica ID", "Choose source cluster for read-replica") { |arg| create.replica = arg }
     parser.on("--fork ID", "Choose source cluster for fork") { |arg| create.fork = arg }
     parser.on("--at TIME", "Recovery point-in-time in RFC3339 (default: now)") { |arg| create.at = arg }
   end

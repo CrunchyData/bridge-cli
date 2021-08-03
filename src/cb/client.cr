@@ -158,6 +158,16 @@ class CB::Client
     Cluster.from_json resp.body, root: "cluster"
   end
 
+  def replicate_cluster(cc)
+    resp = post "clusters/#{cc.replica}/replicas", {
+      name:        cc.name,
+      plan_id:     cc.plan,
+      provider_id: cc.platform,
+      region_id:   cc.region,
+    }
+    Cluster.from_json resp.body, root: "cluster"
+  end
+
   def destroy_cluster(id)
     delete "clusters/#{id}"
   end

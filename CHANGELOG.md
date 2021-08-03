@@ -5,11 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Fixed
-- Clusters can now have hyphens
-
 ### Changed
 - `cb fork` command removed. Forks can now be created with `cb create --fork`
+
+### Added
+- `cb create --replica` to create read-replicas of clusters. Note: these cannot
+  be seen nor deleted from `cb` at this time
+
+### Fixed
+- Cluster names can now have hyphens
 
 ## [0.5.0] - 2021-07-29
 ### Added
