@@ -94,7 +94,7 @@ class CB::ClusterFork < CB::Action
   end
 
   def storage=(i : Int32)
-    raise_arg_error "storage", i unless 25 <= i < 100_000
+    raise_arg_error "storage", i unless 10 <= i <= 65_535
     @storage = i
   end
 end

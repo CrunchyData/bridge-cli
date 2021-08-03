@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Storage bounds lowered from 25-99,999GiB to 10-65,535GiB 
 
 ## [0.5.0] - 2021-07-29
 ### Added
