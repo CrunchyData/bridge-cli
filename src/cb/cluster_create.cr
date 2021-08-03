@@ -45,7 +45,7 @@ class CB::ClusterCreate < CB::Action
   end
 
   def name=(str : String)
-    raise_arg_error "name", str unless str =~ /\A[ \w_]+\z/
+    raise_arg_error "name", str unless str =~ /\A[ \w-]+\z/
     @name = str
   end
 

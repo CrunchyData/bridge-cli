@@ -157,6 +157,9 @@ describe CB::ClusterFork do
 
     cf.name = "A new Cluster 3"
     cf.name.should eq "A new Cluster 3"
+
+    cf.name = "Fork of nab-c1-azr"
+    cf.name.should eq "Fork of nab-c1-azr"
   end
 
   it "checks provider input" do

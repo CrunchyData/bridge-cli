@@ -92,6 +92,12 @@ describe CB::ClusterCreate do
 
     cc.name = "A new Cluster 3"
     cc.name.should eq "A new Cluster 3"
+
+    cc.name = "A new_Cluster 3"
+    cc.name.should eq "A new_Cluster 3"
+
+    cc.name = "nab-c1-fork-aws"
+    cc.name.should eq "nab-c1-fork-aws"
   end
 
   it "checks team input" do
