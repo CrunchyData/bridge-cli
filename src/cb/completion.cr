@@ -101,6 +101,10 @@ class CB::Completion
       return [] of String
     end
 
+    if args.includes? "--network"
+      return [] of String
+    end
+
     if last_arg? "-n", "--name"
       return [] of String
     end
@@ -133,6 +137,7 @@ class CB::Completion
     suggest << "--storage\tstorage size in GiB" unless has_full_flag?(:storage) || has_full_flag?(:replica)
     suggest << "--ha\thigh availability" unless has_full_flag?(:ha) || has_full_flag?(:replica)
     suggest << "--name\tcluster name" unless has_full_flag? :name
+    suggest << "--network\tnetwork id" unless has_full_flag? :network
     return suggest
   end
 
@@ -333,6 +338,7 @@ class CB::Completion
     full << :host if has_full_flag? "--host"
     full << :fork if has_full_flag? "--fork"
     full << :replica if has_full_flag? "--replica"
+    full << :network if has_full_flag? "--network"
     return full
   end
 

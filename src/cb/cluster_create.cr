@@ -8,6 +8,7 @@ class CB::ClusterCreate < CB::Action
   property region : String?
   property storage : Int32?
   property team : String?
+  property network : String?
   property replica : String?
   property fork : String?
   property at : Time?
@@ -100,5 +101,10 @@ class CB::ClusterCreate < CB::Action
   def team=(str : String)
     raise_arg_error "team id", str unless str =~ EID_PATTERN
     @team = str
+  end
+
+  def network=(str : String)
+    raise_arg_error "network id", str unless str =~ EID_PATTERN
+    @network = str
   end
 end

@@ -130,6 +130,7 @@ class CB::Client
     Role.from_json resp.body
   end
 
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/clusters/post
   def create_cluster(cc)
     body = {
       ha:            cc.ha,
@@ -140,11 +141,13 @@ class CB::Client
       region_id:     cc.region,
       storage:       cc.storage,
       team_id:       cc.team,
+      network_id:    cc.network,
     }
     resp = post "clusters", body
     Cluster.from_json resp.body, root: "cluster"
   end
 
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridforks/post
   def fork_cluster(cc)
     resp = post "clusters/#{cc.fork}/forks", {
       name:        cc.name,
@@ -154,6 +157,7 @@ class CB::Client
       target_time: cc.at.try(&.to_rfc3339),
       region_id:   cc.region,
       is_ha:       cc.ha,
+      network_id:  cc.network,
     }
     Cluster.from_json resp.body, root: "cluster"
   end

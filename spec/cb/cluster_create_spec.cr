@@ -108,6 +108,20 @@ describe CB::ClusterCreate do
     cc.team.should eq "afpvoqooxzdrriu6w3bhqo55c4"
   end
 
+  it "checks network input" do
+    cc = make_cc
+    msg = /Invalid network id/
+
+    expect_cb_error(msg) { cc.network = "yes" }
+    expect_cb_error(msg) { cc.network = "afpvoqooxzdrriu6w3bhqo55c3" }
+    expect_cb_error(msg) { cc.network = "aafpvoqooxzdrriu6w3bhqo55c4" }
+    expect_cb_error(msg) { cc.network = "fpvoqooxzdrriu6w3bhqo55c4" }
+
+    cc.network.should eq nil
+    cc.network = "afpvoqooxzdrriu6w3bhqo55c4"
+    cc.network.should eq "afpvoqooxzdrriu6w3bhqo55c4"
+  end
+
   it "checks provider input" do
     cc = make_cc
     msg = /Invalid platform/

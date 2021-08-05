@@ -84,6 +84,7 @@ describe CB::Completion do
     result.should have_option "--fork"
     result.should have_option "--replica"
     result.should have_option "--help"
+    result.should have_option "--network"
 
     result = parse("cb create --fork ")
     result.should have_option "abc"
@@ -125,6 +126,9 @@ describe CB::Completion do
     result.should_not have_option "--platform"
     result.should have_option "--region"
     result.should have_option "--plan"
+
+    result = parse("cb create --network ")
+    result.should eq ([] of String)
 
     result = parse("cb create --region ")
     result.should eq ([] of String)
