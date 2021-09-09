@@ -45,8 +45,13 @@ class CB::Client
 
     parsed = JSON.parse(resp.body)
     token = parsed["access_token"].as_s
-    expires_in = parsed["expires_in"].as_i
-    expires = Time.local.to_unix + expires_in - 5.minutes.seconds
+    expires = begin
+      expires_in = parsed["expires_in"].as_i
+      Time.local.to_unix + expires_in - 5.minutes.seconds
+    rescue
+      # on 2021-09-09 the API started returning a number that caused int overflow
+      (Time.local + 10.minutes).to_unix
+    end
 
     Token.new(creds.host, token, expires).store
   end
