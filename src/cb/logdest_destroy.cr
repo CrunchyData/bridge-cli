@@ -5,7 +5,7 @@ module CB
     property cluster_id : String?
     property logdest_id : String?
 
-    def call
+    def run
       check_required_args do |missing|
         missing << "cluster" unless cluster_id
         missing << "logdest" unless logdest_id

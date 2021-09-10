@@ -1,9 +1,12 @@
 require "http/client"
 require "json"
+require "log"
 require "../stdlib_ext"
 
 class CB::Client
   class Error < ::Exception
+    Log = ::Log.for("client")
+
     property method : String
     property path : String
     property resp : HTTP::Client::Response
@@ -262,6 +265,7 @@ class CB::Client
 
   def exec(method, path, body : String? = nil)
     resp = http.exec method, "http://#{host}/#{path}", headers: headers, body: body
+    Log.info &.emit("API Call", status: resp.status.code, path: path, method: method)
     return resp if resp.success?
     raise Error.new(method, path, resp)
   end

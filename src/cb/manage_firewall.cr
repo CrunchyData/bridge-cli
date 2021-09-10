@@ -1,4 +1,4 @@
-class CB::ManageFirewall
+class CB::ManageFirewall < CB::Action
   Error = Program::Error
 
   property output : IO
@@ -17,7 +17,7 @@ class CB::ManageFirewall
     to_remove << cidr
   end
 
-  def call
+  def run
     raise Error.new "--cluster not set" unless cluster_id
     remove_all
     add_all

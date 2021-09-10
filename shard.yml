@@ -4,6 +4,8 @@ version: 0.6.1-dev
 dependencies:
   pg:
     github: will/crystal-pg
+  raven:
+    github: sija/raven.cr
 
 authors:
   - Will Leinweber

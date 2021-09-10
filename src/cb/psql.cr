@@ -3,7 +3,7 @@ require "./action"
 class CB::Psql < CB::Action
   property cluster_id : String?
 
-  def call
+  def run
     c = client.get_cluster cluster_id
     uri = client.get_cluster_default_role(cluster_id).uri
 

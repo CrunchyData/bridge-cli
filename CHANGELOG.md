@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - `cb create` with and without `--fork` can take `--network` to create the new cluster in an existing network
+- Error tracking for unhandled exceptions
 
 ### Changed
 - `cb token -H` is now the flag for the full header version, not `-h` to avoid

@@ -1,5 +1,8 @@
+require "log"
+
 module CB
   abstract class Action
+    Log   = ::Log.for("Action")
     Error = Program::Error
 
     property output : IO
@@ -8,7 +11,12 @@ module CB
     def initialize(@client : Client, @output = STDOUT)
     end
 
-    abstract def call
+    def call
+      Log.info { "calling #{self.class}" }
+      run
+    end
+
+    abstract def run
 
     private def raise_arg_error(field, value)
       raise Error.new "Invalid #{field.colorize.bold}: '#{value.to_s.colorize.red}'"

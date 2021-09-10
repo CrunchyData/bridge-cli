@@ -33,7 +33,7 @@ class CB::ClusterCreate < CB::Action
     end
   end
 
-  def call
+  def run
     validate
     cluster = if fork
                 @client.fork_cluster self

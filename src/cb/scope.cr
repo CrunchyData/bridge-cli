@@ -6,7 +6,7 @@ class CB::Scope < CB::Action
   property checks : Array(::Scope::Check.class) = [] of ::Scope::Check.class
   property suite : String?
 
-  def call
+  def run
     check_required_args { |missing| missing << "cluster" unless cluster_id }
 
     uri = client.get_cluster_default_role(cluster_id).uri

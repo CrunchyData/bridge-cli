@@ -2,7 +2,21 @@
 require "./cb"
 require "option_parser"
 
+require "raven"
+Log.setup do |c|
+  c.bind("raven.*", Log::Severity::None, Log::IOBackend.new)
+  c.bind "*", :info, Raven::LogBackend.new(record_breadcrumbs: true)
+end
+
 PROG = CB::Program.new host: ENV["CB_HOST"]?
+
+Raven.configure do |config|
+  {% if env("DSN") %}
+    config.dsn = {{ env("DSN") }} 
+  {% end %}
+  config.release = CB::VERSION_STR
+  config.server_name = PROG.host
+end
 
 class OptionParser
   # for hiding an option from help, omit description
@@ -169,6 +183,10 @@ op = OptionParser.new do |parser|
     exit
   end
 
+  parser.on("error") do
+    raise "error on purpose to test error catching"
+  end
+
   parser.invalid_option do |flag|
     STDERR << "error".colorize.t_warn << ": " << flag.colorize.t_name << " is not a valid option.\n"
     STDERR.puts parser
@@ -179,6 +197,26 @@ op = OptionParser.new do |parser|
     STDERR << "error".colorize.t_warn << ": " << flag.colorize.t_name << " requires a value.\n"
     STDERR.puts parser
     exit 1
+  end
+end
+
+def capture_error(e)
+  return if e.class == Raven::Error
+  begin
+    # make sure error gets annotated with user id, but don’t fail to capture if
+    # some error in this process
+    t = PROG.token
+    Raven.user_context id: t.user_id
+  rescue
+  end
+
+  cap = Raven.capture e
+  if cap.class == Raven::Event
+    cap = cap.as(Raven::Event)
+    STDERR.puts "#{"error".colorize.red.bold}: #{e.message}"
+    STDERR.puts "   #{"id".colorize.red.bold}: #{cap.id.colorize.t_id}"
+  else
+    raise e
   end
 end
 
@@ -204,4 +242,7 @@ rescue e : CB::Client::Error
   end
   STDERR.puts e
   exit 2
+rescue e
+  capture_error e
+  exit 3
 end

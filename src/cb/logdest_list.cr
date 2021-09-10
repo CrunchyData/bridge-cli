@@ -4,7 +4,7 @@ module CB
   class LogdestList < Action
     property cluster_id : String?
 
-    def call
+    def run
       check_required_args { |missing| missing << "cluster" unless cluster_id }
       dests = client.get_logdests cluster_id
 

@@ -8,7 +8,7 @@ module CB
     property template : String?
     property desc : String?
 
-    def call
+    def run
       validate
       logdest = client.add_logdest self
       output.puts "added new log destination"
