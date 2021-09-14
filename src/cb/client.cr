@@ -53,7 +53,11 @@ class CB::Client
       (Time.local + 10.minutes).to_unix
     end
 
-    Token.new(creds.host, token, expires).store
+    tmp_token = Token.new(creds.host, token, expires, "", "")
+
+    account = new(tmp_token).get_account
+
+    Token.new(creds.host, token, expires, account.id, account.name).store
   end
 
   property host : String
@@ -74,6 +78,14 @@ class CB::Client
     h = @http || HTTP::Client.new(host, tls: self.class.tls)
     @http ||= h
     h
+  end
+
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/accountsaccountid/get
+  jrecord Account, id : String, name : String
+
+  def get_account
+    resp = get "account"
+    Account.from_json resp.body
   end
 
   jrecord Team, id : String, name : String, is_personal : Bool, roles : Array(Int32) do

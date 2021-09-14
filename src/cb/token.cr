@@ -6,10 +6,12 @@ struct CB::Token
   getter host : String
   getter token : String
   getter expires : Int64
+  getter user_id : String
+  getter name : String
 
   CONFIG = Creds::CONFIG
 
-  def initialize(@host, @token, @expires)
+  def initialize(@host, @token, @expires, @user_id, @name)
   end
 
   def self.for_host(host) : Token?
