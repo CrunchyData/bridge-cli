@@ -22,6 +22,8 @@ jobs:
       run: shards install
 
     - name: Build release bundle
+      env: 
+        DSN: ${{ secrets.DSN }}
       run: |
         make release RELEASE=1 STATIC=1
 
@@ -58,6 +60,8 @@ jobs:
         version: latest
 
     - name: Build release bundle
+      env: 
+        DSN: ${{ secrets.DSN }}
       run: |
         make release RELEASE=1 STATIC=1 TARGET_ARCH=aarch64
 
@@ -85,6 +89,8 @@ jobs:
       run: shards install
 
     - name: Build
+      env: 
+        DSN: ${{ secrets.DSN }}
       run: |
         make release RELEASE=1 STATIC_LIBS=1
 
