@@ -24,7 +24,7 @@ class CB::Program
     output.print "  application ID: "
     id = input.gets
     if id.nil? || id.empty?
-      STDERR.puts "#{"error".colorize.red.bold}: applicaton ID must be present"
+      STDERR.puts "#{"error".colorize.red.bold}: application ID must be present"
       exit 1
     end
 
@@ -32,7 +32,7 @@ class CB::Program
     secret = input.noecho { input.gets }
     output.print "\n"
     if secret.nil? || secret.empty?
-      STDERR.puts "#{"error".colorize.red.bold}: applicatoin secret must be present"
+      STDERR.puts "#{"error".colorize.red.bold}: application secret must be present"
       exit 1
     end
 
@@ -132,7 +132,7 @@ class CB::Program
       client.destroy_cluster id
       output.puts "Cluster #{c.id.colorize.t_id} destroyed"
     else
-      output.puts "Reponse did not match, did not destroy the cluster"
+      output.puts "Response did not match, did not destroy the cluster"
     end
   end
 
