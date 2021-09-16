@@ -149,6 +149,7 @@ class CB::Program
       "platform" => c.provider_id,
       "region"   => c.region_id,
     }
+    details["network"] = c.network_id if c.network_id
     pad = 10
     details.each do |k, v|
       output << k.rjust(pad).colorize.bold << ": "

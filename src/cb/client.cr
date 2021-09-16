@@ -122,6 +122,7 @@ class CB::Client
     memory : Int32,
     oldest_backup : Time?,
     provider_id : String,
+    network_id : String,
     region_id : String,
     storage : Int32
 

@@ -20,6 +20,7 @@ private class ClusterCreateTestClient < CB::Client
       oldest_backup: nil,
       provider_id: "aws",
       region_id: "us-east-2",
+      network_id: "nfpvoqooxzdrriu6w3bhqo55c4",
       storage: 1234
     )
   end
