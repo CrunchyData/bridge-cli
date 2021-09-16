@@ -1,8 +1,8 @@
 #!/usr/bin/env crystal
 require "./cb"
 require "option_parser"
-
 require "raven"
+
 Log.setup do |c|
   c.bind("raven.*", Log::Severity::None, Log::IOBackend.new)
   c.bind "*", :info, Raven::LogBackend.new(record_breadcrumbs: true)
@@ -11,8 +11,14 @@ end
 PROG = CB::Program.new host: ENV["CB_HOST"]?
 
 Raven.configure do |config|
-  {% if env("DSN") %}
-    config.dsn = {{ env("DSN") }} 
+  {% if flag?(:release) %}
+    config.dsn = String.new(Bytes[
+      104, 116, 116, 112, 115, 58, 47, 47, 99, 56, 101, 102, 56, 99, 57, 58,
+      48, 100, 52, 57, 52, 48, 102, 50, 97, 49, 53, 55, 48, 52, 102, 101, 100,
+      52, 100, 51, 53, 52, 55, 56, 64, 111, 52, 51, 51, 52, 53, 49, 46, 105,
+      110, 103, 101, 115, 116, 46, 115, 101, 110, 116, 114, 121, 46, 105, 111,
+      47, 53, 56, 51, 49, 51, 51, 49,
+    ])
   {% end %}
   config.release = CB::VERSION_STR
   config.server_name = PROG.host
