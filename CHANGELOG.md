@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix error tracking
 
+### Changed
+- `cb whoami` output improved
+
 ## [0.7.1] - 2021-09-16
 ### Fixed
 - Fix error tracking (incorrectly, as it turned out)

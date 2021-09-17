@@ -167,7 +167,7 @@ op = OptionParser.new do |parser|
   end
 
   parser.on("whoami", "Information on current user") do
-    action = ->{ puts PROG.creds.id.colorize.t_id }
+    action = CB::WhoAmI.new PROG.client
   end
 
   parser.on("token", "Return a bearer token for use in the api") do

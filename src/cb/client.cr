@@ -65,8 +65,9 @@ class CB::Client
 
   property host : String
   property headers : HTTP::Headers
+  getter token : Token
 
-  def initialize(token : Token)
+  def initialize(@token : Token)
     @host = token.host
     @headers = HTTP::Headers{
       "Accept"        => "application/json",
