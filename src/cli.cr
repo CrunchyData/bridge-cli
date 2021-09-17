@@ -189,10 +189,6 @@ op = OptionParser.new do |parser|
     exit
   end
 
-  parser.on("error") do
-    raise "error on purpose to test error catching"
-  end
-
   parser.invalid_option do |flag|
     STDERR << "error".colorize.t_warn << ": " << flag.colorize.t_name << " is not a valid option.\n"
     STDERR.puts parser
