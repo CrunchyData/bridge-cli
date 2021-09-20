@@ -7,17 +7,36 @@ A CLI for Crunchy Bridge with very good tab completion.
 ## Installation
 
 - For homebrew (on [macOS](https://brew.sh) or [linux](https://docs.brew.sh/Homebrew-on-Linux))
-  `brew install will/cb/cb`. This will install both `cb` and the shell tab
+  `brew install will/cb/cb`. This will install both `cb` and the fish shell tab
   completions for you.
 - For others, download the [latest release](https://github.com/will/cb/releases),
   put it somewhere in your path, and be sure to manually install shell tab
   completions from the `completions` directory.
 
+## Getting started
+
+First get your `application ID` and `application secret` from https://www.crunchybridge.com/settings/
+
+Then run `cb login` to register the CLI with your Crunchy Bridge account.
+
 ## Usage
+
+Once you are logged in, you can run `cb list` to see all of your clusters, and
+`cb psql <cluster id>` to securely connect to your database or `cb scope` to
+run health checks against it. There are many more commands that you can use to
+manage things such as log destinations, firewall rules, and more.
 
 To see what commands are available run `cb --help`, and to see more detailed
 information for a given command add `--help` to it, for example `cb create
 --help`.
+
+If you use the [fish command line shell](https://fishshell.com) and have the
+completions installed for you (either automatically through homebrew or
+otherwise), nearly all arguments can be intelligently completed for you. This
+includes all cluster IDs available to just your account, in addition to normal
+subcommands and flags. Also where possible the current arguments you've given
+are taken into consideration. For example if you're creating a new cluster on
+AWS, instances sizes on Azure or regions in GCP will not be shown.
 
 ## Development
 
