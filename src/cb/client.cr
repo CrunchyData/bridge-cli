@@ -74,14 +74,10 @@ class CB::Client
       "Authorization" => "Bearer #{token.token}",
       "User-Agent"    => CB::VERSION_STR,
     }
-    @http = nil.as(HTTP::Client?)
   end
 
-  # memoize to avoid slow tests
   def http : HTTP::Client
-    h = @http || HTTP::Client.new(host, tls: self.class.tls)
-    @http ||= h
-    h
+    HTTP::Client.new(host, tls: self.class.tls)
   end
 
   # https://crunchybridgeapi.docs.apiary.io/#reference/0/accountsaccountid/get
@@ -132,8 +128,17 @@ class CB::Client
     Array(Team).from_json resp.body, root: "teams"
   end
 
-  def get_clusters
-    resp = get "clusters"
+  def get_clusters(teams : Array(Team)? = nil)
+    teams ||= get_teams
+    ch = Channel(Array(Cluster)).new
+    clusters = [] of Cluster
+    teams.each { |t| spawn { ch.send get_clusters(t.id) } }
+    teams.size.times { clusters += ch.receive }
+    clusters.sort_by(&.name)
+  end
+
+  def get_clusters(team_id : String)
+    resp = get "clusters?team_id=#{team_id}"
     Array(Cluster).from_json resp.body, root: "clusters"
   end
 

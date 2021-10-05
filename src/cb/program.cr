@@ -106,8 +106,8 @@ class CB::Program
   end
 
   def list_clusters
-    clusters = client.get_clusters
     teams = client.get_teams
+    clusters = client.get_clusters(teams)
     cluster_max = clusters.map(&.name.size).max? || 0
 
     clusters.each do |cluster|
