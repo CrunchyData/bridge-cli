@@ -104,7 +104,29 @@ class CB::Client
     end
   end
 
+  def get_teams
+    resp = get "teams"
+    Array(Team).from_json resp.body, root: "teams"
+  end
+
   jrecord Cluster, id : String, team_id : String, name : String
+
+  def get_clusters
+    get_clusters(get_teams)
+  end
+
+  def get_clusters(teams : Array(Team))
+    ch = Channel(Array(Cluster)).new
+    clusters = [] of Cluster
+    teams.each { |t| spawn { ch.send get_clusters(t.id) } }
+    teams.size.times { clusters += ch.receive }
+    clusters.sort_by(&.name)
+  end
+
+  def get_clusters(team_id : String)
+    resp = get "clusters?team_id=#{team_id}"
+    Array(Cluster).from_json resp.body, root: "clusters"
+  end
 
   jrecord ClusterDetail,
     id : String,
@@ -122,25 +144,6 @@ class CB::Client
     network_id : String,
     region_id : String,
     storage : Int32
-
-  def get_teams
-    resp = get "teams"
-    Array(Team).from_json resp.body, root: "teams"
-  end
-
-  def get_clusters(teams : Array(Team)? = nil)
-    teams ||= get_teams
-    ch = Channel(Array(Cluster)).new
-    clusters = [] of Cluster
-    teams.each { |t| spawn { ch.send get_clusters(t.id) } }
-    teams.size.times { clusters += ch.receive }
-    clusters.sort_by(&.name)
-  end
-
-  def get_clusters(team_id : String)
-    resp = get "clusters?team_id=#{team_id}"
-    Array(Cluster).from_json resp.body, root: "clusters"
-  end
 
   def get_cluster(id)
     resp = get "clusters/#{id}"
