@@ -7,9 +7,9 @@ A CLI for Crunchy Bridge with very good tab completion.
 ## Installation
 
 - For homebrew (on [macOS](https://brew.sh) or [linux](https://docs.brew.sh/Homebrew-on-Linux))
-  `brew install will/cb/cb`. This will install both `cb` and the fish shell tab
+  `brew install CrunchyData/brew/cb`. This will install both `cb` and the fish shell tab
   completions for you.
-- For others, download the [latest release](https://github.com/will/cb/releases),
+- For others, download the [latest release](https://github.com/CrunchyData/bridge-cli/releases),
   put it somewhere in your path, and be sure to manually install shell tab
   completions from the `completions` directory.
 
