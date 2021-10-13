@@ -60,7 +60,7 @@ You can run `crystal spec` to run all of the specs, or `make test` to also run l
 
 ## Contributing
 
-1. Fork it (<https://github.com/will/cb/fork>)
+1. Fork it (<https://github.com/CrunchyData/bridge-cli/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
