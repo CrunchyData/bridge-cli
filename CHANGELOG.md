@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `cb uri` displays the URI for a cluster with the password displayed as
+  black-on-black so you can still copy and paste it, but it has less of a
+  chance of being unexpectedly leaked
 
 ## [0.7.4] - 2021-10-05
 ### Fixed

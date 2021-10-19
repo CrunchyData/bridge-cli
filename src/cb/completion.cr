@@ -36,7 +36,7 @@ class CB::Completion
       return top_level
     else
       case args.first
-      when "info", "psql", "destroy"
+      when "info", "psql", "destroy", "uri"
         return info
       when "create"
         return create
@@ -66,6 +66,7 @@ class CB::Completion
       "teams\tList teams",
       "teamcert\tGet team public cert",
       "info\tDetailed cluster info",
+      "uri\tConnection uri",
       "create\tProvision a new cluster",
       "destroy\tDestroy a cluster",
       "firewall\tManage firewall rules",

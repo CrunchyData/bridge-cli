@@ -68,6 +68,14 @@ op = OptionParser.new do |parser|
     end
   end
 
+  parser.on("uri", "Display default connection URI for a cluster") do
+    parser.banner = "Usage: cb uri <cluster id>"
+    parser.unknown_args do |args|
+      id = get_id_arg.call(args)
+      action = ->{ PROG.uri id }
+    end
+  end
+
   parser.on("psql", "Connect to the database using `psql`") do
     parser.banner = "Usage: cb psql <cluster id> [-- [args for psql such as -c or -f]]"
     action = psql = CB::Psql.new(PROG.client)

@@ -166,6 +166,14 @@ class CB::Program
     firewall_rules.each { |fr| output << " "*(pad + 4) << fr.rule << "\n" }
   end
 
+  def uri(cluster_id)
+    uri = client.get_cluster_default_role(cluster_id).uri
+    output = uri.to_s
+    pw = uri.password
+    output = output.gsub(pw, pw.colorize.black.on_black.to_s) if pw
+    puts output
+  end
+
   def team_cert(team_id)
     cert = client.get("teams/#{team_id}.pem").body
     output.puts cert
