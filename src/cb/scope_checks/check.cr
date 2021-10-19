@@ -20,8 +20,8 @@ module Scope
           ann = s.annotation(Meta)
           raise "#{s} is missing Meta annotation" unless ann
           "Metadata.new(#{s}, #{ann.args.empty? ? "".id : "#{ann.args.splat},".id}#{ann.named_args.double_splat})".id
-        end.sort(&.flag)
-      }}
+        end
+      }}.sort_by(&.flag)
     end
 
     property conn : DB::Database
