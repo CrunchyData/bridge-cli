@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `cb uri` displays the URI for a cluster with the password displayed as
   black-on-black so you can still copy and paste it, but it has less of a
   chance of being unexpectedly leaked
+- `cb info` now shows source cluster id for replica clusters.
 
 ### Fixed
 - Replica clusters show up in `cb list` as well as tab completion for clusters.

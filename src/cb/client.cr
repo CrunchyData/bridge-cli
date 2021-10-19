@@ -148,7 +148,10 @@ class CB::Client
     provider_id : String,
     network_id : String,
     region_id : String,
-    storage : Int32
+    storage : Int32 do
+    @[JSON::Field(key: "cluster_id")]
+    getter source_cluster_id : String?
+  end
 
   def get_cluster(id)
     resp = get "clusters/#{id}"

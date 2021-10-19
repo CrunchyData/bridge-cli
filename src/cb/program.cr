@@ -149,8 +149,14 @@ class CB::Program
       "platform" => c.provider_id,
       "region"   => c.region_id,
     }
+
+    if source = c.source_cluster_id
+      details["source cluster"] = source
+    end
+
     details["network"] = c.network_id if c.network_id
-    pad = 10
+
+    pad = (details.keys.map(&.size).max || 8) + 2
     details.each do |k, v|
       output << k.rjust(pad).colorize.bold << ": "
       output << v << "\n"
