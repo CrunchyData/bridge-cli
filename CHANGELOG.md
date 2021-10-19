@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   black-on-black so you can still copy and paste it, but it has less of a
   chance of being unexpectedly leaked
 
+### Fixed
+- Replica clusters show up in `cb list` as well as tab completion for clusters.
+
 ## [0.7.4] - 2021-10-05
 ### Fixed
 - `cb list` shows clusters from all teams, not just personal

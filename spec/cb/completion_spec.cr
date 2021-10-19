@@ -2,7 +2,7 @@ require "../spec_helper"
 
 private class CompletionTestClient < CB::Client
   def get_clusters
-    [Cluster.new("abc", "def", "my cluster")]
+    [Cluster.new("abc", "def", "my cluster", [] of Cluster)]
   end
 
   def get_teams

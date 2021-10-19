@@ -2,7 +2,7 @@ require "../spec_helper"
 
 private class ClusterCreateTestClient < CB::Client
   def create_cluster(arg)
-    Cluster.new("abc", "def", "my cluster")
+    Cluster.new("abc", "def", "my cluster", [] of Cluster)
   end
 
   def get_cluster(id : String)

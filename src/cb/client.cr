@@ -109,7 +109,8 @@ class CB::Client
     Array(Team).from_json resp.body, root: "teams"
   end
 
-  jrecord Cluster, id : String, team_id : String, name : String
+  jrecord Cluster, id : String, team_id : String, name : String,
+    replicas : Array(Cluster)?
 
   def get_clusters
     get_clusters(get_teams)
@@ -125,7 +126,11 @@ class CB::Client
 
   def get_clusters(team_id : String)
     resp = get "clusters?team_id=#{team_id}"
-    Array(Cluster).from_json resp.body, root: "clusters"
+    team_clusters = Array(Cluster).from_json resp.body, root: "clusters"
+    replicas = Array(Cluster).new
+    team_clusters.map(&.replicas).reject(Nil).each { |rs| replicas += rs }
+
+    team_clusters + replicas
   end
 
   jrecord ClusterDetail,
