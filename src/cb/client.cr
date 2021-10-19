@@ -276,6 +276,12 @@ class CB::Client
   def exec(method, path, body : String? = nil)
     resp = http.exec method, "http://#{host}/#{path}", headers: headers, body: body
     Log.info &.emit("API Call", status: resp.status.code, path: path, method: method)
+    if resp.body && ENV["HTTP_DEBUG"]?
+      body = mabye_json_parse resp.body
+      status = resp.status.code
+      pp! [method, path, status, body]
+    end
+
     return resp if resp.success?
     raise Error.new(method, path, resp)
   end
@@ -289,6 +295,14 @@ class CB::Client
         # have happened to install openssl with homebrew
         client.ca_certificates = "/private/etc/ssl/cert.pem"
       {% end %}
+    end
+  end
+
+  private def mabye_json_parse(str)
+    begin
+      JSON.parse str
+    rescue
+      str
     end
   end
 end
