@@ -15,11 +15,8 @@ RUN apk add --update --no-cache --force-overwrite \
   llvm11-libs
 
 # Install latest crystal from edge
-# RUN apk add --update --no-cache \
-#   --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
-#   crystal shards
-
+RUN apk add --update --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community crystal shards
 # go back to crystal 1.0.0 while alpine has a broken build
-RUN apk add --update --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/latest-stable/community crystal shards
+# RUN apk add --update --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/latest-stable/community crystal shards
 
 CMD [ "/bin/sh" ]
