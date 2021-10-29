@@ -4,6 +4,7 @@ version: 0.7.6-dev
 dependencies:
   pg:
     github: will/crystal-pg
+    commit: cafec0667726b18d0f332ae6182d9d1d305e7a89
   raven:
     github: sija/raven.cr
 

@@ -14,7 +14,7 @@ shards:
 
   pg:
     git: https://github.com/will/crystal-pg.git
-    version: 0.24.0
+    version: 0.24.0+git.commit.cafec0667726b18d0f332ae6182d9d1d305e7a89
 
   raven:
     git: https://github.com/sija/raven.cr.git
