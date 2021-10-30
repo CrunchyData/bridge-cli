@@ -10,6 +10,8 @@ class CB::Scope < CB::Action
     check_required_args { |missing| missing << "cluster" unless cluster_id }
 
     uri = client.get_cluster_default_role(cluster_id).uri
+    # disable non-channel-binding scram
+    uri.query = "auth_methods=scram-sha-256-plus"
 
     self.suite = "quick" if checks.empty? && suite.nil?
 
@@ -30,5 +32,7 @@ class CB::Scope < CB::Action
         @output << c << "\n"
       end
     end
+  rescue e : DB::ConnectionRefused
+    raise Error.new("Could not connect to database: #{e.cause}")
   end
 end
