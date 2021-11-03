@@ -1,4 +1,5 @@
 require "./action"
+require "./cluster_connection"
 require "./scope_checks/*"
 
 class CB::Scope < CB::Action
@@ -7,11 +8,9 @@ class CB::Scope < CB::Action
   property suite : String?
 
   def run
-    check_required_args { |missing| missing << "cluster" unless cluster_id }
-
-    uri = client.get_cluster_default_role(cluster_id).uri
-    # disable non-channel-binding scram
-    uri.query = "auth_methods=scram-sha-256-plus"
+    cid = cluster_id
+    check_required_args { |missing| missing << "cluster" unless cid }
+    cid = cid.not_nil!
 
     self.suite = "quick" if checks.empty? && suite.nil?
 
@@ -27,12 +26,11 @@ class CB::Scope < CB::Action
 
     to_run = checks.uniq.sort_by(&.name)
 
-    DB.open(uri) do |db|
+    ClusterConnection.new(cid, client).db_names
+    ClusterConnection.new(cid, client).open do |db|
       to_run.map(&.new(db)).each do |c|
         @output << c << "\n"
       end
     end
-  rescue e : DB::ConnectionRefused
-    raise Error.new("Could not connect to database: #{e.cause}")
   end
 end
