@@ -19,7 +19,7 @@ class CB::Program
 
   def login
     raise Error.new "No valid credentials found. Please login." unless output.tty?
-    hint = "from https://www.crunchybridge.com/settings/ " if host == "api.crunchybridge.com"
+    hint = "from https://www.crunchybridge.com/account" if host == "api.crunchybridge.com"
     output.puts "add credentials for #{host.colorize.t_name} #{hint}>"
     output.print "  application ID: "
     id = input.gets

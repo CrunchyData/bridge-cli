@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - Pre-fix for upcoming API change with /clusters
+- Fixed link to get API tokens
 
 ## [0.7.5] - 2021-10-19
 ### Added

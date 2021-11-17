@@ -15,7 +15,7 @@ A CLI for Crunchy Bridge with very good tab completion.
 
 ## Getting started
 
-First get your `application ID` and `application secret` from https://www.crunchybridge.com/settings/
+First get your `application ID` and `application secret` from https://www.crunchybridge.com/account
 
 Then run `cb login` to register the CLI with your Crunchy Bridge account.
 
