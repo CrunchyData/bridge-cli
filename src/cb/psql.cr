@@ -29,6 +29,8 @@ class CB::Psql < CB::Action
       "PGSSLMODE"     => "verify-ca",
       "PGSSLROOTCERT" => cert_path,
     })
+  rescue e : File::NotFoundError
+    raise Error.new "The local psql command could not be found"
   end
 
   def database=(str : String)

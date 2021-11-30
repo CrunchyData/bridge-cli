@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `cb restart` command added to restart clusters.
 - `cb rename` command added to rename clusters.
 
+### Changed
+* Improved error message when local psql command cannot be found.
+
 ## [1.1.0] - 2022-01-27
 ### Added
 - `cb psql` can take `--database` to specify the name of the database to
