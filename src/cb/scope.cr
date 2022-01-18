@@ -4,12 +4,17 @@ require "./scope_checks/*"
 class CB::Scope < CB::Action
   property cluster_id : String?
   property checks : Array(::Scope::Check.class) = [] of ::Scope::Check.class
+  property database : String?
   property suite : String?
 
   def run
     check_required_args { |missing| missing << "cluster" unless cluster_id }
 
     uri = client.get_cluster_default_role(cluster_id).uri
+
+    if database.presence
+      uri.path = database.to_s
+    end
 
     self.suite = "quick" if checks.empty? && suite.nil?
 
@@ -31,4 +36,8 @@ class CB::Scope < CB::Action
       end
     end
   end
+end
+
+def database=(str : String)
+  @database = str
 end

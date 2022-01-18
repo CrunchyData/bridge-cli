@@ -349,6 +349,7 @@ describe CB::Completion do
     result.should have_option "--suite"
     result.should have_option "--mandelbrot"
     result.should have_option "--tables"
+    result.should have_option "--database"
 
     result = parse("cb scope --cluster abc --suite ")
     result.should have_option "all"
@@ -362,5 +363,8 @@ describe CB::Completion do
     result = parse("cb scope --cluster abc --mandelbrot ")
     result.should have_option "--tables"
     result.should_not have_option "--mandelbrot"
+
+    result = parse("cb scope --cluster abc --database ")
+    result.should_not have_option "--database"
   end
 end

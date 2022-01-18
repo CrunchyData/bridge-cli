@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `cb psql` can take `--database` to specify the name of the database to
+  connect.
+- `cb scope` can take `--database` to specify the name of the database to
+  connect.
+
 ### Fixed
 - The --ha flag for `cb create` now actually works
 

@@ -36,7 +36,7 @@ class CB::Completion
       return top_level
     else
       case args.first
-      when "info", "psql", "destroy", "uri"
+      when "info", "destroy", "uri"
         return info
       when "create"
         return create
@@ -44,6 +44,8 @@ class CB::Completion
         return firewall
       when "logdest"
         return logdest
+      when "psql"
+        return psql
       when "teamcert"
         return teams
       when "scope"
@@ -283,6 +285,18 @@ class CB::Completion
     return suggest
   end
 
+  def psql
+    return cluster_suggestions if @args.size == 2
+
+    if last_arg?("--database")
+      [] of String
+    end
+
+    suggest = [] of String
+    suggest << "--database\tName of database" unless has_full_flag? :database
+    return suggest
+  end
+
   def scope
     return ["--cluster\tcluster id"] if @args.size == 2
 
@@ -294,8 +308,13 @@ class CB::Completion
       return ["all\tRun all scopes", "quick\tRun some scopes"]
     end
 
+    if last_arg?("--database")
+      [] of String
+    end
+
     suggest = ::Scope::Check.all.reject { |c| @args.includes? c.flag }.map { |c| "#{c.flag}\t#{c.desc}" }
     suggest << "--suite\tRun predefined scopes" unless @args.includes? "--suite"
+    suggest << "--database\tName of database" unless @args.includes? "--database"
 
     return suggest
   end

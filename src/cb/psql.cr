@@ -2,10 +2,13 @@ require "./action"
 
 class CB::Psql < CB::Action
   property cluster_id : String?
+  property database : String?
 
   def run
     c = client.get_cluster cluster_id
     uri = client.get_cluster_default_role(cluster_id).uri
+
+    database.tap { |db| uri.path = db if db }
 
     output << "connecting to "
     team_name = print_team_slash_cluster c, output
@@ -30,6 +33,10 @@ class CB::Psql < CB::Action
   def cluster_id=(str : String)
     raise_arg_error "cluster id", str unless str =~ EID_PATTERN
     @cluster_id = str
+  end
+
+  def database=(str : String)
+    @database = str
   end
 
   private def ensure_cert(team_id) : String

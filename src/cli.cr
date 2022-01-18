@@ -77,8 +77,10 @@ op = OptionParser.new do |parser|
   end
 
   parser.on("psql", "Connect to the database using `psql`") do
-    parser.banner = "Usage: cb psql <cluster id> [-- [args for psql such as -c or -f]]"
+    parser.banner = "Usage: cb psql <cluster id> [--database] [-- [args for psql such as -c or -f]]"
     action = psql = CB::Psql.new(PROG.client)
+
+    parser.on("--database NAME", "Database name (default: postgres)") { |arg| psql.database = arg }
 
     parser.unknown_args do |args|
       psql.cluster_id = get_id_arg.call(args)
@@ -129,6 +131,7 @@ op = OptionParser.new do |parser|
     action = scope = CB::Scope.new PROG.client
     parser.on("--cluster ID", "Choose cluster") { |arg| scope.cluster_id = arg }
     parser.on("--suite <all|quick>", "Run suite of scopes (default: quick)") { |arg| scope.suite = arg }
+    parser.on("--database NAME", "Database name (default: postgres)") { |arg| scope.database = arg }
     Scope::Check.all.each do |ck|
       parser.on(ck.flag, ck.desc) { scope.checks << ck.type }
     end
