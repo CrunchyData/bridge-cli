@@ -6,7 +6,7 @@ private class CompletionTestClient < CB::Client
   end
 
   def get_teams
-    [Team.new("def", "my team", false, [1])]
+    [Team.new("def", "my team", false, "manager")]
   end
 
   def get_firewall_rules(id)

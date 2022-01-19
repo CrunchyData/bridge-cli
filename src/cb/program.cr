@@ -100,7 +100,7 @@ class CB::Program
       output << "\t"
       output << team.name.ljust(name_max).colorize.t_name
       output << "\t"
-      output << team.human_roles.join ", "
+      output << team.role.to_s.titleize
       output << "\n"
     end
   end

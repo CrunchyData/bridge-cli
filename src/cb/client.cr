@@ -88,19 +88,9 @@ class CB::Client
     Account.from_json resp.body
   end
 
-  jrecord Team, id : String, name : String, is_personal : Bool, roles : Array(Int32) do
-    enum Role
-      Member
-      Manager
-      Administrator
-    end
-
+  jrecord Team, id : String, name : String, is_personal : Bool, role : String? do
     def name
       is_personal ? "personal" : @name
-    end
-
-    def human_roles
-      roles.map { |i| Role.new i }
     end
   end
 
