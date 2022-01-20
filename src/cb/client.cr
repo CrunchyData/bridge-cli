@@ -182,7 +182,7 @@ class CB::Client
       network_id:    cc.network,
     }
     resp = post "clusters", body
-    Cluster.from_json resp.body, root: "cluster"
+    Cluster.from_json resp.body
   end
 
   # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridforks/post
@@ -197,7 +197,7 @@ class CB::Client
       is_ha:       cc.ha,
       network_id:  cc.network,
     }
-    Cluster.from_json resp.body, root: "cluster"
+    Cluster.from_json resp.body
   end
 
   def replicate_cluster(cc)
@@ -207,7 +207,7 @@ class CB::Client
       provider_id: cc.platform,
       region_id:   cc.region,
     }
-    Cluster.from_json resp.body, root: "cluster"
+    Cluster.from_json resp.body
   end
 
   def destroy_cluster(id)
