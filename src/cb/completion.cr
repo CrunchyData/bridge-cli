@@ -114,6 +114,10 @@ class CB::Completion
       return [] of String
     end
 
+    if last_arg? "-v", "--version"
+      return [] of String
+    end
+
     cluster_suggest("--fork").tap { |s| return s if s }
     cluster_suggest("--replica").tap { |s| return s if s }
     platform_region_plan_suggest.tap { |s| return s if s }
@@ -139,6 +143,7 @@ class CB::Completion
     suggest << "--ha\thigh availability" unless has_full_flag?(:ha) || has_full_flag?(:replica)
     suggest << "--name\tcluster name" unless has_full_flag? :name
     suggest << "--network\tnetwork id" unless has_full_flag? :network
+    suggest << "--version\tmajor version" unless has_full_flag?(:version) || has_full_flag?(:fork) || has_full_flag?(:replica)
     return suggest
   end
 
@@ -340,6 +345,7 @@ class CB::Completion
     full << :fork if has_full_flag? "--fork"
     full << :replica if has_full_flag? "--replica"
     full << :network if has_full_flag? "--network"
+    full << :version if has_full_flag? "--version", "-v"
     return full
   end
 

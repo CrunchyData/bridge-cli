@@ -141,8 +141,8 @@ class CB::Client
     created_at : Time,
     cpu : Int32,
     is_ha : Bool,
-    major_version : Int32,
     plan_id : String,
+    major_version : Int32,
     memory : Int32,
     oldest_backup : Time?,
     provider_id : String,
@@ -171,15 +171,16 @@ class CB::Client
   # https://crunchybridgeapi.docs.apiary.io/#reference/0/clusters/post
   def create_cluster(cc)
     body = {
-      is_ha:         cc.ha,
-      major_version: 13,
-      name:          cc.name,
-      plan_id:       cc.plan,
-      provider_id:   cc.platform,
-      region_id:     cc.region,
-      storage:       cc.storage,
-      team_id:       cc.team,
-      network_id:    cc.network,
+      is_ha:               cc.ha,
+      ha:                  cc.ha,
+      name:                cc.name,
+      plan_id:             cc.plan,
+      provider_id:         cc.platform,
+      postgres_version_id: cc.postgres_version,
+      region_id:           cc.region,
+      storage:             cc.storage,
+      team_id:             cc.team,
+      network_id:          cc.network,
     }
     resp = post "clusters", body
     Cluster.from_json resp.body
