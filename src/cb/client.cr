@@ -171,7 +171,7 @@ class CB::Client
   # https://crunchybridgeapi.docs.apiary.io/#reference/0/clusters/post
   def create_cluster(cc)
     body = {
-      ha:            cc.ha,
+      is_ha:         cc.ha,
       major_version: 13,
       name:          cc.name,
       plan_id:       cc.plan,
