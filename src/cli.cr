@@ -97,7 +97,7 @@ op = OptionParser.new do |parser|
   parser.on("create", "Create a new cluster") do
     action = create = CB::ClusterCreate.new(PROG.client)
     parser.banner = <<-EOB
-      Usage: cb create <--platform|-p> <--region|-r> <--plan> <--team|-t> [--size|-s] [--name|-n] [--ha] [--network]
+      Usage: cb create <--platform|-p> <--region|-r> <--plan> <--team|-t> [--size|-s] [--name|-n] [--version|-v] [--ha] [--network]
              cb create --fork ID [--at] [--platform|-p] [--region|-r] [--plan] [--size|-s] [--name|-n] [--ha] [--network]
              cb create --replica ID [--platform|-p] [--region|-r] [--plan] [--name|-n] [--network]
     EOB
@@ -107,6 +107,7 @@ op = OptionParser.new do |parser|
     parser.on("-n NAME", "--name NAME", "Cluster name (default: Cluster date+time)") { |arg| create.name = arg }
     parser.on("-p NAME", "--platform NAME", "Cloud provider") { |arg| create.platform = arg }
     parser.on("-r NAME", "--region NAME", "Region/Location") { |arg| create.region = arg }
+    parser.on("-v VERSION", "--version VERSION", "Postgres version (default: 13)") { |arg| create.postgres_version = arg }
     parser.on("-s GiB", "--storage GiB", "Storage size (default: 100GiB, or same as source)") { |arg| create.storage = arg }
     parser.on("-t ID", "--team ID", "Team") { |arg| create.team = arg }
     parser.on("--network network", "Network") { |arg| create.network = arg }

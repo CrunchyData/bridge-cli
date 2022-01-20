@@ -144,6 +144,7 @@ class CB::Program
       "state"    => c.state,
       "created"  => c.created_at.to_rfc3339,
       "plan"     => "#{c.plan_id} (#{c.memory}GiB ram, #{c.cpu}vCPU)",
+      "version"  => c.major_version,
       "storage"  => "#{c.storage}GiB",
       "ha"       => (c.is_ha ? "on" : "off"),
       "platform" => c.provider_id,

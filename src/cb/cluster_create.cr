@@ -5,6 +5,7 @@ class CB::ClusterCreate < CB::Action
   property name : String?
   property plan : String?
   property platform : String?
+  property postgres_version : Int32?
   property region : String?
   property storage : Int32?
   property team : String?
@@ -28,6 +29,7 @@ class CB::ClusterCreate < CB::Action
       self.storage ||= source.storage
       self.plan ||= source.plan_id
     else
+      self.postgres_version ||= 13
       self.storage ||= 100
       self.name ||= "Cluster #{Time.utc.to_s("%F %H_%M_%S")}"
     end
@@ -85,6 +87,12 @@ class CB::ClusterCreate < CB::Action
     str = "azure" if str == "azr"
     raise_arg_error "platform", str unless str == "azure" || str == "gcp" || str == "aws"
     @platform = str
+  end
+
+  def postgres_version=(str : String)
+    self.postgres_version = str.to_i_cb
+  rescue ArgumentError
+    raise_arg_error "postgres_version", str
   end
 
   def region=(str : String)
