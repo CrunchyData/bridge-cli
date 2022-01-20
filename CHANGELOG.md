@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   connect.
 - `cb scope` can take `--database` to specify the name of the database to
   connect.
+- `cb create` can take `--version` to specify the major postgres version of the
+  new cluster. 
 
 ### Fixed
 - The --ha flag for `cb create` now actually works

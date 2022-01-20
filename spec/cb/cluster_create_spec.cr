@@ -163,6 +163,16 @@ describe CB::ClusterCreate do
     cc.plan.should eq "my-plan3"
   end
 
+  it "checks postgres_version input" do
+    cc = make_cc
+    msg = /Invalid postgres_version/
+
+    expect_cb_error(msg) { cc.postgres_version = "<ok" }
+
+    cc.postgres_version = 14
+    cc.postgres_version.should eq 14
+  end
+
   context "fork" do
     it "fills in defaults from the source cluster" do
       cc = make_cc

@@ -90,6 +90,7 @@ describe CB::Completion do
     result.should have_option "--replica"
     result.should have_option "--help"
     result.should have_option "--network"
+    result.should have_option "--version"
 
     result = parse("cb create --fork ")
     result.should have_option "abc"
@@ -100,6 +101,7 @@ describe CB::Completion do
     result.should_not have_option "--team"
     result.should_not have_option "--fork"
     result.should_not have_option "--replica"
+    result.should_not have_option "--version"
 
     result = parse("cb create --fork abc --at ")
     result.should eq([] of String)
@@ -113,6 +115,7 @@ describe CB::Completion do
     result.should_not have_option "--team"
     result.should_not have_option "--fork"
     result.should_not have_option "--replica"
+    result.should_not have_option "--version"
 
     result = parse("cb create -p ")
     result.should_not have_option "--platform"
@@ -218,6 +221,22 @@ describe CB::Completion do
 
     result = parse("cb create --name \"some name\" -s  ")
     result.should have_option "512"
+
+    result = parse("cb create --version ")
+    result.should eq [] of String
+
+    result = parse("cb create -v ")
+    result.should eq [] of String
+
+    result = parse("cb create --version 14 ")
+    result.should_not be_empty
+    result.should_not have_option "--version"
+    result.should_not have_option "-v"
+
+    result = parse("cb create -v 14 ")
+    result.should_not be_empty
+    result.should_not have_option "--version"
+    result.should_not have_option "-v"
   end
 
   it "firewall" do
