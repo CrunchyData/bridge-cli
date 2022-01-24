@@ -102,7 +102,7 @@ describe CB::Completion do
     result.should_not have_option "--replica"
 
     result = parse("cb create --fork abc --at ")
-    result.should eq ([] of String)
+    result.should eq([] of String)
 
     result = parse("cb create --replica ")
     result.should have_option "abc"
@@ -133,13 +133,13 @@ describe CB::Completion do
     result.should have_option "--plan"
 
     result = parse("cb create --network ")
-    result.should eq ([] of String)
+    result.should eq([] of String)
 
     result = parse("cb create --region ")
-    result.should eq ([] of String)
+    result.should eq([] of String)
 
     result = parse("cb create --plan ")
-    result.should eq ([] of String)
+    result.should eq([] of String)
 
     result = parse("cb create --platform aws --region ")
     result.should_not have_option "--plan"
@@ -162,7 +162,7 @@ describe CB::Completion do
     result.should have_option "westus"
 
     result = parse("cb create --platform lol --region ")
-    result.should eq ([] of String)
+    result.should eq([] of String)
 
     result = parse("cb create --platform aws -r us-west-2 ")
     result.should have_option "--plan"
