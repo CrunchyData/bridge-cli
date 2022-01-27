@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `cb create` can take `--version` to specify the major postgres version of the
   new cluster. 
 
+### Changed
+- `cb teams` now only shows your highest permission. "Administrator" is now "Admin"
+
 ### Fixed
 - The --ha flag for `cb create` now actually works
 
