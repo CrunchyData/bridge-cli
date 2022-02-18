@@ -5,10 +5,11 @@ module CB
     Log   = ::Log.for("Action")
     Error = Program::Error
 
+    property input : IO
     property output : IO
     getter client
 
-    def initialize(@client : Client, @output = STDOUT)
+    def initialize(@client : Client, @input = STDIN, @output = STDOUT)
     end
 
     def call

@@ -14,11 +14,6 @@ class CB::ClusterCreate < CB::Action
   property fork : String?
   property at : Time?
 
-  property output : IO
-
-  def initialize(@client : Client, @output = STDOUT)
-  end
-
   def pre_validate
     if (id = fork || replica)
       source = client.get_cluster id

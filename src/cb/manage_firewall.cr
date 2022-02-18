@@ -1,13 +1,9 @@
 class CB::ManageFirewall < CB::Action
   Error = Program::Error
 
-  property output : IO
   property cluster_id : String?
   property to_add = [] of String
   property to_remove = [] of String
-
-  def initialize(@client : Client, @output = STDOUT)
-  end
 
   def add(cidr : String)
     to_add << cidr
