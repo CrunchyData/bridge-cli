@@ -20,7 +20,7 @@ Raven.configure do |config|
       47, 53, 56, 51, 49, 51, 51, 49,
     ])
   {% end %}
-  config.release = CB::VERSION_STR
+  config.release = CB::VERSION
   config.server_name = PROG.host
 end
 
