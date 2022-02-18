@@ -386,4 +386,12 @@ describe CB::Completion do
     result = parse("cb scope --cluster abc --database ")
     result.should_not have_option "--database"
   end
+
+  it "completes restart" do
+    result = parse("cb restart ")
+    result.should eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb restart abc ")
+    result.should have_option "--confirm"
+  end
 end

@@ -46,6 +46,8 @@ class CB::Completion
         return logdest
       when "psql"
         return psql
+      when "restart"
+        return restart_cluster
       when "teamcert"
         return teams
       when "scope"
@@ -71,6 +73,7 @@ class CB::Completion
       "uri\tConnection uri",
       "create\tProvision a new cluster",
       "destroy\tDestroy a cluster",
+      "restart\tRestart a cluster",
       "firewall\tManage firewall rules",
       "psql\tInteractive psql console",
       "logdest\tManage log destinations",
@@ -302,6 +305,18 @@ class CB::Completion
     return suggest
   end
 
+  def restart_cluster
+    return cluster_suggestions if @args.size == 2
+
+    if last_arg?("--confirm")
+      [] of String
+    end
+
+    suggest = [] of String
+    suggest << "--confirm\tconfirm cluster restart" unless has_full_flag? :confirm
+    return suggest
+  end
+
   def scope
     return ["--cluster\tcluster id"] if @args.size == 2
 
@@ -365,6 +380,7 @@ class CB::Completion
     full << :replica if has_full_flag? "--replica"
     full << :network if has_full_flag? "--network"
     full << :version if has_full_flag? "--version", "-v"
+    full << :confirm if has_full_flag? "--confirm"
     return full
   end
 

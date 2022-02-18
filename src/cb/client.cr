@@ -205,6 +205,10 @@ class CB::Client
     delete "clusters/#{id}"
   end
 
+  def restart_cluster(id)
+    put "clusters/#{id}/restart", ""
+  end
+
   jrecord Plan, id : String, display_name : String
   jrecord Region, id : String, display_name : String, location : String
   jrecord Provider, id : String, display_name : String,
