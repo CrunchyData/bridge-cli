@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `cb restart` command added to restart clusters.
 
 ## [1.1.0] - 2022-01-27
 ### Added
@@ -13,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `cb scope` can take `--database` to specify the name of the database to
   connect.
 - `cb create` can take `--version` to specify the major postgres version of the
-  new cluster. 
+  new cluster.
 
 ### Changed
 - `cb teams` now only shows your highest permission. "Administrator" is now "Admin"

@@ -127,6 +127,19 @@ op = OptionParser.new do |parser|
     end
   end
 
+  parser.on("restart", "Restart a cluster") do
+    action = restart = CB::Restart.new PROG.client
+    parser.banner = "Usage: cb restart <cluster id> [--confirm]"
+
+    parser.on("--confirm", "Confirm cluster restart") do
+      restart.confirmed = true
+    end
+
+    parser.unknown_args do |args|
+      restart.cluster_id = get_id_arg.call(args)
+    end
+  end
+
   parser.on("scope", "Run diagnostic queries on a cluster") do
     parser.banner = "Usage: cb scope <--cluster> [--(check),...]"
     action = scope = CB::Scope.new PROG.client
