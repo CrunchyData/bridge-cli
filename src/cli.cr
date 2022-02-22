@@ -127,6 +127,19 @@ op = OptionParser.new do |parser|
     end
   end
 
+  parser.on("detach", "Detach a cluster") do
+    action = detach = CB::Detach.new PROG.client
+    parser.banner = "Usage: cb detach <cluster id>"
+
+    parser.on("--confirm", "Confirm cluster detach") do
+      detach.confirmed = true
+    end
+
+    parser.unknown_args do |args|
+      detach.cluster_id = get_id_arg.call(args)
+    end
+  end
+
   parser.on("restart", "Restart a cluster") do
     action = restart = CB::Restart.new PROG.client
     parser.banner = "Usage: cb restart <cluster id> [--confirm]"

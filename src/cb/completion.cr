@@ -46,8 +46,8 @@ class CB::Completion
         return logdest
       when "psql"
         return psql
-      when "restart"
-        return restart_cluster
+      when "restart", "detach"
+        return restart_or_detach
       when "teamcert"
         return teams
       when "scope"
@@ -73,6 +73,7 @@ class CB::Completion
       "uri\tConnection uri",
       "create\tProvision a new cluster",
       "destroy\tDestroy a cluster",
+      "detach\tDetach a cluster",
       "restart\tRestart a cluster",
       "firewall\tManage firewall rules",
       "psql\tInteractive psql console",
@@ -305,7 +306,10 @@ class CB::Completion
     return suggest
   end
 
-  def restart_cluster
+  # `restart and `detach` are the only commands that offer `--confirm` as their
+  # own option (other than `--help`). If that expands to other commands, then
+  # perhaps we'll need to refactor this one a little to be more 'general'.
+  def restart_or_detach
     return cluster_suggestions if @args.size == 2
 
     if last_arg?("--confirm")
@@ -313,7 +317,7 @@ class CB::Completion
     end
 
     suggest = [] of String
-    suggest << "--confirm\tconfirm cluster restart" unless has_full_flag? :confirm
+    suggest << "--confirm\tconfirm cluster #{@args.first}" unless has_full_flag? :confirm
     return suggest
   end
 
