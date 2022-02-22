@@ -176,6 +176,10 @@ class CB::Client
     Cluster.from_json resp.body
   end
 
+  def detach_cluster(id)
+    put "clusters/#{id}/detach", ""
+  end
+
   # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridforks/post
   def fork_cluster(cc)
     resp = post "clusters/#{cc.fork}/forks", {

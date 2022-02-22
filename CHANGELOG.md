@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- `cb detach` command added to detach clusters.
 - `cb restart` command added to restart clusters.
 
 ## [1.1.0] - 2022-01-27

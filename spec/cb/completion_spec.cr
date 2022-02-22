@@ -394,4 +394,12 @@ describe CB::Completion do
     result = parse("cb restart abc ")
     result.should have_option "--confirm"
   end
+
+  it "completes detach" do
+    result = parse("cb detach ")
+    result.should eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb detach abc ")
+    result.should have_option "--confirm"
+  end
 end
