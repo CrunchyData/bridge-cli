@@ -50,6 +50,8 @@ class CB::Completion
         return restart_or_detach
       when "teamcert"
         return teams
+      when "upgrade"
+        return upgrade
       when "scope"
         return scope
       else
@@ -340,6 +342,79 @@ class CB::Completion
     suggest << "--suite\tRun predefined scopes" unless @args.includes? "--suite"
     suggest << "--database\tName of database" unless @args.includes? "--database"
 
+    return suggest
+  end
+
+  def upgrade
+    case @args[1]
+    when "cancel"
+      upgrade_cancel
+    when "status"
+      upgrade_status
+    when "start"
+      upgrade_start
+    else
+      [
+        "start\tstart cluster upgrade",
+        "cancel\tcancel cluster upgrade",
+        "status\tshow status of cluster upgrade",
+      ]
+    end
+  end
+
+  def upgrade_cancel
+    return ["--cluster\tcluster id"] if @args.size == 3
+
+    cluster = find_arg_value "--cluster"
+
+    if last_arg? "--cluster"
+      return cluster.nil? ? cluster_suggestions : [] of String
+    end
+
+    [] of String
+  end
+
+  def upgrade_status
+    return ["--cluster\tcluster id"] if @args.size == 3
+
+    cluster = find_arg_value "--cluster"
+
+    if last_arg? "--cluster"
+      return cluster.nil? ? cluster_suggestions : [] of String
+    end
+
+    [] of String
+  end
+
+  def upgrade_start
+    if last_arg? "--cluster"
+      return cluster_suggestions
+    end
+
+    if last_arg? "--plan"
+      cluster_id = find_arg_value "--cluster"
+      cluster = client.get_cluster cluster_id
+      return plan(cluster.provider_id)
+    end
+
+    if last_arg? "--ha"
+      return ["true", "false"]
+    end
+
+    if last_arg? "-v", "--version"
+      return [] of String
+    end
+
+    storage_suggest.tap { |s| return s if s }
+
+    suggest = [] of String
+    suggest << "--help\tshow help" if args.size == 3
+    suggest << "--cluster\tcluster id" unless has_full_flag? :cluster
+    suggest << "--confirm\tconfirm upgrade" unless has_full_flag? :confirm
+    suggest << "--ha\thigh availability" unless has_full_flag? :ha
+    suggest << "--plan\tplan" unless has_full_flag? :plan
+    suggest << "--storage\tsize in GiB" unless has_full_flag? :storage
+    suggest << "--version\tpostgres major version" unless has_full_flag? :version
     return suggest
   end
 

@@ -88,6 +88,9 @@ class CB::Client
     Account.from_json resp.body
   end
 
+  # Upgrade operation.
+  jrecord Operation, flavor : String, state : String
+
   jrecord Team, id : String, name : String, is_personal : Bool, role : String? do
     def name
       is_personal ? "personal" : @name
@@ -193,6 +196,27 @@ class CB::Client
       network_id:  cc.network,
     }
     Cluster.from_json resp.body
+  end
+
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridupgrade/upgrade-cluster
+  def upgrade_cluster(uc)
+    resp = post "clusters/#{uc.cluster_id}/upgrade", {
+      is_ha:               uc.ha,
+      plan_id:             uc.plan,
+      postgres_version_id: uc.postgres_version,
+      storage:             uc.storage,
+    }
+    Array(Operation).from_json resp.body, root: "operations"
+  end
+
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridupgrade/get-upgrade-status
+  def upgrade_cluster_status(id)
+    resp = get "clusters/#{id}/upgrade"
+    Array(Operation).from_json resp.body, root: "operations"
+  end
+
+  def upgrade_cluster_cancel(id)
+    delete "clusters/#{id}/upgrade"
   end
 
   def replicate_cluster(cc)
