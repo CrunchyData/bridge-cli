@@ -402,4 +402,61 @@ describe CB::Completion do
     result = parse("cb detach abc ")
     result.should have_option "--confirm"
   end
+
+  it "completes upgrade" do
+    # cb upgrade
+    result = parse("cb upgrade ")
+    result.should have_option "start"
+    result.should have_option "status"
+    result.should have_option "cancel"
+
+    result = parse("cb upgrade sta")
+    result.should have_option "start"
+    result.should have_option "status"
+
+    # cb upgrade start
+    result = parse("cb upgrade start ")
+    result.should have_option "--cluster"
+    result.should have_option "--ha"
+    result.should have_option "--plan"
+    result.should have_option "--storage"
+    result.should have_option "--version"
+
+    result = parse("cb upgrade start --cluster ")
+    result.should eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb upgrade start --cluster abc ")
+    result.should_not have_option "--cluster"
+    result.should have_option "--ha"
+    result.should have_option "--plan"
+    result.should have_option "--storage"
+    result.should have_option "--version"
+
+    result = parse("cb upgrade start --ha true ")
+    result.should have_option "--cluster"
+    result.should_not have_option "--ha"
+
+    # cb upgrade cancel
+    result = parse("cb upgrade c")
+    result.should have_option "cancel"
+
+    result = parse("cb upgrade cancel ")
+    result.should have_option "--cluster"
+
+    result = parse("cb upgrade cancel --cluster ")
+    result.should eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb upgrade cancel --cluster abc ")
+    result.should eq [] of String
+
+    # cb upgrade status
+    result = parse("cb upgrade status ")
+    result.should have_option "--cluster"
+
+    result = parse("cb upgrade status --cluster ")
+    result.should eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb upgrade status --cluster abc ")
+    result.should eq [] of String
+  end
 end

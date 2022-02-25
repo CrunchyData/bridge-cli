@@ -119,6 +119,39 @@ op = OptionParser.new do |parser|
     parser.on("--at TIME", "Recovery point-in-time in RFC3339 (default: now)") { |arg| create.at = arg }
   end
 
+  # Cluster Upgrade
+  parser.on("upgrade", "Manage a cluster upgrades") do
+    parser.on("start", "Start a cluster upgrade") do
+      action = upgrade = CB::UpgradeStart.new PROG.client
+      parser.banner = "Usage: cb upgrade start <--cluster>"
+
+      parser.on("--cluster ID", "Choose cluster") { |arg| upgrade.cluster_id = arg }
+      parser.on("--ha <true|false>", "High Availability") { |arg| upgrade.ha = arg }
+      parser.on("-v VERSION", "--version VERSION", "Postgres major version") { |arg| upgrade.postgres_version = arg }
+      parser.on("--plan NAME", "Plan (server vCPU+memory)") { |arg| upgrade.plan = arg }
+      parser.on("-s GiB", "--storage GiB", "Storage size") { |arg| upgrade.storage = arg }
+      parser.on("--confirm", "Confirm cluster restart") do
+        upgrade.confirmed = true
+      end
+    end
+
+    parser.on("cancel", "Cancel a cluster upgrade") do
+      action = upgrade = CB::UpgradeCancel.new PROG.client
+      parser.banner = "Usage: cb upgrade cancel <--cluster>"
+
+      parser.on("--cluster ID", "Choose cluster") { |arg| upgrade.cluster_id = arg }
+    end
+
+    parser.on("status", "Show cluster upgrade status") do
+      action = upgrade = CB::UpgradeStatus.new PROG.client
+      parser.banner = "Usage: cb upgrade status <--cluster>"
+
+      parser.on("--cluster ID", "Choose cluster") { |arg| upgrade.cluster_id = arg }
+    end
+
+    parser
+  end
+
   parser.on("destroy", "Destroy a cluster") do
     parser.banner = "Usage: cb destroy <cluster id>"
     parser.unknown_args do |args|

@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- `cb upgrade` command added to upgrade clusters. Supports `start`, `cancel` and
+  `status` sub-commands.
 - `cb detach` command added to detach clusters.
 - `cb restart` command added to restart clusters.
 
