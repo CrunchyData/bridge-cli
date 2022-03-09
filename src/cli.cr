@@ -57,22 +57,24 @@ op = OptionParser.new do |parser|
 
   parser.on("list", "List clusters") do
     parser.banner = "Usage: cb list"
-    action = ->{ PROG.list_clusters }
+    action = CB::List.new PROG.client
   end
 
   parser.on("info", "Detailed cluster information") do
     parser.banner = "Usage: cb info <cluster id>"
+    action = info = CB::ClusterInfo.new PROG.client
+
     parser.unknown_args do |args|
-      id = get_id_arg.call(args)
-      action = ->{ PROG.info id }
+      info.cluster_id = get_id_arg.call(args)
     end
   end
 
   parser.on("uri", "Display default connection URI for a cluster") do
     parser.banner = "Usage: cb uri <cluster id>"
+    action = uri = CB::ClusterURI.new PROG.client
+
     parser.unknown_args do |args|
-      id = get_id_arg.call(args)
-      action = ->{ PROG.uri id }
+      uri.cluster_id = get_id_arg.call(args)
     end
   end
 
@@ -154,9 +156,10 @@ op = OptionParser.new do |parser|
 
   parser.on("destroy", "Destroy a cluster") do
     parser.banner = "Usage: cb destroy <cluster id>"
+    action = destroy = CB::ClusterDestroy.new PROG.client
+
     parser.unknown_args do |args|
-      id = get_id_arg.call(args)
-      action = ->{ PROG.destroy_cluster id }
+      destroy.cluster_id = get_id_arg.call(args)
     end
   end
 
@@ -226,14 +229,15 @@ op = OptionParser.new do |parser|
 
   parser.on("teams", "List teams you belong to") do
     parser.banner = "Usage: cb teams"
-    action = ->{ PROG.teams }
+    action = CB::TeamList.new PROG.client
   end
 
   parser.on("teamcert", "Show public TLS cert for a team") do
     parser.banner = "Usage: cb teamcert <team id>"
+    action = teamcert = CB::TeamCert.new PROG.client
+
     parser.unknown_args do |args|
-      id = get_id_arg.call(args)
-      action = ->{ PROG.team_cert id }
+      teamcert.team_id = get_id_arg.call(args)
     end
   end
 
