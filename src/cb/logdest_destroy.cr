@@ -2,8 +2,8 @@ require "./action"
 
 module CB
   class LogdestDestroy < Action
-    property cluster_id : String?
-    property logdest_id : String?
+    eid_setter cluster_id
+    eid_setter logdest_id
 
     def run
       check_required_args do |missing|
@@ -13,16 +13,6 @@ module CB
 
       client.destroy_logdest cluster_id, logdest_id
       output.puts "log destination destroyed"
-    end
-
-    def cluster_id=(str : String)
-      raise_arg_error "cluster id", str unless str =~ EID_PATTERN
-      @cluster_id = str
-    end
-
-    def logdest=(str : String)
-      raise_arg_error "logdest id", str unless str =~ EID_PATTERN
-      @logdest_id = str
     end
   end
 end

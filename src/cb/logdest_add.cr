@@ -2,9 +2,9 @@ require "./action"
 
 module CB
   class LogdestAdd < Action
-    property cluster_id : String?
+    eid_setter cluster_id
+    i32_setter port
     property host : String?
-    property port : Int32?
     property template : String?
     property desc : String?
 
@@ -22,18 +22,6 @@ module CB
         missing << "host" unless host
         missing << "template" unless template
       end
-    end
-
-    def cluster_id=(str : String)
-      raise_arg_error "cluster id", str unless str =~ EID_PATTERN
-      @cluster_id = str
-    end
-
-    def port=(str : String)
-      i = str.to_i_cb
-      self.port = i
-    rescue ArgumentError
-      raise_arg_error "port", str
     end
 
     def port=(i : Int32)

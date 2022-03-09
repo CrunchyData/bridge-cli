@@ -45,9 +45,3 @@ class URI
     parse pull.read_string
   end
 end
-
-class String
-  def to_i_cb
-    to_i(base: 10, whitespace: true, underscore: true, prefix: false, strict: true, leading_zero_is_octal: false)
-  end
-end

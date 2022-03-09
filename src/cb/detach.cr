@@ -1,7 +1,7 @@
 require "./action"
 
 class CB::Detach < CB::Action
-  property cluster_id : String?
+  eid_setter cluster_id
   property confirmed : Bool = false
 
   def run
@@ -27,10 +27,5 @@ class CB::Detach < CB::Action
     check_required_args do |missing|
       missing << "cluster" unless cluster_id
     end
-  end
-
-  def cluster_id=(str : String)
-    raise_arg_error "cluster_id", str unless str =~ EID_PATTERN
-    @cluster_id = str
   end
 end

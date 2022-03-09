@@ -1,7 +1,7 @@
 class CB::ManageFirewall < CB::Action
   Error = Program::Error
 
-  property cluster_id : String?
+  eid_setter cluster_id
   property to_add = [] of String
   property to_remove = [] of String
 

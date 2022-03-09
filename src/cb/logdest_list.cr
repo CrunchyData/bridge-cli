@@ -2,7 +2,7 @@ require "./action"
 
 module CB
   class LogdestList < Action
-    property cluster_id : String?
+    eid_setter cluster_id
 
     def run
       check_required_args { |missing| missing << "cluster" unless cluster_id }

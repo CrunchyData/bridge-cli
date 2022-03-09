@@ -1,7 +1,7 @@
 require "./action"
 
 abstract class CB::Upgrade < CB::Action
-  property cluster_id : String?
+  eid_setter cluster_id
   property confirmed : Bool = false
 
   abstract def run
@@ -11,18 +11,13 @@ abstract class CB::Upgrade < CB::Action
       missing << "cluster" unless cluster_id
     end
   end
-
-  def cluster_id=(str : String)
-    raise_arg_error "cluster id", str unless str =~ EID_PATTERN
-    @cluster_id = str
-  end
 end
 
 # Action to start cluster upgrade.
 class CB::UpgradeStart < CB::Upgrade
-  property ha : Bool?
-  property postgres_version : Int32?
-  property storage : Int32?
+  bool_setter ha
+  i32_setter postgres_version
+  i32_setter storage
   property plan : String?
 
   def run
@@ -44,29 +39,6 @@ class CB::UpgradeStart < CB::Upgrade
 
     client.upgrade_cluster self
     output.puts "  Cluster #{c.id.colorize.t_id} upgrade started."
-  end
-
-  def ha=(str : String)
-    case str.downcase
-    when "true"
-      self.ha = true
-    when "false"
-      self.ha = false
-    else
-      raise_arg_error "ha", str
-    end
-  end
-
-  def postgres_version=(str : String)
-    self.postgres_version = str.to_i_cb
-  rescue ArgumentError
-    raise_arg_error "postgres_version", str
-  end
-
-  def storage=(str : String)
-    self.storage = str.to_i_cb
-  rescue ArgumentError
-    raise_arg_error "storage", str
   end
 end
 

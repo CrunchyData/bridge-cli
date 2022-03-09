@@ -1,7 +1,7 @@
 require "./action"
 
 class CB::Psql < CB::Action
-  property cluster_id : String?
+  eid_setter cluster_id
   property database : String?
 
   def run
@@ -28,11 +28,6 @@ class CB::Psql < CB::Action
       "PGSSLMODE"     => "verify-ca",
       "PGSSLROOTCERT" => cert_path,
     })
-  end
-
-  def cluster_id=(str : String)
-    raise_arg_error "cluster id", str unless str =~ EID_PATTERN
-    @cluster_id = str
   end
 
   def database=(str : String)
