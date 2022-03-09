@@ -80,16 +80,16 @@ module CB
       true
     end
 
-    private def print_team_slash_cluster(c, io : IO)
+    private def print_team_slash_cluster(c)
       team_name = team_name_for_cluster c
-      io << team_name << "/" if team_name
-      io << c.name.colorize.t_name << "\n"
+      output << team_name << "/" if team_name
+      output << c.name.colorize.t_name << "\n"
       team_name
     end
 
     private def team_name_for_cluster(c)
-      # no way to look up a single team yet
-      client.get_teams.find { |t| t.id == c.team_id }.try &.name.colorize.t_alt
+      team = client.get_team c.team_id
+      team.name.colorize.t_alt
     end
   end
 end

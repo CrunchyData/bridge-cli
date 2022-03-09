@@ -5,7 +5,7 @@ class CB::ClusterInfo < CB::Action
 
   def run
     c = client.get_cluster cluster_id
-    print_team_slash_cluster c, output
+    print_team_slash_cluster c
 
     details = {
       "state"    => c.state,
