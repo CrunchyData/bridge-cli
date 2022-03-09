@@ -21,6 +21,15 @@ private class ClusterUpgradeTestClient < CB::Client
     )
   end
 
+  def get_team(id : String)
+    Team.new(
+      id: "teamid",
+      name: "",
+      is_personal: true,
+      role: "admin",
+    )
+  end
+
   def get_cluster(id : String)
     ClusterDetail.new(
       id: id,

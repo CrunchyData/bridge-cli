@@ -97,9 +97,16 @@ class CB::Client
     end
   end
 
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/teams/list-teams
   def get_teams
     resp = get "teams"
     Array(Team).from_json resp.body, root: "teams"
+  end
+
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/teamsteamid/get-team
+  def get_team(team_id : String)
+    resp = get "teams/#{team_id}"
+    Team.from_json resp.body
   end
 
   jrecord Cluster, id : String, team_id : String, name : String,
