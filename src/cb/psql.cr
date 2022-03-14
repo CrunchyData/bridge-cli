@@ -11,7 +11,7 @@ class CB::Psql < CB::Action
     database.tap { |db| uri.path = db if db }
 
     output << "connecting to "
-    team_name = print_team_slash_cluster c, output
+    team_name = print_team_slash_cluster c
 
     cert_path = ensure_cert c.team_id
     psqlrc_path = build_psqlrc c, team_name
@@ -62,17 +62,5 @@ class CB::Psql < CB::Action
     end
 
     psqlrc.path.to_s
-  end
-
-  private def print_team_slash_cluster(c, io : IO)
-    team_name = team_name_for_cluster c
-    io << team_name << "/" if team_name
-    io << c.name.colorize.t_name << "\n"
-    team_name
-  end
-
-  private def team_name_for_cluster(c)
-    # no way to look up a single team yet
-    client.get_teams.find { |t| t.id == c.team_id }.try &.name.colorize.t_alt
   end
 end
