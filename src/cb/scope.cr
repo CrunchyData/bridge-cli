@@ -37,7 +37,3 @@ class CB::Scope < CB::Action
     end
   end
 end
-
-def database=(str : String)
-  @database = str
-end
