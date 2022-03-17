@@ -28,12 +28,20 @@ class CB::Client
       end
     end
 
-    def unauthorized?
-      resp.status == HTTP::Status::UNAUTHORIZED
+    def bad_request?
+      resp.status == HTTP::Status::BAD_REQUEST
+    end
+
+    def forbidden?
+      resp.status == HTTP::Status::FORBIDDEN
     end
 
     def not_found?
       resp.status == HTTP::Status::NOT_FOUND
+    end
+
+    def unauthorized?
+      resp.status == HTTP::Status::UNAUTHORIZED
     end
   end
 
