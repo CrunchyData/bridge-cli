@@ -34,8 +34,10 @@ class IO
 end
 
 macro jrecord(name, *properties)
+  @[JSON::Serializable::Options(emit_nulls: true)]
   record({{name}}, {{*properties}}) do
     include JSON::Serializable
+
     {{yield}}
   end
 end
