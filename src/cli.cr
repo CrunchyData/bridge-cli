@@ -73,9 +73,11 @@ op = OptionParser.new do |parser|
     end
   end
 
-  parser.on("uri", "Display default connection URI for a cluster") do
-    parser.banner = "Usage: cb uri <cluster id>"
+  parser.on("uri", "Display connection URI for a cluster") do
+    parser.banner = "Usage: cb uri <cluster id> [--role]"
     uri = set_action ClusterURI
+
+    parser.on("--role NAME", "Role name (default: default)") { |arg| uri.role_name = arg }
 
     parser.unknown_args do |args|
       uri.cluster_id = get_id_arg.call(args)
@@ -228,6 +230,33 @@ op = OptionParser.new do |parser|
       parser.banner = "Usage: cb logdest destroy <--cluster> <--logdest>"
       parser.on("--cluster ID", "Choose cluster") { |arg| destroy.cluster_id = arg }
       parser.on("--logdest ID", "Choose log destination") { |arg| destroy.logdest_id = arg }
+    end
+  end
+
+  # Cluster Role Management
+  parser.on("role", "Manage cluster roles") do
+    parser.banner = "Usage: cb role <create|update|destroy>"
+
+    parser.on("create", "Create new role for a cluster") do
+      create = set_action RoleCreate
+      parser.banner = "Usage: cb role create <--cluster>"
+      parser.on("--cluster ID", "Choose cluster") { |arg| create.cluster_id = arg }
+    end
+
+    parser.on("update", "Update a cluster role") do
+      update = set_action RoleUpdate
+      parser.banner = "Usage: cb role update <--cluster> <--name> [--mode] [--rotate-password]"
+      parser.on("--cluster ID", "Choose cluster") { |arg| update.cluster_id = arg }
+      parser.on("--name NAME", "Role name") { |arg| update.role_name = arg }
+      parser.on("--read-only <true|false>", "Read-only") { |arg| update.read_only = arg }
+      parser.on("--rotate-password <true|false>", "Rotate password") { |arg| update.rotate_password = arg }
+    end
+
+    parser.on("destroy", "Destroy a cluster role") do
+      destroy = set_action RoleDelete
+      parser.banner = "Usage: cb role destroy <--cluster> <--name>"
+      parser.on("--cluster ID", "Choose cluster") { |arg| destroy.cluster_id = arg }
+      parser.on("--name NAME", "Role name") { |arg| destroy.role_name = arg }
     end
   end
 

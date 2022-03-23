@@ -49,10 +49,27 @@ module CB
       end
     end
 
-    # Not: unlike the other macros, this one does not create a nilable boolean,
+    # Note: unlike the other macros, this one does not create a nilable boolean,
     # and instead creates one that defaults to false
     macro bool_setter(property)
       property {{property}} : Bool = false
+
+      def {{property}}=(str : String)
+        case str.downcase
+        when "true"
+          self.{{property}} = true
+        when "false"
+          self.{{property}} = false
+        else
+          raise_arg_error {{property.stringify}}, str
+        end
+      end
+    end
+
+    # Nilable boolean setter. This is useful for fields where nil can have a
+    # meaningful value beyond being falesy.
+    macro bool_setter?(property)
+      property {{property}} : Bool?
 
       def {{property}}=(str : String)
         case str.downcase
