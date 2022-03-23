@@ -6,7 +6,8 @@ class CB::Psql < CB::Action
 
   def run
     c = client.get_cluster cluster_id
-    uri = client.get_cluster_default_role(cluster_id).uri
+    uri = client.get_role(cluster_id, "default").uri
+    raise Error.new "null uri" if uri.nil?
 
     database.tap { |db| uri.path = db if db }
 

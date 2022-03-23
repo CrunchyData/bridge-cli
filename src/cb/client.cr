@@ -169,13 +169,6 @@ class CB::Client
     raise Program::Error.new "cluster #{id.colorize.t_id} does not exist, or you do not have access to it"
   end
 
-  jrecord Role, name : String, password : String, uri : URI
-
-  def get_cluster_default_role(id)
-    resp = get "clusters/#{id}/roles/default"
-    Role.from_json resp.body
-  end
-
   # https://crunchybridgeapi.docs.apiary.io/#reference/0/clusters/post
   def create_cluster(cc)
     body = {
@@ -297,6 +290,36 @@ class CB::Client
   def destroy_logdest(cluster_id, logdest_id)
     resp = delete "clusters/#{cluster_id}/loggers/#{logdest_id}"
     resp.body
+  end
+
+  #
+  # Cluster Roles
+  #
+
+  jrecord Role, name : String?, password : String?, uri : URI?
+
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridroles/create-role
+  def create_role(cluster_id)
+    resp = post "clusters/#{cluster_id}/roles", "{}"
+    Role.from_json resp.body
+  end
+
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridrolesrolename/get-role
+  def get_role(cluster_id, role_name)
+    resp = get "clusters/#{cluster_id}/roles/#{role_name}"
+    Role.from_json resp.body
+  end
+
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridrolesrolename/update-role
+  def update_role(cluster_id, role_name, ur)
+    resp = put "clusters/#{cluster_id}/roles/#{role_name}", ur
+    Role.from_json resp.body
+  end
+
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridrolesrolename/delete-role
+  def delete_role(cluster_id, role_name)
+    resp = delete "clusters/#{cluster_id}/roles/#{role_name}"
+    Role.from_json resp.body
   end
 
   def get(path)

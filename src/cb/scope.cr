@@ -10,7 +10,8 @@ class CB::Scope < CB::Action
   def run
     check_required_args { |missing| missing << "cluster" unless cluster_id }
 
-    uri = client.get_cluster_default_role(cluster_id).uri
+    uri = client.get_role(cluster_id, "default").uri
+    raise Error.new "null uri" if uri.nil?
 
     if database.presence
       uri.path = database.to_s
