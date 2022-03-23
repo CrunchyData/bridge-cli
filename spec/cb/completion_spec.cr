@@ -403,6 +403,64 @@ describe CB::Completion do
     result.should have_option "--confirm"
   end
 
+  it "completes role" do
+    # cb role
+    result = parse("cb role ")
+    result.should have_option "create"
+    result.should have_option "update"
+    result.should have_option "destroy"
+
+    # cb role create
+    result = parse("cb role create ")
+    result.should have_option "--cluster"
+
+    result = parse("cb role create --cluster ")
+    result.should eq ["abc\tmy team/my cluster"]
+
+    # cb role update
+    result = parse("cb role update ")
+    result.should have_option "--cluster"
+    result.should_not have_option "--name"
+    result.should_not have_option "--read-only"
+    result.should_not have_option "--rotate-password"
+
+    result = parse("cb role update --cluster ")
+    result.should eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb role update --cluster abc ")
+    result.should_not have_option "--cluster"
+    result.should have_option "--name"
+    result.should have_option "--read-only"
+    result.should have_option "--rotate-password"
+
+    # cb role destroy
+    result = parse("cb role destroy ")
+    result.should have_option "--cluster"
+    result.should_not have_option "--name"
+
+    result = parse("cb role destroy --cluster ")
+    result.should eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb role destroy --cluster abc ")
+    result.should_not have_option "--cluster"
+    result.should have_option "--name"
+
+    result = parse("cb role destroy --name ")
+    result.should_not have_option "--name"
+    result.should eq CB::VALID_CLUSTER_ROLES.to_a
+  end
+
+  it "completes uri" do
+    result = parse("cb uri ")
+    result.should eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb uri abc ")
+    result.should have_option "--role"
+
+    result = parse("cb uri abc --role ")
+    result.should eq CB::VALID_CLUSTER_ROLES.to_a
+  end
+
   it "completes upgrade" do
     # cb upgrade
     result = parse("cb upgrade ")

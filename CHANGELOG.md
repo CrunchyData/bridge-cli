@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- `cb uri` can take `--role` to specify the name of the role to retrieve.
+- `cb role` command added to manage cluster roles. Supports `create`, `update` and `destroy`.
 - `cb upgrade` command added to upgrade clusters. Supports `start`, `cancel` and
   `status` sub-commands.
 - `cb detach` command added to detach clusters.

@@ -36,7 +36,7 @@ class CB::Completion
       return top_level
     else
       case args.first
-      when "info", "destroy", "uri"
+      when "info", "destroy"
         return info
       when "create"
         return create
@@ -48,10 +48,14 @@ class CB::Completion
         return psql
       when "restart", "detach"
         return restart_or_detach
+      when "role"
+        return role
       when "teamcert"
         return teams
       when "upgrade"
         return upgrade
+      when "uri"
+        return uri
       when "scope"
         return scope
       else
@@ -246,6 +250,81 @@ class CB::Completion
     end
   end
 
+  def role
+    case @args[1]
+    when "create"
+      role_create
+    when "destroy"
+      role_destroy
+    when "update"
+      role_update
+    else
+      [
+        "create\tcreate a role for a cluster",
+        "destroy\tremove a role from a cluster",
+        "update\tupdate a role for a cluster",
+      ]
+    end
+  end
+
+  def role_create
+    return ["--cluster\tcluster id"] if @args.size == 3
+
+    cluster = find_arg_value "--cluster"
+
+    if last_arg?("--cluster")
+      return cluster.nil? ? cluster_suggestions : [] of String
+    end
+
+    [] of String
+  end
+
+  def role_destroy
+    return ["--cluster\tcluster id"] if args.size == 3
+
+    cluster = find_arg_value "--cluster"
+
+    if last_arg?("--cluster")
+      return cluster.nil? ? cluster_suggestions : [] of String
+    end
+
+    if last_arg? "--name"
+      return VALID_CLUSTER_ROLES.to_a
+    end
+
+    suggest = [] of String
+    suggest << "--name\trole name" unless has_full_flag? :name
+    return suggest
+  end
+
+  def role_update
+    return ["--cluster\tcluster id"] if args.size == 3
+
+    cluster = find_arg_value "--cluster"
+
+    if last_arg?("--cluster")
+      return cluster.nil? ? cluster_suggestions : [] of String
+    end
+
+    if last_arg? "--name"
+      return VALID_CLUSTER_ROLES.to_a
+    end
+
+    if last_arg?("--read-only")
+      return ["false", "true"]
+    end
+
+    if last_arg?("--rotate-password")
+      return ["false", "true"]
+    end
+
+    suggest = [] of String
+    suggest << "--name\trole name" unless has_full_flag? :name
+    suggest << "--rotate-password" unless has_full_flag? :rotate_password
+    suggest << "--read-only" unless has_full_flag? :read_only
+    return suggest
+  end
+
   def logdest_list
     return ["--cluster\tcluster id"] if @args.size == 3
 
@@ -418,6 +497,18 @@ class CB::Completion
     return suggest
   end
 
+  def uri
+    return cluster_suggestions if @args.size == 2
+
+    if last_arg? "--role"
+      return VALID_CLUSTER_ROLES.to_a
+    end
+
+    suggest = [] of String
+    suggest << "--role\trole name" unless has_full_flag? :role
+    return suggest
+  end
+
   def find_arg_value(arg1 : String, arg2 : String? = nil) : String?
     idx = @args.index(arg1)
     idx = @args.index(arg2) if idx.nil? && arg2
@@ -460,6 +551,9 @@ class CB::Completion
     full << :network if has_full_flag? "--network"
     full << :version if has_full_flag? "--version", "-v"
     full << :confirm if has_full_flag? "--confirm"
+    full << :read_only if has_full_flag? "--read-only"
+    full << :role if has_full_flag? "--role"
+    full << :rotate_password if has_full_flag? "--rotate-password"
     return full
   end
 
