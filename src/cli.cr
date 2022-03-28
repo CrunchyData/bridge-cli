@@ -264,7 +264,10 @@ op = OptionParser.new do |parser|
     end
   end
 
+  #
   # Cluster Role Management
+  #
+
   parser.on("role", "Manage cluster roles") do
     parser.banner = "Usage: cb role <create|update|destroy>"
 
@@ -310,7 +313,7 @@ op = OptionParser.new do |parser|
   end
 
   parser.on("token", "Return a bearer token for use in the api") do
-    parser.banner = "Usage: cb token [-h]"
+    parser.banner = "Usage: cb token [-H]"
     action = ->{ puts PROG.token.token }
     parser.on("-H", "Authorization header format") do
       action = ->{ puts "Authorization: Bearer #{PROG.token.token}" }
