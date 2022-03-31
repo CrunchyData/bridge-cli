@@ -461,6 +461,68 @@ describe CB::Completion do
     result.should eq CB::VALID_CLUSTER_ROLES.to_a
   end
 
+  it "completes team" do
+    # cb teams
+    #
+    # NOTE:
+    #  `cb teams` is deprecated. However, completion should:
+    #     1. Rewrite to `cb team`
+    #     2. Return the same suggestions as `cb team`.
+    result = parse("cb teams ")
+    result.should have_option "create"
+    result.should have_option "list"
+    result.should have_option "info"
+    result.should have_option "update"
+    result.should have_option "destroy"
+
+    # cb team
+    result = parse("cb team ")
+    result.should have_option "create"
+    result.should have_option "list"
+    result.should have_option "info"
+    result.should have_option "update"
+    result.should have_option "destroy"
+
+    # cb team create
+    result = parse("cb team create ")
+    result.should have_option "--name"
+
+    # cb team list
+    result = parse("cb team list ")
+    result.should eq [] of String
+
+    # cb team info
+    result = parse("cb team info ")
+    result.should eq ["def\tmy team"]
+
+    result = parse("cb team info def ")
+    result.should eq [] of String
+
+    # cb team update
+    result = parse("cb team update ")
+    result.should eq ["def\tmy team"]
+
+    result = parse("cb team update def ")
+    result.should have_option "--billing-email"
+    result.should have_option "--enforce-sso"
+    result.should have_option "--name"
+
+    result = parse("cb team update def --enforce-sso ")
+    result.should eq ["false", "true"]
+
+    result = parse("cb team update def --enforce-sso true ")
+    result.should_not have_option "--enforce-sso"
+    result.should have_option "--billing-email"
+    result.should have_option "--name"
+
+    # cb team destroy
+    result = parse("cb team destroy ")
+    result.should eq ["def\tmy team"]
+
+    result = parse("cb team destroy def ")
+    result.should eq [] of String
+  end
+
   it "completes upgrade" do
     # cb upgrade
     result = parse("cb upgrade ")

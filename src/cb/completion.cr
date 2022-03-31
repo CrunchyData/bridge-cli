@@ -10,6 +10,14 @@ class CB::Completion
   getter args : Array(String)
   getter full_flags : Set(Symbol)
 
+  macro suggest_none
+    return [] of String
+  end
+
+  macro suggest_bool
+    return ["false", "true"]
+  end
+
   def initialize(@client : Client?, @commandline : String)
     @args = @commandline.split(/\s+/)[1..-1]
     @full_flags = find_full_flags
@@ -50,6 +58,8 @@ class CB::Completion
         return restart_or_detach
       when "role"
         return role
+      when "team", "teams"
+        return team
       when "teamcert"
         return teams
       when "upgrade"
@@ -73,7 +83,7 @@ class CB::Completion
       "login\tStore API key",
       "token\tGet current API token",
       "list\tList clusters",
-      "teams\tList teams",
+      "team\tManage teams",
       "teamcert\tGet team public cert",
       "info\tDetailed cluster info",
       "uri\tConnection uri",
@@ -424,6 +434,80 @@ class CB::Completion
     return suggest
   end
 
+  #
+  # Team Completion.
+  #
+
+  def team
+    case @args[1]
+    when "create"
+      team_create
+    when "info"
+      team_info
+    when "list"
+      team_list
+    when "update"
+      team_update
+    when "destroy"
+      team_destroy
+    else
+      [
+        "create\tcreate a new team",
+        "list\tlist available teams",
+        "info\tshow details of a team",
+        "update\tupdate a team",
+        "destroy\tdelete a team",
+      ]
+    end
+  end
+
+  def team_create
+    if last_arg? "--name"
+      suggest_none
+    end
+
+    suggest = [] of String
+    suggest << "--name\tteam name" unless has_full_flag? :name
+    return suggest
+  end
+
+  def team_list
+    suggest_none
+  end
+
+  def team_info
+    return teams if @args.size == 3
+    suggest_none
+  end
+
+  def team_update
+    return teams if @args.size == 3
+
+    if last_arg? "--billing-email"
+      suggest_none
+    end
+
+    if last_arg? "--enforce-sso"
+      suggest_bool
+    end
+
+    if last_arg? "--name"
+      suggest_none
+    end
+
+    suggest = [] of String
+    suggest << "--billing-email\tteams billing email address" unless has_full_flag? :billing_email
+    suggest << "--enforce-sso\tenforce SSO access to team" unless has_full_flag? :enforce_sso
+    suggest << "--help\tshow help" unless has_full_flag? :help
+    suggest << "--name\tteam name" unless has_full_flag? :name
+    return suggest
+  end
+
+  def team_destroy
+    return teams if @args.size == 3
+    suggest_none
+  end
+
   def upgrade
     case @args[1]
     when "cancel"
@@ -554,6 +638,8 @@ class CB::Completion
     full << :read_only if has_full_flag? "--read-only"
     full << :role if has_full_flag? "--role"
     full << :rotate_password if has_full_flag? "--rotate-password"
+    full << :enforce_sso if has_full_flag? "--enforce-sso"
+    full << :billing_email if has_full_flag? "--billing-email"
     return full
   end
 

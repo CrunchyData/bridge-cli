@@ -14,6 +14,10 @@ macro set_action(cl)
   action = CB::{{cl}}.new PROG.client
 end
 
+def show_deprecated(msg : String)
+  printf "%s: %s\n\n", "Deprecated".colorize.t_warn, msg
+end
+
 Raven.configure do |config|
   {% if flag?(:release) %}
     config.dsn = String.new(Bytes[
@@ -255,9 +259,65 @@ op = OptionParser.new do |parser|
     end
   end
 
-  parser.on("teams", "List teams you belong to") do
+  #
+  # Team Management
+  #
+
+  parser.on("teams") do
     parser.banner = "cb teams"
     set_action TeamList
+    show_deprecated "Prefer use of 'cb team list' instead."
+  end
+
+  parser.on("team", "Manage teams") do
+    parser.banner = "cb team <command>"
+
+    parser.on("create", "Create a new team.") do
+      create = set_action TeamCreate
+      parser.banner = "cb team create <--name>"
+
+      parser.on("--name NAME", "Team name") { |arg| create.name = arg }
+    end
+
+    parser.on("list", "List available teams.") do
+      set_action TeamList
+      parser.banner = "cb team list"
+    end
+
+    parser.on("info", "Show a teams details.") do
+      info = set_action TeamInfo
+      parser.banner = "cb team info <team id>"
+
+      parser.unknown_args do |args|
+        info.team_id = get_id_arg.call(args)
+      end
+    end
+
+    parser.on("update", "Update a team.") do
+      update = set_action TeamUpdate
+      parser.banner = "cb team update <team id> [options]"
+
+      parser.on("--billing-email EMAIL", "Team billing email address.") { |arg| update.billing_email = arg }
+      parser.on("--enforce-sso <true|false>", "Enforce SSO access to team.") { |arg| update.enforce_sso = arg }
+      parser.on("--name NAME", "Name of the team.") { |arg| update.name = arg }
+
+      parser.on("--confirm", "Confirm team update.") { |arg| update.confirmed = true }
+
+      parser.unknown_args do |args|
+        update.team_id = get_id_arg.call(args)
+      end
+    end
+
+    parser.on("destroy", "Delete a team.") do
+      destroy = set_action TeamDestroy
+      parser.banner = "cb team destroy <team id> [options]"
+
+      parser.on("--confirm", "Confirm team deletion.") { destroy.confirmed = true }
+
+      parser.unknown_args do |args|
+        destroy.team_id = get_id_arg.call(args)
+      end
+    end
   end
 
   parser.on("teamcert", "Show public TLS cert for a team") do
