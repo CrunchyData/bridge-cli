@@ -69,6 +69,20 @@ op = OptionParser.new do |parser|
     end
   end
 
+  parser.on("rename", "Change cluster name") do
+    parser.banner = "cb rename <cluster id> <new name>"
+    rename = set_action ClusterRename
+
+    parser.unknown_args do |args|
+      unless args.size == 2
+        STDERR.puts parser
+        exit 1
+      end
+      rename.cluster_id = args.first
+      rename.new_name = args.last
+    end
+  end
+
   parser.on("uri", "Display connection URI for a cluster") do
     parser.banner = "cb uri <cluster id> [--role]"
     uri = set_action ClusterURI

@@ -192,7 +192,7 @@ class CB::Client
     id : String,
     team_id : String,
     name : String,
-    state : String,
+    state : String?,
     created_at : Time,
     cpu : Int32,
     is_ha : Bool,
@@ -272,6 +272,12 @@ class CB::Client
 
   def upgrade_cluster_cancel(id)
     delete "clusters/#{id}/upgrade"
+  end
+
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusterid/update-cluster
+  def update_cluster(cluster_id, body)
+    resp = patch "clusters/#{cluster_id}", body
+    ClusterDetail.from_json resp.body
   end
 
   def replicate_cluster(cc)

@@ -78,6 +78,11 @@ describe CB::Completion do
     result.should eq ["abc\tmy team/my cluster"]
   end
 
+  it "rename suggests clusters" do
+    result = parse("cb rename ")
+    result.should eq ["abc\tmy team/my cluster"]
+  end
+
   it "uri suggests clusters" do
     result = parse("cb uri ")
     result.should eq ["abc\tmy team/my cluster"]

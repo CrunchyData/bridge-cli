@@ -44,7 +44,7 @@ class CB::Completion
       return top_level
     else
       case args.first
-      when "info", "destroy"
+      when "info", "destroy", "rename"
         return info
       when "create"
         return create
@@ -89,6 +89,7 @@ class CB::Completion
       "uri\tConnection uri",
       "create\tProvision a new cluster",
       "destroy\tDestroy a cluster",
+      "rename\tRename a cluster",
       "detach\tDetach a cluster",
       "restart\tRestart a cluster",
       "firewall\tManage firewall rules",
