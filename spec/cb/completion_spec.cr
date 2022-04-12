@@ -528,6 +528,119 @@ describe CB::Completion do
     result.should eq [] of String
   end
 
+  it "completes team-member" do
+    # cb team-member
+    result = parse("cb team-member ")
+    result.should have_option "add"
+    result.should have_option "info"
+    result.should have_option "list"
+    result.should have_option "update"
+    result.should have_option "remove"
+
+    # cb team-member add
+    result = parse("cb team-member add ")
+    result.should have_option "--team"
+    result.should have_option "--email"
+    result.should have_option "--role"
+
+    result = parse("cb team-member add --team ")
+    result.should eq ["def\tmy team"]
+
+    result = parse("cb team-member add --email ")
+    result.should eq [] of String
+
+    result = parse("cb team-member add --role ")
+    result.should eq ["admin", "manager", "member"]
+
+    # cb team-member info
+    result = parse("cb team-member info ")
+    result.should have_option "--team"
+    result.should have_option "--account"
+    result.should have_option "--email"
+
+    result = parse("cb team-member info --team ")
+    result.should eq ["def\tmy team"]
+
+    result = parse("cb team-member info --account ")
+    result.should eq [] of String
+
+    result = parse("cb team-member info --account abc ")
+    result.should have_option "--team"
+    result.should_not have_option "--account"
+    result.should_not have_option "--email"
+
+    result = parse("cb team-member info --email test@example.com ")
+    result.should have_option "--team"
+    result.should_not have_option "--account"
+    result.should_not have_option "--email"
+
+    # cb team-member list
+    result = parse("cb team-member list ")
+    result.should have_option "--team"
+
+    result = parse("cb team-member list --team ")
+    result.should eq ["def\tmy team"]
+
+    result = parse("cb team-member list --team def ")
+    result.should eq [] of String
+
+    # cb team-member update
+    result = parse("cb team-member update ")
+    result.should have_option "--team"
+    result.should have_option "--account"
+    result.should have_option "--email"
+    result.should have_option "--role"
+
+    result = parse("cb team-member update --team ")
+    result.should eq ["def\tmy team"]
+
+    result = parse("cb team-member update --account ")
+    result.should eq [] of String
+
+    result = parse("cb team-member update --account abc ")
+    result.should_not have_option "--account"
+    result.should_not have_option "--email"
+    result.should have_option "--team"
+    result.should have_option "--role"
+
+    result = parse("cb team-member update --email ")
+    result.should eq [] of String
+
+    result = parse("cb team-member update --email test@example.com ")
+    result.should_not have_option "--account"
+    result.should_not have_option "--email"
+    result.should have_option "--team"
+    result.should have_option "--role"
+
+    result = parse("cb team-member update --role ")
+    result.should eq ["admin", "manager", "member"]
+
+    # cb team-member remove
+    result = parse("cb team-member remove ")
+    result.should have_option "--team"
+    result.should have_option "--account"
+    result.should have_option "--email"
+
+    result = parse("cb team-member remove --team ")
+    result.should eq ["def\tmy team"]
+
+    result = parse("cb team-member remove --account ")
+    result.should eq [] of String
+
+    result = parse("cb team-member remove --account abc ")
+    result.should have_option "--team"
+    result.should_not have_option "--account"
+    result.should_not have_option "--email"
+
+    result = parse("cb team-member remove --email ")
+    result.should eq [] of String
+
+    result = parse("cb team-member remove --email test@example.com ")
+    result.should have_option "--team"
+    result.should_not have_option "--account"
+    result.should_not have_option "--email"
+  end
+
   it "completes upgrade" do
     # cb upgrade
     result = parse("cb upgrade ")

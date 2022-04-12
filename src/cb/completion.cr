@@ -60,6 +60,8 @@ class CB::Completion
         return role
       when "team", "teams"
         return team
+      when "team-member"
+        return team_member
       when "teamcert"
         return teams
       when "upgrade"
@@ -84,6 +86,7 @@ class CB::Completion
       "token\tGet current API token",
       "list\tList clusters",
       "team\tManage teams",
+      "team-member\tManage a team's members",
       "teamcert\tGet team public cert",
       "info\tDetailed cluster info",
       "uri\tConnection uri",
@@ -509,6 +512,116 @@ class CB::Completion
     suggest_none
   end
 
+  #
+  # Team Member Completion
+  #
+
+  def team_member
+    case @args[1]
+    when "add"
+      team_member_add
+    when "info"
+      team_member_info
+    when "list"
+      team_member_list
+    when "update"
+      team_member_update
+    when "remove"
+      team_member_remove
+    else
+      [
+        "add\tadd a team member",
+        "list\tlist current team members",
+        "info\tshow details of a team member",
+        "update\tupdate a team member",
+        "remove\tremove a team member",
+      ]
+    end
+  end
+
+  def team_member_add
+    if last_arg?("--team")
+      return teams
+    end
+
+    if last_arg? "--email"
+      suggest_none
+    end
+
+    if last_arg?("--role")
+      return ["admin", "manager", "member"]
+    end
+
+    suggest = [] of String
+    suggest << "--team\tteam ID" unless has_full_flag? :team
+    suggest << "--email\tuser's email address" unless has_full_flag? :email
+    suggest << "--role\tteam member role" unless has_full_flag? :role
+    return suggest
+  end
+
+  def team_member_info
+    if last_arg?("--team")
+      return teams
+    end
+
+    if last_arg? "--account", "--email"
+      suggest_none
+    end
+
+    suggest = [] of String
+    suggest << "--team\tteam ID" unless has_full_flag? :team
+    suggest << "--account\tuser's account ID" unless has_full_flag?(:account) || has_full_flag?(:email)
+    suggest << "--email\tuser's email address" unless has_full_flag?(:email) || has_full_flag?(:account)
+    return suggest
+  end
+
+  def team_member_list
+    if last_arg?("--team")
+      return teams
+    end
+
+    suggest = [] of String
+    suggest << "--team\tteam ID" unless has_full_flag? :team
+    return suggest
+  end
+
+  def team_member_update
+    if last_arg?("--team")
+      return teams
+    end
+
+    if last_arg? "--account", "--email"
+      suggest_none
+    end
+
+    if last_arg?("--role")
+      return ["admin", "manager", "member"]
+    end
+
+    suggest = [] of String
+    suggest << "--team\tteam ID" unless has_full_flag? :team
+    suggest << "--account\tuser's account ID" unless has_full_flag?(:account) || has_full_flag?(:email)
+    suggest << "--email\tuser's email address" unless has_full_flag?(:email) || has_full_flag?(:account)
+    suggest << "--role\tteam member role" unless has_full_flag? :role
+    return suggest
+  end
+
+  def team_member_remove
+    if last_arg?("--team")
+      return teams
+    end
+
+    if last_arg?("--account") || last_arg?("--email")
+      suggest_none
+    end
+
+    suggest = [] of String
+    suggest << "--team\tteam ID" unless has_full_flag? :team
+    suggest << "--account\tuser's account ID" unless has_full_flag?(:account) || has_full_flag?(:email)
+    suggest << "--email\tuser's email address" unless has_full_flag?(:email) || has_full_flag?(:account)
+    return suggest
+  end
+
   def upgrade
     case @args[1]
     when "cancel"
@@ -641,6 +754,8 @@ class CB::Completion
     full << :rotate_password if has_full_flag? "--rotate-password"
     full << :enforce_sso if has_full_flag? "--enforce-sso"
     full << :billing_email if has_full_flag? "--billing-email"
+    full << :account if has_full_flag? "--account"
+    full << :email if has_full_flag? "--email"
     return full
   end
 

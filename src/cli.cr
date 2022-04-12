@@ -334,6 +334,58 @@ op = OptionParser.new do |parser|
     end
   end
 
+  #
+  # Team Member Management
+  #
+
+  parser.on("team-member", "Manage team members") do
+    parser.banner = "cb team-member <command>"
+
+    parser.on("add", "Add a team member") do
+      add = set_action TeamMemberAdd
+      parser.banner = "cb team-member add <--team> <--email> [--role]"
+
+      parser.on("--team ID", "Team ID") { |arg| add.team_id = arg }
+      parser.on("--email EMAIL", "User email address") { |arg| add.email = arg }
+      parser.on("--role ROLE", "Team member role (default: member)") { |arg| add.role = arg }
+    end
+
+    parser.on("list", "List members of a team") do
+      list = set_action TeamMemberList
+      parser.banner = "cb team-member list <--team>"
+
+      parser.on("--team ID", "Team ID") { |arg| list.team_id = arg }
+    end
+
+    parser.on("info", "Show team member details") do
+      info = set_action TeamMemberInfo
+      parser.banner = "cb team-member info <--team> <--account | --email>"
+
+      parser.on("--team ID", "Team ID") { |arg| info.team_id = arg }
+      parser.on("--account ID", "Account ID") { |arg| info.account_id = arg }
+      parser.on("--email EMAIL", "User email address") { |arg| info.email = arg }
+    end
+
+    parser.on("update", "Update a member of a team") do
+      update = set_action TeamMemberUpdate
+      parser.banner = "cb team-member update <--team> <--account | --email> [options]"
+
+      parser.on("--team ID", "Team ID") { |arg| update.team_id = arg }
+      parser.on("--account ID", "Account ID") { |arg| update.account_id = arg }
+      parser.on("--email EMAIL", "User email address") { |arg| update.email = arg }
+      parser.on("--role ROLE", "Team member role") { |arg| update.role = arg }
+    end
+
+    parser.on("remove", "Remove a member from a team") do
+      remove = set_action TeamMemberRemove
+      parser.banner = "cb team-member remove <--team> <--account | --email>"
+
+      parser.on("--team ID", "Team ID") { |arg| remove.team_id = arg }
+      parser.on("--account ID", "Account ID") { |arg| remove.account_id = arg }
+      parser.on("--email EMAIL", "User email address") { |arg| remove.email = arg }
+    end
+  end
+
   parser.on("teamcert", "Show public TLS cert for a team") do
     parser.banner = "cb teamcert <team id>"
     teamcert = set_action TeamCert
