@@ -13,19 +13,19 @@ private class RoleTestClient < CB::Client
   )
 
   def get_account
-    return ACCOUNT
+    ACCOUNT
   end
 
   def create_role(id : String)
-    return ROLE
+    ROLE
   end
 
   def update_role(id : String, name : String, opts)
-    return ROLE
+    ROLE
   end
 
   def delete_role(id : String, name : String)
-    return ROLE
+    ROLE
   end
 end
 

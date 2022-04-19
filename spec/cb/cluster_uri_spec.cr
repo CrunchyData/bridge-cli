@@ -13,13 +13,13 @@ private class ClusterURITestClient < CB::Client
   )
 
   def get_account
-    return ACCOUNT
+    ACCOUNT
   end
 
-  property p_get_role : Proc(Role) = -> : Role { return ROLE }
+  property p_get_role : Proc(Role) = -> : Role { ROLE }
 
   def get_role(id, name)
-    return p_get_role.call
+    p_get_role.call
   end
 end
 

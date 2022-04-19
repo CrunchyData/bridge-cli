@@ -12,7 +12,7 @@ private class TeamMemberTestClient < CB::Client
   ]
 
   def get_team(team_id)
-    return Team.new(
+    Team.new(
       id: "pkdpq6yynjgjbps4otxd7il2u4",
       name: "Test Team",
       is_personal: false,
@@ -23,7 +23,7 @@ private class TeamMemberTestClient < CB::Client
   end
 
   def create_team_member(team_id, params : TeamMemberCreateParams)
-    return TeamMember.new(
+    TeamMember.new(
       id: "",
       team_id: team_id.to_s,
       account_id: "abc123",
@@ -33,19 +33,19 @@ private class TeamMemberTestClient < CB::Client
   end
 
   def get_team_member(team_id, account_id)
-    return MEMBERS[0]
+    MEMBERS[0]
   end
 
   def list_team_members(team_id)
-    return MEMBERS
+    MEMBERS
   end
 
   def update_team_member(team_id, account_id, role)
-    return MEMBERS[0]
+    MEMBERS[0]
   end
 
   def remove_team_member(team_id, account_id)
-    return MEMBERS[0]
+    MEMBERS[0]
   end
 end
 

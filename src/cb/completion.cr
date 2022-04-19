@@ -41,35 +41,35 @@ class CB::Completion
 
   def _parse : Array(String)
     if args.size < 2
-      return top_level
+      top_level
     else
       case args.first
       when "info", "destroy", "rename"
-        return info
+        info
       when "create"
-        return create
+        create
       when "firewall"
-        return firewall
+        firewall
       when "logdest"
-        return logdest
+        logdest
       when "psql"
-        return psql
+        psql
       when "restart", "detach"
-        return restart_or_detach
+        restart_or_detach
       when "role"
-        return role
+        role
       when "team", "teams"
-        return team
+        team
       when "team-member"
-        return team_member
+        team_member
       when "teamcert"
-        return teams
+        teams
       when "upgrade"
-        return upgrade
+        upgrade
       when "uri"
-        return uri
+        uri
       when "scope"
-        return scope
+        scope
       else
         [] of String
       end
@@ -170,7 +170,7 @@ class CB::Completion
     suggest << "--name\tcluster name" unless has_full_flag? :name
     suggest << "--network\tnetwork id" unless has_full_flag? :network
     suggest << "--version\tmajor version" unless has_full_flag?(:version) || has_full_flag?(:fork) || has_full_flag?(:replica)
-    return suggest
+    suggest
   end
 
   private def platform_region_plan_suggest
@@ -234,15 +234,15 @@ class CB::Completion
     if has_full_flag? :cluster
       suggestions = ["--add\tcidr of rule to add"]
       suggestions << "--remove\tcidr of rule to remove" unless firewall_rules(cluster).empty?
-      return suggestions
+      suggestions
     else
-      return ["--cluster\tcluster id"]
+      ["--cluster\tcluster id"]
     end
   end
 
   def firewall_rules(cluster_id)
     rules = client.get_firewall_rules(cluster_id)
-    rules.map { |r| r.rule } - @args
+    rules.map(&.rule) - @args
   rescue Client::Error
     [] of String
   end
@@ -308,7 +308,7 @@ class CB::Completion
 
     suggest = [] of String
     suggest << "--name\trole name" unless has_full_flag? :name
-    return suggest
+    suggest
   end
 
   def role_update
@@ -336,7 +336,7 @@ class CB::Completion
     suggest << "--name\trole name" unless has_full_flag? :name
     suggest << "--rotate-password" unless has_full_flag? :rotate_password
     suggest << "--read-only" unless has_full_flag? :read_only
-    return suggest
+    suggest
   end
 
   def logdest_list
@@ -386,7 +386,7 @@ class CB::Completion
     suggest << "--port\tport number" unless has_full_flag? :port
     suggest << "--desc\tdescription" unless has_full_flag? :desc
     suggest << "--template\ttemplate" unless has_full_flag? :template
-    return suggest
+    suggest
   end
 
   def psql
@@ -398,7 +398,7 @@ class CB::Completion
 
     suggest = [] of String
     suggest << "--database\tName of database" unless has_full_flag? :database
-    return suggest
+    suggest
   end
 
   # `restart and `detach` are the only commands that offer `--confirm` as their
@@ -413,7 +413,7 @@ class CB::Completion
 
     suggest = [] of String
     suggest << "--confirm\tconfirm cluster #{@args.first}" unless has_full_flag? :confirm
-    return suggest
+    suggest
   end
 
   def scope
@@ -435,7 +435,7 @@ class CB::Completion
     suggest << "--suite\tRun predefined scopes" unless @args.includes? "--suite"
     suggest << "--database\tName of database" unless @args.includes? "--database"
 
-    return suggest
+    suggest
   end
 
   #
@@ -472,7 +472,7 @@ class CB::Completion
 
     suggest = [] of String
     suggest << "--name\tteam name" unless has_full_flag? :name
-    return suggest
+    suggest
   end
 
   def team_list
@@ -504,7 +504,7 @@ class CB::Completion
     suggest << "--enforce-sso\tenforce SSO access to team" unless has_full_flag? :enforce_sso
     suggest << "--help\tshow help" unless has_full_flag? :help
     suggest << "--name\tteam name" unless has_full_flag? :name
-    return suggest
+    suggest
   end
 
   def team_destroy
@@ -556,7 +556,7 @@ class CB::Completion
     suggest << "--team\tteam ID" unless has_full_flag? :team
     suggest << "--email\tuser's email address" unless has_full_flag? :email
     suggest << "--role\tteam member role" unless has_full_flag? :role
-    return suggest
+    suggest
   end
 
   def team_member_info
@@ -572,7 +572,7 @@ class CB::Completion
     suggest << "--team\tteam ID" unless has_full_flag? :team
     suggest << "--account\tuser's account ID" unless has_full_flag?(:account) || has_full_flag?(:email)
     suggest << "--email\tuser's email address" unless has_full_flag?(:email) || has_full_flag?(:account)
-    return suggest
+    suggest
   end
 
   def team_member_list
@@ -582,7 +582,7 @@ class CB::Completion
 
     suggest = [] of String
     suggest << "--team\tteam ID" unless has_full_flag? :team
-    return suggest
+    suggest
   end
 
   def team_member_update
@@ -603,7 +603,7 @@ class CB::Completion
     suggest << "--account\tuser's account ID" unless has_full_flag?(:account) || has_full_flag?(:email)
     suggest << "--email\tuser's email address" unless has_full_flag?(:email) || has_full_flag?(:account)
     suggest << "--role\tteam member role" unless has_full_flag? :role
-    return suggest
+    suggest
   end
 
   def team_member_remove
@@ -619,7 +619,7 @@ class CB::Completion
     suggest << "--team\tteam ID" unless has_full_flag? :team
     suggest << "--account\tuser's account ID" unless has_full_flag?(:account) || has_full_flag?(:email)
     suggest << "--email\tuser's email address" unless has_full_flag?(:email) || has_full_flag?(:account)
-    return suggest
+    suggest
   end
 
   def upgrade
@@ -692,7 +692,7 @@ class CB::Completion
     suggest << "--plan\tplan" unless has_full_flag? :plan
     suggest << "--storage\tsize in GiB" unless has_full_flag? :storage
     suggest << "--version\tpostgres major version" unless has_full_flag? :version
-    return suggest
+    suggest
   end
 
   def uri
@@ -704,7 +704,7 @@ class CB::Completion
 
     suggest = [] of String
     suggest << "--role\trole name" unless has_full_flag? :role
-    return suggest
+    suggest
   end
 
   def find_arg_value(arg1 : String, arg2 : String? = nil) : String?
@@ -756,7 +756,7 @@ class CB::Completion
     full << :billing_email if has_full_flag? "--billing-email"
     full << :account if has_full_flag? "--account"
     full << :email if has_full_flag? "--email"
-    return full
+    full
   end
 
   def has_full_flag?(arg1 : String, arg2 : String? = nil) : Bool

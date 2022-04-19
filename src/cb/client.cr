@@ -484,10 +484,10 @@ class CB::Client
   end
 
   private def mabye_json_parse(str)
-    begin
+
       JSON.parse str
     rescue
       str
-    end
+
   end
 end

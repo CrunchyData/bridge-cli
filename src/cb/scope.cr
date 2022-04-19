@@ -29,7 +29,7 @@ class CB::Scope < CB::Action
       raise Error.new("unknown suite '#{suite.inspect}'")
     end
 
-    to_run = checks.uniq.sort_by(&.name)
+    to_run = checks.uniq.sort_by!(&.name)
 
     DB.open(uri) do |db|
       to_run.map(&.new(db)).each do |c|

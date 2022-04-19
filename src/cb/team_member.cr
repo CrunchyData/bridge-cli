@@ -59,7 +59,7 @@ class CB::TeamMemberAdd < CB::TeamMemberAction
 
     raise Error.new("invalid role '#{@role}'") unless VALID_TEAM_ROLES.includes? @role
 
-    return valid
+    valid
   end
 
   def run
