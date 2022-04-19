@@ -14,7 +14,6 @@ end
 describe CB::LogdestAdd do
   it "validates that required arguments are present" do
     lda = make_lda
-    msg = /Missing required argument/
 
     expect_validation_err lda, "cluster"
     lda.cluster_id = "afpvoqooxzdrriu6w3bhqo55c4"

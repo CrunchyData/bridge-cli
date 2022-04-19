@@ -66,7 +66,7 @@ describe CB::RoleUpdate do
 
   it "#run errors on invalid role" do
     action = CB::RoleUpdate.new(RoleTestClient.new(TEST_TOKEN))
-    action.output = output = IO::Memory.new
+    action.output = IO::Memory.new
 
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
     action.role_name = "invalid"
@@ -78,7 +78,7 @@ describe CB::RoleUpdate do
 
   it "#run translates 'user' role" do
     action = CB::RoleUpdate.new(RoleTestClient.new(TEST_TOKEN))
-    action.output = output = IO::Memory.new
+    action.output = IO::Memory.new
 
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
     action.role_name = "user"
@@ -104,7 +104,7 @@ end
 describe CB::RoleDelete do
   it "validate that required arguments are present" do
     action = CB::RoleDelete.new(RoleTestClient.new(TEST_TOKEN))
-    action.output = output = IO::Memory.new
+    action.output = IO::Memory.new
 
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
     action.role_name = "user"
@@ -112,7 +112,7 @@ describe CB::RoleDelete do
 
   it "#run errors on invalid role" do
     action = CB::RoleDelete.new(RoleTestClient.new(TEST_TOKEN))
-    action.output = output = IO::Memory.new
+    action.output = IO::Memory.new
 
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
     action.role_name = "invalid"
@@ -122,7 +122,7 @@ describe CB::RoleDelete do
 
   it "#run translates 'user' role" do
     action = CB::RoleDelete.new(RoleTestClient.new(TEST_TOKEN))
-    action.output = output = IO::Memory.new
+    action.output = IO::Memory.new
 
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
     action.role_name = "user"

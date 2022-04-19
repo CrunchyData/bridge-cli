@@ -23,7 +23,7 @@ class CB::TeamCreate < CB::TeamAction
     end
 
     team = client.create_team name
-    output << "Created team #{team.to_s}\n"
+    output << "Created team #{team}\n"
   end
 end
 
@@ -103,6 +103,6 @@ class CB::TeamDestroy < CB::TeamAction
     end
 
     team = client.destroy_team team_id
-    output << "Deleted team #{team.to_s}\n"
+    output << "Deleted team #{team}\n"
   end
 end

@@ -315,7 +315,7 @@ op = OptionParser.new do |parser|
       parser.on("--enforce-sso <true|false>", "Enforce SSO access to team.") { |arg| update.enforce_sso = arg }
       parser.on("--name NAME", "Name of the team.") { |arg| update.name = arg }
 
-      parser.on("--confirm", "Confirm team update.") { |arg| update.confirmed = true }
+      parser.on("--confirm", "Confirm team update.") { |_| update.confirmed = true }
 
       parser.unknown_args do |args|
         update.team_id = get_id_arg.call(args)

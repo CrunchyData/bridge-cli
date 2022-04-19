@@ -8,7 +8,7 @@ class CB::ClusterURI < CB::Action
     # Ensure the role name
     raise Error.new("invalid role: '#{@role_name}'") unless VALID_CLUSTER_ROLES.includes? @role_name
     if @role_name == "user"
-      @role_name = "u_" + client.get_account.id
+      @role_name = "u_#{client.get_account.id}"
     end
 
     # Fetch the role.
@@ -37,6 +37,6 @@ class CB::ClusterURI < CB::Action
       msg = "role '#{@role_name}' does not exist."
     end
 
-    raise Error.new "invalid input."
+    raise Error.new msg
   end
 end

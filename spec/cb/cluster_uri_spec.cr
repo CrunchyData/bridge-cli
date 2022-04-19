@@ -52,7 +52,7 @@ describe CB::ClusterURI do
     }
 
     action = CB::ClusterURI.new(c)
-    action.output = output = IO::Memory.new
+    action.output = IO::Memory.new
 
     msg = /invalid input/
 

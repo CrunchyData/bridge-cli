@@ -762,7 +762,7 @@ class CB::Completion
   def has_full_flag?(arg1 : String, arg2 : String? = nil) : Bool
     idx = @args.index(arg1) || @args.index(arg2)
     return false unless idx
-    return !@args[idx + 1]?.nil?
+    !@args[idx + 1]?.nil?
   end
 
   def has_full_flag?(*names : Symbol) : Bool

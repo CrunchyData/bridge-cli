@@ -10,7 +10,7 @@ module CB
 
     def run
       validate
-      logdest = client.add_logdest self
+      client.add_logdest self
       output.puts "added new log destination"
     end
 

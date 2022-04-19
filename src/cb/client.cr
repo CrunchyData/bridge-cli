@@ -464,7 +464,7 @@ class CB::Client
     if resp.body && ENV["HTTP_DEBUG"]?
       body = mabye_json_parse resp.body
       status = resp.status.code
-      pp! [method, path, status, body]
+      pp! [method, path, status, body] # ameba:disable Lint/DebugCalls
     end
 
     return resp if resp.success?
@@ -484,10 +484,8 @@ class CB::Client
   end
 
   private def mabye_json_parse(str)
-
-      JSON.parse str
-    rescue
-      str
-
+    JSON.parse str
+  rescue
+    str
   end
 end

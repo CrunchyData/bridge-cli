@@ -31,7 +31,7 @@ class CB::UpgradeStart < CB::Upgrade
       response = input.gets
 
       if c.name == response
-        confirmed = true
+        self.confirmed = true
       else
         raise Error.new "Response did not match, did not upgrade the cluster"
       end

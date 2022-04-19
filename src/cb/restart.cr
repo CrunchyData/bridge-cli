@@ -15,7 +15,7 @@ class CB::Restart < CB::Action
       response = input.gets
 
       if c.name == response
-        confirmed = true
+        self.confirmed = true
       else
         raise Error.new "Response did not match, did not restart the cluster"
       end

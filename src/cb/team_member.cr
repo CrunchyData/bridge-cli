@@ -98,14 +98,14 @@ class CB::TeamMemberList < CB::TeamMemberAction
     # doesn't have any members. Making no claims to it being personal or
     # otherwise.  Which should be good enough in all cases, however unlikely
     # they might be.
-    unless team_members.empty?
+    if team_members.empty?
+      output << "Team #{team_id.colorize.t_id} has no team members.\n"
+    else
       team_members.each do |member|
         output << member.account_id.colorize.t_id << '\t'
         output << member.email.ljust(email_max).colorize.t_name << '\t'
         output << member.role.titleize << '\n'
       end
-    else
-      output << "Team #{team_id.colorize.t_id} has no team members.\n"
     end
   end
 end
@@ -119,17 +119,17 @@ class CB::TeamMemberInfo < CB::TeamMemberAction
   def run
     validate_account_email
 
-    unless @account_id.nil?
-      tm = client.get_team_member(team_id, @account_id)
-    else
-      tm = get_member_by_email(team_id, email)
-    end
+    tm = if @account_id.nil?
+           get_member_by_email(team_id, email)
+         else
+           client.get_team_member(team_id, @account_id)
+         end
 
-    unless tm.nil?
-      output << team_member_details(tm) << '\n'
-    else
+    if tm.nil?
       # TODO (abrightwell): move this to an error above, similar to update.
       output << "Unknown team member.\n"
+    else
+      output << team_member_details(tm) << '\n'
     end
   end
 end
@@ -146,7 +146,7 @@ class CB::TeamMemberUpdate < CB::TeamMemberAction
     validate_account_email
 
     unless @role.nil?
-      raise Error.new("invalid role '#{@role.to_s}'") unless VALID_TEAM_ROLES.includes? @role
+      raise Error.new("invalid role '#{@role}'") unless VALID_TEAM_ROLES.includes? @role
     end
 
     if account_id.nil?
@@ -177,6 +177,6 @@ class CB::TeamMemberRemove < CB::TeamMemberAction
 
     removed = client.remove_team_member(team_id, account_id)
     team = client.get_team(team_id)
-    output << "Removed #{removed.email.colorize.t_name} from team #{team.to_s}.\n" unless removed.nil?
+    output << "Removed #{removed.email.colorize.t_name} from team #{team}.\n" unless removed.nil?
   end
 end
