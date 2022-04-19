@@ -61,5 +61,11 @@ jobs:
     - name: Install crystal
       run: sudo apt install -y crystal libevent-dev libpcre3-dev libreadline-dev libssl-dev
 
-    - name: Lint
+    - name: Format
       run: crystal tool format --check
+
+    - name: Install dependencies
+      run: shards install
+
+    - name: Run tests
+      run: bin/ameba
