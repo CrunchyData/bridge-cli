@@ -73,19 +73,19 @@ describe CB::Completion do
     result.any?(&.starts_with?("login")).should be_true
   end
 
-  it "info suggests clusters" do
-    result = parse("cb info ")
-    result.should eq ["abc\tmy team/my cluster"]
-  end
+  %w[info rename destroy logs].each do |cmd|
+    it "#{cmd} is included in top level suggestions" do
+      result = parse("cb ")
+      result.any?(&.starts_with?(cmd)).should be_true
+    end
 
-  it "rename suggests clusters" do
-    result = parse("cb rename ")
-    result.should eq ["abc\tmy team/my cluster"]
-  end
+    it "#{cmd} suggests clusters" do
+      result = parse("cb #{cmd} ")
+      result.should eq ["abc\tmy team/my cluster"]
 
-  it "uri suggests clusters" do
-    result = parse("cb uri ")
-    result.should eq ["abc\tmy team/my cluster"]
+      result = parse("cb #{cmd} abc ")
+      result.should be_empty
+    end
   end
 
   it "create" do
@@ -395,6 +395,9 @@ describe CB::Completion do
   it "completes restart" do
     result = parse("cb restart ")
     result.should eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb restart abc ")
+    result.should_not have_option "abc"
 
     result = parse("cb restart abc ")
     result.should have_option "--confirm"

@@ -44,8 +44,8 @@ class CB::Completion
       top_level
     else
       case args.first
-      when "info", "destroy", "rename"
-        info
+      when "info", "destroy", "rename", "logs"
+        single_cluster_suggestion
       when "create"
         create
       when "firewall"
@@ -99,6 +99,7 @@ class CB::Completion
       "psql\tInteractive psql console",
       "logdest\tManage log destinations",
       "scope\tRun diagnostic queries",
+      "logs\tView live cluster logs",
     ]
     if @client
       options
@@ -107,8 +108,9 @@ class CB::Completion
     end
   end
 
-  def info
-    cluster_suggestions
+  def single_cluster_suggestion
+    return cluster_suggestions if args.size == 2
+    suggest_none
   end
 
   def cluster_suggestions

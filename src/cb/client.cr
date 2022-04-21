@@ -434,6 +434,11 @@ class CB::Client
     Role.from_json resp.body
   end
 
+  def get_tempkey(cluster_id)
+    resp = post "clusters/#{cluster_id}/tempkeys"
+    Tempkey.from_json resp.body
+  end
+
   def get(path)
     exec "GET", path
   end
@@ -442,7 +447,7 @@ class CB::Client
     exec "PATCH", path, body
   end
 
-  def post(path, body)
+  def post(path, body = nil)
     exec "POST", path, body
   end
 

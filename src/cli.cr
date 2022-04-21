@@ -216,6 +216,15 @@ op = OptionParser.new do |parser|
     end
   end
 
+  parser.on("logs", "View live cluster logs") do
+    parser.banner = "cb scope <cluster>"
+    logs = set_action Logs
+
+    parser.unknown_args do |args|
+      logs.cluster_id = get_id_arg.call(args)
+    end
+  end
+
   parser.on("logdest", "Manage log destinations") do
     parser.banner = "cb logdest <list|add|destroy>"
 
