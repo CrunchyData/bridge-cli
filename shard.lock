@@ -14,13 +14,17 @@ shards:
 
   db:
     git: https://github.com/crystal-lang/crystal-db.git
-    version: 0.10.1
+    version: 0.11.0
 
   pg:
     git: https://github.com/will/crystal-pg.git
-    version: 0.24.0
+    version: 0.26.0
 
   raven:
     git: https://github.com/sija/raven.cr.git
     version: 1.9.1
+
+  ssh2:
+    git: https://github.com/spider-gazelle/ssh2.cr.git
+    version: 1.5.3
 

@@ -6,6 +6,8 @@ dependencies:
     github: will/crystal-pg
   raven:
     github: sija/raven.cr
+  ssh2:
+    github: spider-gazelle/ssh2.cr
 
 development_dependencies:
   ameba:
