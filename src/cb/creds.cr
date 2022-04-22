@@ -1,4 +1,5 @@
 require "json"
+require "./dirs"
 
 struct CB::Creds
   include JSON::Serializable
@@ -7,7 +8,7 @@ struct CB::Creds
   getter id : String
   getter secret : String
 
-  CONFIG = Path["~/.config/cb"].expand(home: true)
+  CONFIG = Dirs::CONFIG
 
   def initialize(@host, @id, @secret)
   end

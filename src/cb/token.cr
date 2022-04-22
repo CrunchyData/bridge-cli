@@ -1,4 +1,5 @@
 require "json"
+require "./dirs"
 
 struct CB::Token
   include JSON::Serializable
@@ -9,14 +10,14 @@ struct CB::Token
   getter user_id : String
   getter name : String
 
-  CONFIG = Creds::CONFIG
+  CACHE = Dirs::CACHE
 
   def initialize(@host, @token, @expires, @user_id, @name)
   end
 
   def self.for_host(host) : Token?
     begin
-      token = from_json File.read(CONFIG/"#{host}.token")
+      token = from_json File.read(CACHE/"#{host}.token")
     rescue File::Error | JSON::ParseException
       return nil
     end
@@ -28,8 +29,8 @@ struct CB::Token
   end
 
   def store
-    Dir.mkdir_p CONFIG
-    File.open(CONFIG/"#{host}.token", "w", perm: 0o600) do |f|
+    Dir.mkdir_p CACHE
+    File.open(CACHE/"#{host}.token", "w", perm: 0o600) do |f|
       f << to_json
     end
     self
