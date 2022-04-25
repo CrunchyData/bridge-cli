@@ -2,6 +2,13 @@ require "json"
 require "./dirs"
 
 module CB::Cacheable
+  macro include(key)
+    include ::CB::Cacheable
+    def key
+      {{key}}
+    end
+  end
+
   macro included
     include JSON::Serializable
     extend ::CB::Cacheable::ClassMethods
@@ -10,7 +17,9 @@ module CB::Cacheable
   CACHE_DIR = Dirs::CACHE
 
   module ClassMethods
-    abstract def suffix
+    def suffix
+      name.split("::").last.downcase
+    end
 
     def fetch?(key)
       begin

@@ -1,13 +1,6 @@
 module CB
   record Tempkey, private_key : String, public_key : String, cluster_id : String, team_id : String, expires_at : Time do
-    include Cacheable
-    def self.suffix
-      "tempkey"
-    end
-
-    def key
-      cluster_id
-    end
+    Cacheable.include key: cluster_id
 
     def self.for_cluster(cluster_id, client) : Tempkey
       tk = fetch? cluster_id
@@ -16,4 +9,3 @@ module CB
     end
   end
 end
-

@@ -8,10 +8,6 @@ private struct Hi
 
   def initialize(@key, @expires_at)
   end
-
-  def self.suffix
-    "test"
-  end
 end
 
 # to make sure nothing on the fs leakes between tests
