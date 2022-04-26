@@ -24,7 +24,8 @@ ifeq ($(shell [[ "$(TARGET_OS)" == "darwin" && "$(STATIC_LIBS)" != "" ]] && echo
   BDWGC_LIB_PATH    ?= $(shell pkg-config --libs-only-L bdw-gc | cut -c 3-)
   LIBEVENT_LIB_PATH ?= $(shell pkg-config --libs-only-L libevent | cut -c 3-)
   LIBPCRE_LIB_PATH  ?= $(shell pkg-config --libs-only-L libpcre | cut -c 3-)
-  OPENSSL_LIB_PATH ?= $(shell brew --prefix openssl@1.1)/lib
+  OPENSSL_LIB_PATH  ?= $(shell brew --prefix openssl@1.1)/lib
+  LIBSSH2_LIB_PATH  ?= $(shell brew --prefix libssh2)/lib
   export PKG_CONFIG_PATH=$(OPENSSL_LIB_PATH)/pkgconfig
 
   vendor/libcrypto.a: $(OPENSSL_LIB_PATH)/libcrypto.a
@@ -47,8 +48,12 @@ ifeq ($(shell [[ "$(TARGET_OS)" == "darwin" && "$(STATIC_LIBS)" != "" ]] && echo
 		mkdir -p $(OPENSSL_LIB_PATH)
 		cp -f $(OPENSSL_LIB_PATH)/libssl.a $(STATIC_LIBS_DIR)
 
+  vendor/libssh2.a: $(LIBSSH2_LIB_PATH)/libssh2.a
+		mkdir -p $(LIBSSH2_LIB_PATH)
+		cp -f $(LIBSSH2_LIB_PATH)/libssh2.a $(STATIC_LIBS_DIR)
+
   .PHONY: libs
-  libs: vendor/libcrypto.a vendor/libgc.a vendor/libssl.a vendor/libevent.a vendor/libpcre.a
+  libs: vendor/libcrypto.a vendor/libgc.a vendor/libssl.a vendor/libevent.a vendor/libpcre.a vendor/libssh2.a
 else
   .PHONY: libs
   libs:
