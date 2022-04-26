@@ -31,16 +31,14 @@ jobs:
 
   ubuntu-tests:
     runs-on: ubuntu-latest
+    container: crystallang/crystal:latest-alpine
 
     steps:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Add Crystal repos
-      run: curl -sSL https://crystal-lang.org/install.sh | sudo bash
-
-    - name: Install crystal
-      run: sudo apt install -y crystal libevent-dev libpcre3-dev libreadline-dev libssl-dev
+    - name: Install LibSSH2
+      run: apk add --no-cache libssh2 libssh2-dev libssh2-static
 
     - name: Install dependencies
       run: shards install
@@ -59,7 +57,7 @@ jobs:
       run: curl -sSL https://crystal-lang.org/install.sh | sudo bash
 
     - name: Install crystal
-      run: sudo apt install -y crystal libevent-dev libpcre3-dev libreadline-dev libssl-dev
+      run: sudo apt-get install -y crystal libevent-dev libpcre3-dev libreadline-dev
 
     - name: Format
       run: crystal tool format --check
