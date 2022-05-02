@@ -1,4 +1,4 @@
-FROM alpine:3.14.0
+FROM alpine:latest
 
 RUN \
   apk add --update --no-cache --force-overwrite \
@@ -8,7 +8,8 @@ RUN \
     # depedencies (used by Crystal stdlib)
     openssl-libs-static \
     zlib-static \
-    crystal shards
+    crystal shards \
+    libssh2 libssh2-dev libssh2-static
 
 # RUN apk add --update --no-cache --force-overwrite --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main llvm12-libs
 
