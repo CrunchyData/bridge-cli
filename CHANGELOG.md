@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Fully respect the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
 - `cb logs` command added to view live logs for a cluster.
+- The env var `SSL_CERT_FILE` can be used to override the default location of
+  the certificate file.
 
 ## [1.2.0] - 2022-04-07
 ### Added

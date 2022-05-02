@@ -13,4 +13,5 @@ module CB
 end
 
 require "./stdlib_ext"
+require "./openssl_cert"
 require "./cb/*"

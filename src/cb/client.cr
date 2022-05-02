@@ -478,13 +478,8 @@ class CB::Client
 
   def self.tls
     OpenSSL::SSL::Context::Client.new.tap do |client|
-      {% if flag?(:darwin) %}
-        # workaround: Can't easily build for arm macs, so they use the
-        # statically linked x86 under rosetta. This however seems to hardcode
-        # the homebrew location of the tls certs, which will fail unless they
-        # have happened to install openssl with homebrew
-        client.ca_certificates = "/private/etc/ssl/cert.pem"
-      {% end %}
+      cert_file = SSL_CERT_FILE
+      client.ca_certificates = cert_file if cert_file
     end
   end
 
