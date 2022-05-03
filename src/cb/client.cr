@@ -279,7 +279,6 @@ class CB::Client
   def create_cluster(cc)
     body = {
       is_ha:               cc.ha,
-      ha:                  cc.ha,
       name:                cc.name,
       plan_id:             cc.plan,
       provider_id:         cc.platform,

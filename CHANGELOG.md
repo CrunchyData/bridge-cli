@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The env var `SSL_CERT_FILE` can be used to override the default location of
   the certificate file.
 
+### Fixed
+- Fix cluster creation error after the API became stricter.
+
 ## [1.2.0] - 2022-04-07
 ### Added
 - `cb team` command added to manage teams. Supports `create`, `list`, `info`,
