@@ -194,11 +194,10 @@ op = OptionParser.new do |parser|
 
   parser.on("restart", "Restart a cluster") do
     restart = set_action Restart
-    parser.banner = "cb restart <cluster id> [--confirm]"
+    parser.banner = "cb restart <cluster id> [--confirm] [--full]"
 
-    parser.on("--confirm", "Confirm cluster restart") do
-      restart.confirmed = true
-    end
+    parser.on("--confirm", "Confirm cluster restart") { restart.confirmed = true }
+    parser.on("--full", "Full restart of server") { restart.full = true }
 
     parser.unknown_args do |args|
       restart.cluster_id = get_id_arg.call(args)

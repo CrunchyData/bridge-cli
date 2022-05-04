@@ -401,6 +401,13 @@ describe CB::Completion do
 
     result = parse("cb restart abc ")
     result.should have_option "--confirm"
+    result.should have_option "--full"
+
+    result = parse("cb restart abc --full ")
+    result.should have_option "--confirm"
+
+    result = parse("cb restart abc --full --confirm ")
+    result.empty?.should be_true
   end
 
   it "completes detach" do
@@ -409,6 +416,9 @@ describe CB::Completion do
 
     result = parse("cb detach abc ")
     result.should have_option "--confirm"
+
+    result = parse "cb detach abc --confirm "
+    result.empty?.should be_true
   end
 
   it "completes role" do

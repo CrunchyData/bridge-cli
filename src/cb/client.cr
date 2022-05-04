@@ -352,8 +352,9 @@ class CB::Client
     delete "clusters/#{id}"
   end
 
-  def restart_cluster(id)
-    put "clusters/#{id}/restart", ""
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridrestart/restart-cluster
+  def restart_cluster(id, service : String)
+    put "clusters/#{id}/restart", {service: service}
   end
 
   jrecord Plan, id : String, display_name : String

@@ -48,14 +48,16 @@ class CB::Completion
         single_cluster_suggestion
       when "create"
         create
+      when "detach"
+        detach
       when "firewall"
         firewall
       when "logdest"
         logdest
       when "psql"
         psql
-      when "restart", "detach"
-        restart_or_detach
+      when "restart"
+        restart
       when "role"
         role
       when "team", "teams"
@@ -403,15 +405,17 @@ class CB::Completion
     suggest
   end
 
-  # `restart and `detach` are the only commands that offer `--confirm` as their
-  # own option (other than `--help`). If that expands to other commands, then
-  # perhaps we'll need to refactor this one a little to be more 'general'.
-  def restart_or_detach
+  def restart
     return cluster_suggestions if @args.size == 2
 
-    if last_arg?("--confirm")
-      [] of String
-    end
+    suggest = [] of String
+    suggest << "--confirm\tconfirm cluster #{@args.first}" unless has_full_flag? :confirm
+    suggest << "--full\tfull server restart" unless has_full_flag? :full
+    suggest
+  end
+
+  def detach
+    return cluster_suggestions if @args.size == 2
 
     suggest = [] of String
     suggest << "--confirm\tconfirm cluster #{@args.first}" unless has_full_flag? :confirm
@@ -758,6 +762,7 @@ class CB::Completion
     full << :billing_email if has_full_flag? "--billing-email"
     full << :account if has_full_flag? "--account"
     full << :email if has_full_flag? "--email"
+    full << :full if has_full_flag? "--full"
     full
   end
 

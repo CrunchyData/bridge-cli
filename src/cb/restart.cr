@@ -2,7 +2,8 @@ require "./action"
 
 class CB::Restart < CB::Action
   eid_setter cluster_id
-  property confirmed : Bool = false
+  bool_setter confirmed
+  bool_setter full
 
   def run
     validate
@@ -17,12 +18,14 @@ class CB::Restart < CB::Action
       if c.name == response
         self.confirmed = true
       else
-        raise Error.new "Response did not match, did not restart the cluster"
+        raise Error.new "Response did not match, did not restart the cluster."
       end
     end
 
-    client.restart_cluster cluster_id
-    output.puts "Cluster #{c.id.colorize.t_id} restarted"
+    service = full ? "server" : "postgres"
+
+    client.restart_cluster cluster_id, service
+    output.puts "Cluster #{c.id.colorize.t_id} restarted."
   end
 
   def validate
