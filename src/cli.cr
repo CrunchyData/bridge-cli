@@ -8,7 +8,7 @@ Log.setup do |c|
   c.bind "*", :info, Raven::LogBackend.new(record_breadcrumbs: true)
 end
 
-PROG = CB::Program.new host: ENV["CB_HOST"]?
+PROG = CB::Program.new host: ENV["CB_HOST"]?, domain: ENV["CB_CLUSTER_DOMAIN"]?
 
 macro set_action(cl)
   action = CB::{{cl}}.new PROG.client
@@ -219,6 +219,7 @@ op = OptionParser.new do |parser|
   parser.on("logs", "View live cluster logs") do
     parser.banner = "cb scope <cluster>"
     logs = set_action Logs
+    logs.domain = PROG.domain
 
     parser.unknown_args do |args|
       logs.cluster_id = get_id_arg.call(args)

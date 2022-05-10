@@ -9,11 +9,13 @@ class CB::Program
   property input : IO
   property output : IO
   property host : String
+  property domain : String
   property creds : CB::Creds?
   property token : CB::Token?
 
-  def initialize(host = nil, @input = STDIN, @output = STDOUT)
+  def initialize(host = nil, domain = nil, @input = STDIN, @output = STDOUT)
     @host = host || "api.crunchybridge.com"
+    @domain = domain || "db.postgresbridge.com"
     Colorize.enabled = false unless output == STDOUT && input == STDIN
   end
 
