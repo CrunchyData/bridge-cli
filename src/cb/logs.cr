@@ -6,11 +6,12 @@ require "ssh2"
 module CB
   class Logs < Action
     eid_setter cluster_id
+    property subdomain : String?
 
     def run
       tk = Tempkey.for_cluster cluster_id, client: client
 
-      host = "p.#{cluster_id}.db.postgresbridge.com"
+      host = "p.#{cluster_id}.#{subdomain}.pgbridgedev.com"
       socket = TCPSocket.new(host, 22, connect_timeout: 1)
       ssh = SSH2::Session.new(socket)
       ssh.login_with_data("cormorant", tk.private_key, tk.public_key)
