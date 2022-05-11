@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the certificate file.
 
 ### Fixed
+- Fix `unknown ca` error with `cb psql`.
 - Fix cluster creation error after the API became stricter.
 
 ## [1.2.0] - 2022-04-07

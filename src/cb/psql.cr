@@ -26,6 +26,8 @@ class CB::Psql < CB::Action
       "PGDATABASE"    => uri.path.lchop('/'),
       "PGPORT"        => uri.port.to_s,
       "PSQLRC"        => psqlrc_path,
+      "PGSSLCERT"     => "dontuse",
+      "PGSSLKEY"      => "dontuse",
       "PGSSLMODE"     => "verify-ca",
       "PGSSLROOTCERT" => cert_path,
     })
