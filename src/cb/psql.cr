@@ -56,7 +56,7 @@ class CB::Psql < CB::Action
       s << "%[%033[36m%]#{c.name}%[%033m%]"
     end
 
-    psqlrc = File.tempfile(c.id, "pslrc")
+    psqlrc = File.tempfile(c.id, "psqlrc")
     File.copy("~/.psqlrc", psqlrc.path) if File.exists?("~/.psqlrc")
     File.open(psqlrc.path, "a") do |f|
       f.puts "\\set ON_ERROR_ROLLBACK interactive"
