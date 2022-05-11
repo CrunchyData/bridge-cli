@@ -284,13 +284,6 @@ op = OptionParser.new do |parser|
   #
   # Team Management
   #
-
-  parser.on("teams") do
-    parser.banner = "cb teams"
-    set_action TeamList
-    show_deprecated "Prefer use of 'cb team list' instead."
-  end
-
   parser.on("team", "Manage teams") do
     parser.banner = "cb team <command>"
 

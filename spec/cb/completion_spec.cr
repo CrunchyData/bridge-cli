@@ -480,19 +480,6 @@ describe CB::Completion do
   end
 
   it "completes team" do
-    # cb teams
-    #
-    # NOTE:
-    #  `cb teams` is deprecated. However, completion should:
-    #     1. Rewrite to `cb team`
-    #     2. Return the same suggestions as `cb team`.
-    result = parse("cb teams ")
-    result.should have_option "create"
-    result.should have_option "list"
-    result.should have_option "info"
-    result.should have_option "update"
-    result.should have_option "destroy"
-
     # cb team
     result = parse("cb team ")
     result.should have_option "create"

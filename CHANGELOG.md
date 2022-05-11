@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Added `--full` option to `cb restart` to restart the entire server.
+- `--full` option to `cb restart` to restart the entire server.
+
+### Removed
+- `cb teams` removed in favor of `cb team list`.
 
 ### Changed
 - Updated `cb scope` connections to utilize SCRAM with channel binding only.
@@ -26,7 +29,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `cb team` command added to manage teams. Supports `create`, `list`, `info`,
   `update` and `destroy`.
-- `cb teams` deprecated in favor of `cb team list`.
 - `cb uri` can take `--role` to specify the name of the role to retrieve.
 - `cb role` command added to manage cluster roles. Supports `create`, `update`
   and `destroy`.
@@ -38,6 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 * Improved error message when local psql command cannot be found.
+
+### Deprecated
+- `cb teams` deprecated in favor of `cb team list`.
 
 ## [1.1.0] - 2022-01-27
 ### Added

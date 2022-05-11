@@ -60,7 +60,7 @@ class CB::Completion
         restart
       when "role"
         role
-      when "team", "teams"
+      when "team"
         team
       when "team-member"
         team_member
