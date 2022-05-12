@@ -13,6 +13,11 @@ class CB::Scope < CB::Action
     uri = client.get_role(cluster_id, "default").uri
     raise Error.new "null uri" if uri.nil?
 
+    # Accept only SCRAM with Channel Binding.
+    #
+    # https://github.com/will/crystal-pg#authentication-methods
+    uri.query = "auth_methods=scram-sha-256-plus"
+
     if database.presence
       uri.path = database.to_s
     end
