@@ -72,6 +72,8 @@ class CB::Completion
         uri
       when "scope"
         scope
+      when "backup"
+        backup
       else
         [] of String
       end
@@ -98,6 +100,7 @@ class CB::Completion
       "detach\tDetach a cluster",
       "restart\tRestart a cluster",
       "firewall\tManage firewall rules",
+      "backup\tManage backups",
       "psql\tInteractive psql console",
       "logdest\tManage log destinations",
       "scope\tRun diagnostic queries",
@@ -442,6 +445,23 @@ class CB::Completion
     suggest << "--database\tName of database" unless @args.includes? "--database"
 
     suggest
+  end
+
+  #
+  # Backup Completion.
+  #
+
+  def backup
+    case @args[1]
+    when ""
+      return [
+        "list\tlist backups",
+      ]
+    when "list"
+      return cluster_suggestions if @args.size == 3
+    end
+
+    suggest_none
   end
 
   #

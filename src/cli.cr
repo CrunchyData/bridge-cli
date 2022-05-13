@@ -387,6 +387,19 @@ op = OptionParser.new do |parser|
     end
   end
 
+  #
+  # Backup Management
+  #
+  parser.on("backup", "Manage backups") do
+    parser.banner = "cb backup <list>"
+
+    parser.on("list", "List backups for a cluster") do
+      list = set_action BackupList
+      parser.banner = "cb backup list <cluster id>"
+      parser.unknown_args { |args| list.cluster_id = get_id_arg.call(args) }
+    end
+  end
+
   parser.on("teamcert", "Show public TLS cert for a team") do
     parser.banner = "cb teamcert <team id>"
     teamcert = set_action TeamCert

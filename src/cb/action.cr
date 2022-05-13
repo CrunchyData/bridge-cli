@@ -1,4 +1,5 @@
 require "log"
+require "./client"
 
 module CB
   abstract class Action

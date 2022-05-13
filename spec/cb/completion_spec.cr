@@ -410,6 +410,16 @@ describe CB::Completion do
     result.empty?.should be_true
   end
 
+  it "completes backup" do
+    result = parse("cb backup ")
+    result.should have_option "list"
+
+    result = parse("cb backup list ")
+    result.should eq ["abc\tmy team/my cluster"]
+    result = parse("cb backup list abc ")
+    result.should_not have_option "abc"
+  end
+
   it "completes detach" do
     result = parse("cb detach ")
     result.should eq ["abc\tmy team/my cluster"]
