@@ -8,10 +8,10 @@ Log.setup do |c|
   c.bind "*", :info, Raven::LogBackend.new(record_breadcrumbs: true)
 end
 
-PROG = CB::Program.new host: ENV["CB_HOST"]?
+PROG = CB::Program.new
 
 macro set_action(cl)
-  action = CB::{{cl}}.new PROG.client
+  action = CB::{{cl}}.new PROG.client, PROG.input, PROG.output
 end
 
 def show_deprecated(msg : String)
@@ -29,7 +29,7 @@ Raven.configure do |config|
     ])
   {% end %}
   config.release = CB::VERSION
-  config.server_name = PROG.host
+  config.server_name = CB::HOST
 end
 
 action = nil
