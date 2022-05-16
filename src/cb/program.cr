@@ -8,16 +8,16 @@ class CB::Program
 
   property input : IO
   property output : IO
-  property host : String
   property creds : CB::Creds?
   property token : CB::Token?
 
-  def initialize(host = nil, @input = STDIN, @output = STDOUT)
-    @host = host || "api.crunchybridge.com"
+  def initialize(@input = STDIN, @output = STDOUT)
     Colorize.enabled = false unless output == STDOUT && input == STDIN
   end
 
   def login
+    host = CB::HOST
+
     raise Error.new "No valid credentials found. Please login." unless output.tty?
     hint = "from https://www.crunchybridge.com/account" if host == "api.crunchybridge.com"
     output.puts "add credentials for #{host.colorize.t_name} #{hint}>"
@@ -43,14 +43,14 @@ class CB::Program
     if c = @creds
       return c
     end
-    @cred = Creds.for_host(host) || login
+    @cred = Creds.for_host(CB::HOST) || login
   end
 
   def token : CB::Token
     if t = @token
       return t
     end
-    t = Token.for_host(host) || get_token
+    t = Token.for_host(CB::HOST) || get_token
     @token = t
   end
 
