@@ -451,7 +451,7 @@ class CB::Client
     exec "POST", path, body
   end
 
-  def put(path, body)
+  def put(path, body = nil)
     exec "PUT", path, body
   end
 

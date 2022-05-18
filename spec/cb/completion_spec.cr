@@ -73,7 +73,7 @@ describe CB::Completion do
     result.any?(&.starts_with?("login")).should be_true
   end
 
-  %w[info rename destroy logs].each do |cmd|
+  %w[info rename destroy logs suspend resume].each do |cmd|
     it "#{cmd} is included in top level suggestions" do
       result = parse("cb ")
       result.any?(&.starts_with?(cmd)).should be_true

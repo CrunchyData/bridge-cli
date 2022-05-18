@@ -400,6 +400,18 @@ op = OptionParser.new do |parser|
     end
   end
 
+  parser.on("suspend", "Temporarily turn off a cluster") do
+    parser.banner = "cb suspend <cluster id>"
+    suspend = set_action ClusterSuspend
+    parser.unknown_args { |args| suspend.cluster_id = get_id_arg.call(args) }
+  end
+
+  parser.on("resume", "Turn on a previously suspended cluster") do
+    parser.banner = "cb resume <cluster id>"
+    resume = set_action ClusterResume
+    parser.unknown_args { |args| resume.cluster_id = get_id_arg.call(args) }
+  end
+
   parser.on("teamcert", "Show public TLS cert for a team") do
     parser.banner = "cb teamcert <team id>"
     teamcert = set_action TeamCert

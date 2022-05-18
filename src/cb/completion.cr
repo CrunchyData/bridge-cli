@@ -44,7 +44,7 @@ class CB::Completion
       top_level
     else
       case args.first
-      when "info", "destroy", "rename", "logs"
+      when "info", "destroy", "rename", "logs", "suspend", "resume"
         single_cluster_suggestion
       when "create"
         create
@@ -105,6 +105,8 @@ class CB::Completion
       "logdest\tManage log destinations",
       "scope\tRun diagnostic queries",
       "logs\tView live cluster logs",
+      "suspend\tTemporarily turn off a cluster",
+      "resume\tTurn on a suspended cluster",
     ]
     if @client
       options
