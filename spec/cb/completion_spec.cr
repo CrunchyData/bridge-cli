@@ -413,10 +413,16 @@ describe CB::Completion do
   it "completes backup" do
     result = parse("cb backup ")
     result.should have_option "list"
+    result.should have_option "capture"
 
     result = parse("cb backup list ")
     result.should eq ["abc\tmy team/my cluster"]
     result = parse("cb backup list abc ")
+    result.should_not have_option "abc"
+
+    result = parse("cb backup capture ")
+    result.should eq ["abc\tmy team/my cluster"]
+    result = parse("cb backup capture abc ")
     result.should_not have_option "abc"
   end
 

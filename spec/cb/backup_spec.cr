@@ -10,8 +10,20 @@ private class BackupTestClient < CB::Client
   end
 end
 
+private def make_ba
+  CB::BackupCapture.new(BackupTestClient.new(TEST_TOKEN))
+end
+
 private def make_bl
   CB::BackupList.new(BackupTestClient.new(TEST_TOKEN))
+end
+
+describe CB::BackupCapture do
+  it "validates that cluster_id is correct" do
+    ba = make_ba
+    ba.cluster_id = "afpvoqooxzdrriu6w3bhqo55c4"
+    expect_cb_error(/cluster id/) { ba.cluster_id = "notaneid" }
+  end
 end
 
 describe CB::BackupList do

@@ -458,8 +458,9 @@ class CB::Completion
     when ""
       return [
         "list\tlist backups",
+        "capture\tstart a new backup",
       ]
-    when "list"
+    when "list", "capture"
       return cluster_suggestions if @args.size == 3
     end
 

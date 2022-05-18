@@ -1,6 +1,20 @@
 require "./action"
 
 module CB
+  class BackupCapture < Action
+    eid_setter cluster_id
+
+    def run
+      check_required_args do |missing|
+        missing << "cluster id" unless cluster_id
+      end
+
+      client.put "clusters/#{cluster_id}/actions/start-backup"
+      c = client.get_cluster cluster_id
+      output << "requested backup capture of " << c.name.colorize.t_name << "\n"
+    end
+  end
+
   class Client
     jrecord Backup,
       name : String,
