@@ -6,11 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-<<<<<<< HEAD
 - `cb backup list` shows current backups for a cluster.
-=======
 - `cb suspend` and `resume` to temporarily stop running a cluster.
->>>>>>> cafe0ec (add suspend and resume)
 
 ## [2.0.0] - 2022-05-17
 ### Added
