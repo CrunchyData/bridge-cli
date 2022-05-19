@@ -3,7 +3,7 @@ require "../spec_helper"
 private class BackupTestClient < CB::Client
   def backup_list(id)
     if id.try &.starts_with? 'z'
-      [Backup.new(name: "a backup", started_at: Time.utc, finished_at: Time.utc, start_lsn: "1/a", end_lsn: "2/b", size_bytes: 123)]
+      [Backup.new(name: "a backup", started_at: Time.utc, finished_at: Time.utc, lsn_start: "1/a", lsn_stop: "2/b", size_bytes: 123)]
     else
       [] of Backup
     end
