@@ -459,8 +459,9 @@ class CB::Completion
       return [
         "list\tlist backups",
         "capture\tstart a new backup",
+        "token\tcreate a backup token",
       ]
-    when "list", "capture"
+    when "list", "capture", "token"
       return cluster_suggestions if @args.size == 3
     end
 

@@ -28,6 +28,30 @@ module CB
       resp = get "clusters/#{id}/backups"
       Array(Backup).from_json resp.body, root: "backups"
     end
+
+    jrecord AWSBackrestCredential,
+      s3_key : String,
+      s3_key_secret : String,
+      s3_token : String,
+      s3_region : String,
+      s3_bucket : String
+
+    jrecord AzureBackrestCredential,
+      azure_account : String,
+      azure_container : String,
+      azure_key : String,
+      azure_key_type : String
+
+    jrecord BackupToken,
+      type : String,
+      repo_path : String,
+      aws : AWSBackrestCredential? = nil,
+      azure : AzureBackrestCredential? = nil
+
+    def backup_token(id)
+      resp = post "clusters/#{id}/backup-tokens"
+      BackupToken.from_json resp.body
+    end
   end
 
   class BackupList < Action
@@ -59,6 +83,45 @@ module CB
         output << bk.finished_at.to_rfc3339.colorize.bold << '\t'
         output << bk.lsn_start.ljust(lsn_start_max) << '\t'
         output << bk.lsn_stop.colorize.bold << '\n'
+      end
+    end
+  end
+
+  class BackupToken < Action
+    eid_setter cluster_id
+
+    def run
+      check_required_args do |missing|
+        missing << "cluster id" unless cluster_id
+      end
+
+      token = client.backup_token cluster_id
+      raise Error.new("backup token not created") if token.nil?
+
+      cred = case
+             when !token.aws.nil?
+               token.aws
+             when !token.azure.nil?
+               token.azure
+             else
+               "No Credentials"
+             end
+
+      output << "Type:".colorize.bold << "            #{token.type}\n"
+      output << "Repo Path:".colorize.bold << "       #{token.repo_path}\n"
+      if cred.is_a?(Client::AWSBackrestCredential)
+        output << "S3 Bucket:".colorize.bold << "       #{cred.s3_bucket}\n"
+        output << "S3 Key:".colorize.bold << "          #{cred.s3_key}\n"
+        output << "S3 Key Secret:".colorize.bold << "   #{cred.s3_key_secret}\n"
+        output << "S3 Region:".colorize.bold << "       #{cred.s3_region}\n"
+        output << "S3 Token:".colorize.bold << "        #{cred.s3_token}\n"
+      elsif cred.is_a?(Client::AzureBackrestCredential)
+        output << "Azure Account:".colorize.bold << "   #{cred.azure_account}\n"
+        output << "Azure Container:".colorize.bold << " #{cred.azure_container}\n"
+        output << "Azure Key:".colorize.bold << "       #{cred.azure_key}\n"
+        output << "Azure Key Type:".colorize.bold << "  #{cred.azure_key_type}\n"
+      else
+        output << cred << '\n'
       end
     end
   end

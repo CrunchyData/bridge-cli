@@ -391,7 +391,13 @@ op = OptionParser.new do |parser|
   # Backup Management
   #
   parser.on("backup", "Manage backups") do
-    parser.banner = "cb backup <list|capture>"
+    parser.banner = "cb backup <capture|list|token>"
+
+    parser.on("capture", "Start capturing a new backup for a cluster") do
+      capture = set_action BackupCapture
+      parser.banner = "cb backup capture <cluster id>"
+      parser.unknown_args { |args| capture.cluster_id = get_id_arg.call(args) }
+    end
 
     parser.on("list", "List backups for a cluster") do
       list = set_action BackupList
@@ -399,10 +405,10 @@ op = OptionParser.new do |parser|
       parser.unknown_args { |args| list.cluster_id = get_id_arg.call(args) }
     end
 
-    parser.on("capture", "Start capturing a new backup for a cluster") do
-      capture = set_action BackupCapture
-      parser.banner = "cb backup capture <cluster id>"
-      parser.unknown_args { |args| capture.cluster_id = get_id_arg.call(args) }
+    parser.on("token", "Create backup token") do
+      token = set_action BackupToken
+      parser.banner = "cb backup token <cluster id>"
+      parser.unknown_args { |args| token.cluster_id = get_id_arg.call(args) }
     end
   end
 
