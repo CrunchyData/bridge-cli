@@ -139,7 +139,7 @@ module CB
 
     def output_pgbackrest(token, cred)
       output << "repo1-type=#{token.type}\n"
-      output << "repo1-path=#{token.repo_path}"
+      output << "repo1-path=#{token.repo_path}\n"
       if cred.is_a?(Client::AWSBackrestCredential)
         output << <<-AWS
 repo1-s3-bucket=#{cred.s3_bucket}
