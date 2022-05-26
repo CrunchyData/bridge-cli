@@ -414,6 +414,7 @@ describe CB::Completion do
     result = parse("cb backup ")
     result.should have_option "list"
     result.should have_option "capture"
+    result.should have_option "token"
 
     result = parse("cb backup list ")
     result.should eq ["abc\tmy team/my cluster"]
@@ -423,6 +424,11 @@ describe CB::Completion do
     result = parse("cb backup capture ")
     result.should eq ["abc\tmy team/my cluster"]
     result = parse("cb backup capture abc ")
+    result.should_not have_option "abc"
+
+    result = parse("cb backup token ")
+    result.should eq ["abc\tmy team/my cluster"]
+    result = parse("cb backup token abc ")
     result.should_not have_option "abc"
   end
 

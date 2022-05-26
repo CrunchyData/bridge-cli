@@ -8,6 +8,35 @@ private class BackupTestClient < CB::Client
       [] of Backup
     end
   end
+
+  def backup_token(id)
+    if id.try &.starts_with? "aws"
+      BackupToken.new(
+        type: "s3",
+        repo_path: "/the-path",
+        aws: AWSBackrestCredential.new(
+          s3_key: "key",
+          s3_key_secret: "secret",
+          s3_token: "token",
+          s3_region: "us-west-1",
+          s3_bucket: "the-bucket",
+        )
+      )
+    elsif id.try &.starts_with? "azr"
+      BackupToken.new(
+        type: "azure",
+        repo_path: "/",
+        azure: AzureBackrestCredential.new(
+          azure_account: "test_account",
+          azure_key: "test_token",
+          azure_key_type: "sas",
+          azure_container: "test_container",
+        )
+      )
+    else
+      nil
+    end
+  end
 end
 
 private def make_ba
@@ -16,6 +45,10 @@ end
 
 private def make_bl
   CB::BackupList.new(BackupTestClient.new(TEST_TOKEN))
+end
+
+private def make_bt
+  CB::BackupToken.new(BackupTestClient.new(TEST_TOKEN))
 end
 
 describe CB::BackupCapture do
@@ -49,5 +82,32 @@ describe CB::BackupList do
 
     bl.call
     output.to_s.should match /a backup/
+  end
+end
+
+describe CB::BackupToken do
+  it "validates that cluster_id is correct" do
+    bt = make_bt
+    bt.cluster_id = "afpvoqooxzdrriu6w3bhqo55c4"
+    expect_cb_error(/cluster id/) { bt.cluster_id = "notaneid" }
+  end
+
+  it "says when there are no backups" do
+    bt = make_bt
+    bt.cluster_id = "awszzzzzzzzzriu6w3bhqo55c4"
+    bt.output = output = IO::Memory.new
+
+    bt.call
+    output.to_s.should match /Type:.*s3.*/
+
+    bt = make_bt
+    bt.cluster_id = "azrzzzzzzzzzriu6w3bhqo55c4"
+    bt.output = output = IO::Memory.new
+
+    bt.call
+    output.to_s.should match /Type:.*azure.*/
+  end
+
+  it "prints token when available" do
   end
 end
