@@ -14,6 +14,7 @@ private class BackupTestClient < CB::Client
       BackupToken.new(
         type: "s3",
         repo_path: "/the-path",
+        stanza: "h3zwxm6bafaq3mqbgou5zj56su",
         aws: AWSBackrestCredential.new(
           s3_key: "key",
           s3_key_secret: "secret",
@@ -26,6 +27,7 @@ private class BackupTestClient < CB::Client
       BackupToken.new(
         type: "azure",
         repo_path: "/",
+        stanza: "h3zwxm6bafaq3mqbgou5zj56su",
         azure: AzureBackrestCredential.new(
           azure_account: "test_account",
           azure_key: "test_token",

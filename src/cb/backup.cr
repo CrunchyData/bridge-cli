@@ -45,6 +45,7 @@ module CB
     jrecord BackupToken,
       type : String,
       repo_path : String,
+      stanza : String,
       aws : AWSBackrestCredential? = nil,
       azure : AzureBackrestCredential? = nil
 
@@ -89,6 +90,7 @@ module CB
 
   class BackupToken < Action
     eid_setter cluster_id
+    eid_setter stanza
     ident_setter format
 
     def run
@@ -121,6 +123,7 @@ module CB
     def output_default(token, cred)
       output << "Type:".colorize.bold << "            #{token.type}\n"
       output << "Repo Path:".colorize.bold << "       #{token.repo_path}\n"
+      output << "Stanza:".colorize.bold << "          #{token.stanza}\n"
       if cred.is_a?(Client::AWSBackrestCredential)
         output << "S3 Bucket:".colorize.bold << "       #{cred.s3_bucket}\n"
         output << "S3 Key:".colorize.bold << "          #{cred.s3_key}\n"
@@ -138,6 +141,7 @@ module CB
     end
 
     def output_pgbackrest(token, cred)
+      output << "[#{token.stanza}]\n"
       output << "repo1-type=#{token.type}\n"
       output << "repo1-path=#{token.repo_path}\n"
       if cred.is_a?(Client::AWSBackrestCredential)
