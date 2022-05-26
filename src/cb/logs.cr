@@ -23,6 +23,8 @@ module CB
       while (read_bytes = ch.read(buffer.to_slice)) > 0
         output.write buffer.to_slice[0, read_bytes]
       end
+    rescue e
+      raise Program::Error.new(cause: e)
     end
   end
 end

@@ -4,6 +4,10 @@ require "./token"
 class CB::Program
   class Error < Exception
     property show_usage : Bool = false
+
+    def message
+      @message || @cause.try &.message
+    end
   end
 
   property input : IO
