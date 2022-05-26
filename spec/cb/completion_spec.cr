@@ -430,6 +430,9 @@ describe CB::Completion do
     result.should eq ["abc\tmy team/my cluster"]
     result = parse("cb backup token abc ")
     result.should_not have_option "abc"
+    result.should have_option "--format"
+    result = parse("cb backup token abc --format ")
+    result.should eq ["default", "pgbackrest"]
   end
 
   it "completes detach" do
