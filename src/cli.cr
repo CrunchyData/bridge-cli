@@ -407,6 +407,7 @@ op = OptionParser.new do |parser|
 
     parser.on("token", "Create backup token") do
       token = set_action BackupToken
+      parser.on("--format=FORMAT", "<default|pgbackrest>") { |arg| token.format = arg }
       parser.banner = "cb backup token <cluster id>"
       parser.unknown_args { |args| token.cluster_id = get_id_arg.call(args) }
     end

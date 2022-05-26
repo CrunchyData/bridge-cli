@@ -461,11 +461,24 @@ class CB::Completion
         "capture\tstart a new backup",
         "token\tcreate a backup token",
       ]
-    when "list", "capture", "token"
+    when "list", "capture"
       return cluster_suggestions if @args.size == 3
+    when "token"
+      return cluster_suggestions if @args.size == 3
+      return backup_token
     end
 
     suggest_none
+  end
+
+  def backup_token
+    if last_arg?("--format")
+      return ["default", "pgbackrest"]
+    end
+
+    suggest = [] of String
+    suggest << "--format\toutput format" unless has_full_flag? :format
+    suggest
   end
 
   #
@@ -787,6 +800,7 @@ class CB::Completion
     full << :account if has_full_flag? "--account"
     full << :email if has_full_flag? "--email"
     full << :full if has_full_flag? "--full"
+    full << :format if has_full_flag? "--format"
     full
   end
 

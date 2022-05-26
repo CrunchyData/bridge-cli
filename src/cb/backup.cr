@@ -89,6 +89,7 @@ module CB
 
   class BackupToken < Action
     eid_setter cluster_id
+    ident_setter format
 
     def run
       check_required_args do |missing|
@@ -107,6 +108,17 @@ module CB
                "No Credentials"
              end
 
+      case @format
+      when nil, "default"
+        output_default(token, cred)
+      when "pgbackrest"
+        output_pgbackrest(token, cred)
+      else
+        raise Error.new("invalid format #{@format}")
+      end
+    end
+
+    def output_default(token, cred)
       output << "Type:".colorize.bold << "            #{token.type}\n"
       output << "Repo Path:".colorize.bold << "       #{token.repo_path}\n"
       if cred.is_a?(Client::AWSBackrestCredential)
@@ -120,6 +132,30 @@ module CB
         output << "Azure Container:".colorize.bold << " #{cred.azure_container}\n"
         output << "Azure Key:".colorize.bold << "       #{cred.azure_key}\n"
         output << "Azure Key Type:".colorize.bold << "  #{cred.azure_key_type}\n"
+      else
+        output << cred << '\n'
+      end
+    end
+
+    def output_pgbackrest(token, cred)
+      output << "repo1-type=#{token.type}\n"
+      output << "repo1-path=#{token.repo_path}"
+      if cred.is_a?(Client::AWSBackrestCredential)
+        output << <<-AWS
+repo1-s3-bucket=#{cred.s3_bucket}
+repo1-s3-key=#{cred.s3_key}
+repo1-s3-key-secret=#{cred.s3_key_secret}
+repo1-s3-token=#{cred.s3_token}
+repo1-s3-endpoint=s3.dualstack.#{cred.s3_region}.amazonaws.com
+repo1-s3-region=#{cred.s3_region}
+AWS
+      elsif cred.is_a?(Client::AzureBackrestCredential)
+        output << <<-AZURE
+repo1-azure-account=#{cred.azure_account}
+repo1-azure-container=#{cred.azure_container}
+repo1-azure-key-type=#{cred.azure_key_type}
+repo1-azure-key=#{cred.azure_key}
+AZURE
       else
         output << cred << '\n'
       end
