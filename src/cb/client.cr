@@ -357,29 +357,53 @@ class CB::Client
     put "clusters/#{id}/restart", {service: service}
   end
 
-  jrecord Plan, id : String, display_name : String
-  jrecord Region, id : String, display_name : String, location : String
-  jrecord Provider, id : String, display_name : String,
-    regions : Array(Region), plans : Array(Plan)
+  #
+  # Providers
+  #
 
+  jrecord Plan, id : String, display_name : String
+
+  jrecord Region, id : String, display_name : String, location : String
+
+  jrecord Provider, id : String,
+    display_name : String,
+    regions : Array(Region),
+    plans : Array(Plan)
+
+  # List available providers.
+  #
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/providers/list-providers
   def get_providers
     resp = get "providers"
     Array(Provider).from_json resp.body, root: "providers"
   end
 
+  #
+  # Firewall Rules
+  #
+
   jrecord FirewallRule, id : String, rule : String
 
-  def get_firewall_rules(cluster_id)
-    resp = get "clusters/#{cluster_id}/firewall"
-    Array(FirewallRule).from_json resp.body, root: "firewall_rules"
+  # Add a firewall rule to a cluster.
+  #
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridfirewall/create-firewall-rule
+  def add_firewall_rule(cluster_id, cidr)
+    post "clusters/#{cluster_id}/firewall", {rule: cidr}
   end
 
+  # Remove a firewall rule from a cluster.
+  #
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridfirewallruleid/destroy-firewall-rule
   def delete_firewall_rule(cluster_id, firewall_rule_id)
     delete "clusters/#{cluster_id}/firewall/#{firewall_rule_id}"
   end
 
-  def add_firewall_rule(cluster_id, cidr)
-    post "clusters/#{cluster_id}/firewall", {rule: cidr}
+  # List current firewall rules for a cluster.
+  #
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridfirewall/list-firewall-rules
+  def get_firewall_rules(cluster_id)
+    resp = get "clusters/#{cluster_id}/firewall"
+    Array(FirewallRule).from_json resp.body, root: "firewall_rules"
   end
 
   #
@@ -393,18 +417,24 @@ class CB::Client
     template : String,
     description : String
 
+  # List existing loggers for a cluster.
+  #
   # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridloggers/list-loggers
   def get_log_destinations(cluster_id)
     resp = get "clusters/#{cluster_id}/loggers"
     Array(LogDestination).from_json resp.body, root: "loggers"
   end
 
+  # Add a logger to a cluster.
+  #
   # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridloggers/create-logger
   def add_log_destination(cluster_id, ld)
     resp = post "clusters/#{cluster_id}/loggers", ld
     resp.body
   end
 
+  # Remove a logger from a cluster.
+  #
   # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridloggersloggerid/destroy-logger
   def destroy_log_destination(cluster_id, logdest_id)
     resp = delete "clusters/#{cluster_id}/loggers/#{logdest_id}"
