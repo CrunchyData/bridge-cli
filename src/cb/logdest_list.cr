@@ -1,7 +1,7 @@
 require "./action"
 
 module CB
-  class LogDestinationList < Action
+  class LogDestinationList < APIAction
     eid_setter cluster_id
 
     def run

@@ -1,6 +1,6 @@
 require "./action"
 
-class CB::Restart < CB::Action
+class CB::Restart < CB::APIAction
   eid_setter cluster_id
   bool_setter confirmed
   bool_setter full

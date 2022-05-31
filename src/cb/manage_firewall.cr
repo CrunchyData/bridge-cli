@@ -1,4 +1,4 @@
-class CB::ManageFirewall < CB::Action
+class CB::ManageFirewall < CB::APIAction
   Error = Program::Error
 
   eid_setter cluster_id

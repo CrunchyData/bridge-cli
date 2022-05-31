@@ -79,7 +79,7 @@ class CB::Completion
       end
     end
   rescue NoClientError
-    [] of String
+    suggest_none
   end
 
   def top_level

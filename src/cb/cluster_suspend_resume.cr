@@ -1,7 +1,7 @@
 require "./action"
 
 module CB
-  class ClusterSuspend < Action
+  class ClusterSuspend < APIAction
     eid_setter cluster_id
 
     def run
@@ -11,7 +11,7 @@ module CB
     end
   end
 
-  class ClusterResume < Action
+  class ClusterResume < APIAction
     eid_setter cluster_id
 
     def run

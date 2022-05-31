@@ -1,7 +1,7 @@
 require "./action"
 
 module CB
-  class LogDestinationDestroy < Action
+  class LogDestinationDestroy < APIAction
     eid_setter cluster_id
     eid_setter logdest_id
 

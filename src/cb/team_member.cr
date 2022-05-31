@@ -17,7 +17,7 @@ end
 #
 # Provides common properties and functionality specific to team member managment
 # actions.
-abstract class CB::TeamMemberAction < CB::Action
+abstract class CB::TeamMemberAction < CB::APIAction
   eid_setter team_id
   eid_setter account_id
   property email : String?

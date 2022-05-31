@@ -2,20 +2,28 @@ require "log"
 require "./client"
 
 module CB
+  # Action is the base class for all actions performed by `cb`.
   abstract class Action
     Log   = ::Log.for("Action")
     Error = Program::Error
 
     property input : IO
     property output : IO
-    getter client
 
-    def initialize(@client : Client, @input = STDIN, @output = STDOUT)
+    def initialize(@input = STDIN, @output = STDOUT)
     end
 
     def call
       Log.info { "calling #{self.class}" }
       run
+    end
+  end
+
+  # APIAction performs some action utilizing the API.
+  abstract class APIAction < Action
+    property client : Client
+
+    def initialize(@client, @input = STDIN, @output = STDOUT)
     end
 
     abstract def run

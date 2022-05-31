@@ -1,6 +1,6 @@
 require "./action"
 
-abstract class CB::TeamAction < CB::Action
+abstract class CB::TeamAction < CB::APIAction
   eid_setter team_id
 
   private def team_details(t : CB::Client::Team) : String

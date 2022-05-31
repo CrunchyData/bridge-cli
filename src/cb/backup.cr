@@ -1,7 +1,7 @@
 require "./action"
 
 module CB
-  class BackupCapture < Action
+  class BackupCapture < APIAction
     eid_setter cluster_id
 
     def run
@@ -55,7 +55,7 @@ module CB
     end
   end
 
-  class BackupList < Action
+  class BackupList < APIAction
     eid_setter cluster_id
 
     def run
@@ -88,7 +88,7 @@ module CB
     end
   end
 
-  class BackupToken < Action
+  class BackupToken < APIAction
     eid_setter cluster_id
     eid_setter stanza
     ident_setter format

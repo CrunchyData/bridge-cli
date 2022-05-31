@@ -52,7 +52,7 @@ op = OptionParser.new do |parser|
 
   parser.on("login", "Store API key") do
     parser.banner = "cb login"
-    action = ->{ PROG.login }
+    action = CB::Login.new
   end
 
   parser.on("list", "List clusters") do

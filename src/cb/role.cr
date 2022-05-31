@@ -5,7 +5,7 @@ module CB
   VALID_CLUSTER_ROLES = Set{"application", "default", "postgres", "user"}
 end
 
-abstract class CB::RoleAction < CB::Action
+abstract class CB::RoleAction < CB::APIAction
   eid_setter cluster_id
   property role_name : String?
 end

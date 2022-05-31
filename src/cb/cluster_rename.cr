@@ -1,6 +1,6 @@
 require "./action"
 
-class CB::ClusterRename < CB::Action
+class CB::ClusterRename < CB::APIAction
   eid_setter cluster_id
   property new_name : String?
 

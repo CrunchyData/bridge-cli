@@ -1,6 +1,6 @@
 require "./action"
 
-class CB::TeamCert < CB::Action
+class CB::TeamCert < CB::APIAction
   eid_setter team_id
 
   def run
