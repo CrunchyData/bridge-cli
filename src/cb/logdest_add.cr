@@ -1,24 +1,31 @@
 require "./action"
 
 module CB
-  class LogdestAdd < Action
+  class LogDestinationAdd < Action
     eid_setter cluster_id
     i32_setter port
     property host : String?
     property template : String?
-    property desc : String?
+    property description : String?
 
     def run
       validate
-      client.add_logdest self
-      output.puts "added new log destination"
+      client.add_log_destination(cluster_id, {
+        "host":        host,
+        "port":        port,
+        "template":    template,
+        "description": description,
+      })
+
+      output << "added new log destination for "
+      output << "#{cluster_id}".colorize.t_id << '\n'
     end
 
     def validate
       check_required_args do |missing|
         missing << "cluster" unless cluster_id
         missing << "port" unless port
-        missing << "desc" unless desc
+        missing << "desc" unless description
         missing << "host" unless host
         missing << "template" unless template
       end
@@ -30,8 +37,8 @@ module CB
     end
 
     def host=(str : String)
-      unless @desc
-        @desc = str.split('.').last(2).first
+      unless @description
+        @description = str.split('.').last(2).first
       end
       @host = str
     end

@@ -372,7 +372,7 @@ class CB::Completion
 
     if last_arg?("--logdest")
       return [] of String unless logdest.nil? && cluster
-      return client.get_logdests(cluster).map { |d| "#{d.id}\t#{d.description}" }
+      return client.get_log_destinations(cluster).map { |d| "#{d.id}\t#{d.description}" }
     end
 
     if cluster && !logdest

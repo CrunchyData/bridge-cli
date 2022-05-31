@@ -228,23 +228,23 @@ op = OptionParser.new do |parser|
     parser.banner = "cb logdest <list|add|destroy>"
 
     parser.on("list", "List log destinations for a cluster") do
-      list = set_action LogdestList
+      list = set_action LogDestinationList
       parser.banner = "cb logdest list <--cluster>"
       parser.on("--cluster ID", "Choose cluster") { |arg| list.cluster_id = arg }
     end
 
     parser.on("add", "Add a new log destination to a cluster") do
-      add = set_action LogdestAdd
+      add = set_action LogDestinationAdd
       parser.banner = "cb logdest add <--cluster> <--host> <--port> <--template> [--desc]"
       parser.on("--cluster ID", "Choose cluster") { |arg| add.cluster_id = arg }
       parser.on("--host HOST", "Hostname") { |arg| add.host = arg }
       parser.on("--port PORT", "Port number") { |arg| add.port = arg }
       parser.on("--template STR", "Log template") { |arg| add.template = arg }
-      parser.on("--desc STR", "Description") { |arg| add.desc = arg }
+      parser.on("--desc STR", "Description") { |arg| add.description = arg }
     end
 
     parser.on("destroy", "Remove an existing log destination from a cluster") do
-      destroy = set_action LogdestDestroy
+      destroy = set_action LogDestinationDestroy
       parser.banner = "cb logdest destroy <--cluster> <--logdest>"
       parser.on("--cluster ID", "Choose cluster") { |arg| destroy.cluster_id = arg }
       parser.on("--logdest ID", "Choose log destination") { |arg| destroy.logdest_id = arg }

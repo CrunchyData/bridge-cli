@@ -382,24 +382,31 @@ class CB::Client
     post "clusters/#{cluster_id}/firewall", {rule: cidr}
   end
 
-  jrecord Logdest, id : String, host : String, port : Int32, template : String, description : String
+  #
+  # Log Destinations
+  #
 
-  def get_logdests(cluster_id)
+  jrecord LogDestination,
+    id : String,
+    host : String,
+    port : Int32,
+    template : String,
+    description : String
+
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridloggers/list-loggers
+  def get_log_destinations(cluster_id)
     resp = get "clusters/#{cluster_id}/loggers"
-    Array(Logdest).from_json resp.body, root: "loggers"
+    Array(LogDestination).from_json resp.body, root: "loggers"
   end
 
-  def add_logdest(lda : CB::LogdestAdd)
-    resp = post "clusters/#{lda.cluster_id}/loggers", {
-      host:        lda.host,
-      port:        lda.port,
-      template:    lda.template,
-      description: lda.desc,
-    }
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridloggers/create-logger
+  def add_log_destination(cluster_id, ld)
+    resp = post "clusters/#{cluster_id}/loggers", ld
     resp.body
   end
 
-  def destroy_logdest(cluster_id, logdest_id)
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridloggersloggerid/destroy-logger
+  def destroy_log_destination(cluster_id, logdest_id)
     resp = delete "clusters/#{cluster_id}/loggers/#{logdest_id}"
     resp.body
   end

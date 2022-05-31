@@ -1,12 +1,12 @@
 require "./action"
 
 module CB
-  class LogdestList < Action
+  class LogDestinationList < Action
     eid_setter cluster_id
 
     def run
       check_required_args { |missing| missing << "cluster" unless cluster_id }
-      dests = client.get_logdests cluster_id
+      dests = client.get_log_destinations cluster_id
 
       output.tty? ? display_tty(dests) : display_pipe(dests)
     end
