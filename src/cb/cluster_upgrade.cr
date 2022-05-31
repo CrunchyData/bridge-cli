@@ -1,6 +1,6 @@
 require "./action"
 
-abstract class CB::Upgrade < CB::Action
+abstract class CB::Upgrade < CB::APIAction
   eid_setter cluster_id
   property confirmed : Bool = false
 

@@ -1,6 +1,6 @@
 require "./action"
 
-class CB::ClusterInfo < CB::Action
+class CB::ClusterInfo < CB::APIAction
   eid_setter cluster_id
 
   def run

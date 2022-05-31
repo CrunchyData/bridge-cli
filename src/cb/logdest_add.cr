@@ -1,7 +1,7 @@
 require "./action"
 
 module CB
-  class LogDestinationAdd < Action
+  class LogDestinationAdd < APIAction
     eid_setter cluster_id
     i32_setter port
     property host : String?

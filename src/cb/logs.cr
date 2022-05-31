@@ -4,7 +4,7 @@ require "./dirs"
 require "ssh2"
 
 module CB
-  class Logs < Action
+  class Logs < APIAction
     eid_setter cluster_id
 
     def run

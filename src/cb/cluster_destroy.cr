@@ -1,6 +1,6 @@
 require "./action"
 
-class CB::ClusterDestroy < CB::Action
+class CB::ClusterDestroy < CB::APIAction
   eid_setter cluster_id
 
   def run

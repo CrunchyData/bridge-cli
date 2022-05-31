@@ -1,6 +1,6 @@
 require "./action"
 
-class CB::ClusterURI < CB::Action
+class CB::ClusterURI < CB::APIAction
   eid_setter cluster_id
   property role_name : String = "default"
 

@@ -1,6 +1,6 @@
 require "./action"
 
-class CB::Detach < CB::Action
+class CB::Detach < CB::APIAction
   eid_setter cluster_id
   property confirmed : Bool = false
 

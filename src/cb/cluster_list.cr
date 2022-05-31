@@ -1,6 +1,6 @@
 require "./action"
 
-class CB::List < CB::Action
+class CB::List < CB::APIAction
   def run
     teams = client.get_teams
     clusters = client.get_clusters(teams)

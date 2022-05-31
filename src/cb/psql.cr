@@ -1,6 +1,6 @@
 require "./action"
 
-class CB::Psql < CB::Action
+class CB::Psql < CB::APIAction
   eid_setter cluster_id
   property database : String?
 

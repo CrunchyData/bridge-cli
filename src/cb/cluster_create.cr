@@ -1,6 +1,6 @@
 require "./action"
 
-class CB::ClusterCreate < CB::Action
+class CB::ClusterCreate < CB::APIAction
   bool_setter ha
   property name : String?
   ident_setter plan

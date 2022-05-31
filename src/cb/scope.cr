@@ -1,7 +1,7 @@
 require "./action"
 require "./scope_checks/*"
 
-class CB::Scope < CB::Action
+class CB::Scope < CB::APIAction
   property cluster_id : String?
   property checks : Array(::Scope::Check.class) = [] of ::Scope::Check.class
   property database : String?
