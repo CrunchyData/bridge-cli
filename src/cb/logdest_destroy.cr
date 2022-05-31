@@ -1,7 +1,7 @@
 require "./action"
 
 module CB
-  class LogdestDestroy < Action
+  class LogDestinationDestroy < Action
     eid_setter cluster_id
     eid_setter logdest_id
 
@@ -11,7 +11,7 @@ module CB
         missing << "logdest" unless logdest_id
       end
 
-      client.destroy_logdest cluster_id, logdest_id
+      client.destroy_log_destination cluster_id, logdest_id
       output.puts "log destination destroyed"
     end
   end

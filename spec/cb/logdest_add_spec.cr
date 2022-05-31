@@ -1,17 +1,17 @@
 require "../spec_helper"
 
-private class LogdestAddTestClient < CB::Client
+private class LogDestinationAddTestClient < CB::Client
 end
 
 private def make_lda
-  CB::LogdestAdd.new(LogdestAddTestClient.new(TEST_TOKEN))
+  CB::LogDestinationAdd.new(LogDestinationAddTestClient.new(TEST_TOKEN))
 end
 
 private def expect_validation_err(lda, part)
   expect_cb_error(/Missing required argument.+#{part}/) { lda.validate }
 end
 
-describe CB::LogdestAdd do
+describe CB::LogDestinationAdd do
   it "validates that required arguments are present" do
     lda = make_lda
 
@@ -20,7 +20,7 @@ describe CB::LogdestAdd do
     expect_validation_err lda, "port"
     lda.port = 2345
     expect_validation_err lda, "desc"
-    lda.desc = "hello"
+    lda.description = "hello"
     expect_validation_err lda, "host"
     lda.host = "example.com"
     expect_validation_err lda, "template"
@@ -36,22 +36,22 @@ describe CB::LogdestAdd do
 
   it "sets a default description based on the host if missing" do
     lda = make_lda
-    lda.desc.should be_nil
+    lda.description.should be_nil
 
     lda.host = "foo"
     lda.host.should eq "foo"
-    lda.desc.should eq "foo"
+    lda.description.should eq "foo"
 
-    lda.desc = nil
+    lda.description = nil
     lda.host = "bar.com"
-    lda.desc.should eq "bar"
+    lda.description.should eq "bar"
 
-    lda.desc = nil
+    lda.description = nil
     lda.host = "logs.baz.com"
-    lda.desc.should eq "baz"
+    lda.description.should eq "baz"
 
-    lda.desc = "already set dont change"
+    lda.description = "already set dont change"
     lda.host = "logs.zam.com"
-    lda.desc.should eq "already set dont change"
+    lda.description.should eq "already set dont change"
   end
 end

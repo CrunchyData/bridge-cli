@@ -33,8 +33,8 @@ private class CompletionTestClient < CB::Client
     ]
   end
 
-  def get_logdests(id)
-    [Logdest.new("logid", "host", 2020, "template", "logdest descr")]
+  def get_log_destinations(id)
+    [LogDestination.new("logid", "host", 2020, "template", "logdest descr")]
   end
 end
 
