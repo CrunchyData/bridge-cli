@@ -1,7 +1,7 @@
 require "http/client"
 require "json"
 require "log"
-require "../stdlib_ext"
+require "../ext/stdlib_ext"
 
 class CB::Client
   class Error < ::Exception

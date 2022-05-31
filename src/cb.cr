@@ -15,6 +15,6 @@ module CB
   VERSION_STR = "cb v#{CB::VERSION} (#{CB::BUILD_DATE})"
 end
 
-require "./stdlib_ext"
+require "./ext/stdlib_ext"
 require "./openssl_cert"
 require "./cb/*"

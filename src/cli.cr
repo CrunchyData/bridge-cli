@@ -1,6 +1,6 @@
 #!/usr/bin/env crystal
 require "./cb"
-require "./option_parser"
+require "./ext/option_parser"
 require "raven"
 
 Log.setup do |c|
