@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `cb suspend` and `resume` to temporarily stop running a cluster.
 - `cb backup capture` manually starts a backup for a cluster.
 
+### Fixed
+- Fix required arguments check for `cb upgrade cancel` and `cb upgrade status`.
+
 ## [2.0.0] - 2022-05-17
 ### Added
 - `--full` option to `cb restart` to restart the entire server.
