@@ -45,6 +45,8 @@ end
 # Action to cancel cluster upgrade.
 class CB::UpgradeCancel < CB::Upgrade
   def run
+    validate
+
     c = client.get_cluster cluster_id
     print_team_slash_cluster c
 
@@ -56,6 +58,8 @@ end
 # Action to get the cluster upgrade status.
 class CB::UpgradeStatus < CB::Upgrade
   def run
+    validate
+
     c = client.get_cluster cluster_id
     print_team_slash_cluster c
 
