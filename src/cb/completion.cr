@@ -121,8 +121,15 @@ class CB::Completion
   end
 
   def cluster_suggestions
-    teams = client.get_teams
-    client.get_clusters.map do |c|
+    tch = Channel(Array(CB::Client::Team)).new
+    spawn { tch.send client.get_teams }
+    cch = Channel(Array(CB::Client::Cluster)).new
+    spawn { cch.send client.get_clusters }
+
+    teams = tch.receive
+    clusters = cch.receive
+
+    clusters.map do |c|
       team_name = teams.find { |t| t.id == c.team_id }.try(&.name) || "unknown_team"
       "#{c.id}\t#{team_name}/#{c.name}"
     end
