@@ -17,16 +17,6 @@ module CB
       Log.info { "calling #{self.class}" }
       run
     end
-  end
-
-  # APIAction performs some action utilizing the API.
-  abstract class APIAction < Action
-    property client : Client
-
-    def initialize(@client, @input = STDIN, @output = STDOUT)
-    end
-
-    abstract def run
 
     macro eid_setter(property, description = nil)
       property {{property}} : String?
@@ -105,6 +95,16 @@ module CB
       end
       true
     end
+  end
+
+  # APIAction performs some action utilizing the API.
+  abstract class APIAction < Action
+    property client : Client
+
+    def initialize(@client, @input = STDIN, @output = STDOUT)
+    end
+
+    abstract def run
 
     private def print_team_slash_cluster(c)
       team_name = team_name_for_cluster c
