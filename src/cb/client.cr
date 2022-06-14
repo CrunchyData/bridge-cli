@@ -82,6 +82,10 @@ class CB::Client
       "Authorization" => "Bearer #{token.token}",
       "User-Agent"    => CB::VERSION_STR,
     }
+
+    ENV.select { |k, _| k.starts_with? "X_CRUNCHY_" }.each { |k, v|
+      @headers.add k.split('_').map(&.titleize).join('-'), v
+    }
   end
 
   def http : HTTP::Client
