@@ -1,5 +1,6 @@
 require "./creds"
 require "./token"
+require "./action/*"
 
 class CB::Program
   class Error < Exception
@@ -23,7 +24,7 @@ class CB::Program
     if c = @creds
       return c
     end
-    @cred = Creds.for_host(CB::HOST) || CB::Login.new.run
+    @cred = Creds.for_host(CB::HOST) || Action::Login.new.run
   end
 
   def token : CB::Token

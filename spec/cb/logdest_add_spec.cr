@@ -4,14 +4,14 @@ private class LogDestinationAddTestClient < CB::Client
 end
 
 private def make_lda
-  CB::LogDestinationAdd.new(LogDestinationAddTestClient.new(TEST_TOKEN))
+  CB::Action::LogDestinationAdd.new(LogDestinationAddTestClient.new(TEST_TOKEN))
 end
 
 private def expect_validation_err(lda, part)
   expect_cb_error(/Missing required argument.+#{part}/) { lda.validate }
 end
 
-describe CB::LogDestinationAdd do
+describe CB::Action::LogDestinationAdd do
   it "validates that required arguments are present" do
     lda = make_lda
 

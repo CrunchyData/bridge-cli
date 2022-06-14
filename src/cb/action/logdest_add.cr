@@ -1,6 +1,6 @@
 require "./action"
 
-module CB
+module CB::Action
   class LogDestinationAdd < APIAction
     eid_setter cluster_id
     i32_setter port

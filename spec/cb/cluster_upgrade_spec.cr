@@ -51,9 +51,9 @@ private class ClusterUpgradeTestClient < CB::Client
   end
 end
 
-describe CB::UpgradeStart do
+describe CB::Action::UpgradeStart do
   it "validates that required arguments are present" do
-    action = CB::UpgradeStart.new(ClusterUpgradeTestClient.new(TEST_TOKEN))
+    action = CB::Action::UpgradeStart.new(ClusterUpgradeTestClient.new(TEST_TOKEN))
 
     msg = /Missing required argument/
 
@@ -63,7 +63,7 @@ describe CB::UpgradeStart do
   end
 
   it "#run prints cluster upgrade started" do
-    action = CB::UpgradeStart.new(ClusterUpgradeTestClient.new(TEST_TOKEN))
+    action = CB::Action::UpgradeStart.new(ClusterUpgradeTestClient.new(TEST_TOKEN))
     action.output = output = IO::Memory.new
 
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
@@ -75,9 +75,9 @@ describe CB::UpgradeStart do
   end
 end
 
-describe CB::UpgradeStatus do
+describe CB::Action::UpgradeStatus do
   it "validates that required arguments are present" do
-    action = CB::UpgradeStatus.new(ClusterUpgradeTestClient.new(TEST_TOKEN))
+    action = CB::Action::UpgradeStatus.new(ClusterUpgradeTestClient.new(TEST_TOKEN))
 
     msg = /Missing required argument/
 
@@ -87,7 +87,7 @@ describe CB::UpgradeStatus do
   end
 
   it "#run no upgrades" do
-    action = CB::UpgradeStatus.new(ClusterUpgradeTestClient.new(TEST_TOKEN))
+    action = CB::Action::UpgradeStatus.new(ClusterUpgradeTestClient.new(TEST_TOKEN))
     action.output = output = IO::Memory.new
 
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
@@ -98,9 +98,9 @@ describe CB::UpgradeStatus do
   end
 end
 
-describe CB::UpgradeCancel do
+describe CB::Action::UpgradeCancel do
   it "validates that required arguments are present" do
-    action = CB::UpgradeCancel.new(ClusterUpgradeTestClient.new(TEST_TOKEN))
+    action = CB::Action::UpgradeCancel.new(ClusterUpgradeTestClient.new(TEST_TOKEN))
 
     msg = /Missing required argument/
 
@@ -110,7 +110,7 @@ describe CB::UpgradeCancel do
   end
 
   it "#run " do
-    action = CB::UpgradeCancel.new(ClusterUpgradeTestClient.new(TEST_TOKEN))
+    action = CB::Action::UpgradeCancel.new(ClusterUpgradeTestClient.new(TEST_TOKEN))
     action.output = output = IO::Memory.new
 
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"

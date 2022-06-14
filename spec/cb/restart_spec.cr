@@ -25,9 +25,9 @@ private class RestartTestClient < CB::Client
   end
 end
 
-describe CB::Restart do
+describe CB::Action::Restart do
   it "validates that required arguments are present" do
-    action = CB::Restart.new(RestartTestClient.new(TEST_TOKEN))
+    action = CB::Action::Restart.new(RestartTestClient.new(TEST_TOKEN))
 
     msg = /Missing required argument/
     expect_cb_error(msg) { action.validate }
@@ -37,7 +37,7 @@ describe CB::Restart do
   end
 
   it "#run prints confirmation" do
-    action = CB::Restart.new(RestartTestClient.new(TEST_TOKEN))
+    action = CB::Action::Restart.new(RestartTestClient.new(TEST_TOKEN))
     action.output = IO::Memory.new
 
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"

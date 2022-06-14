@@ -1,6 +1,6 @@
 require "./action"
 
-module CB
+module CB::Action
   class ClusterSuspend < APIAction
     eid_setter cluster_id
 
