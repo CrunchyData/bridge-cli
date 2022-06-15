@@ -87,6 +87,7 @@ class CB::Completion
       "--help\tShow help and usage",
       "version\tShow version information",
       "login\tStore API key",
+      "logout\tRemove stored API key and token",
       "token\tGet current API token",
       "list\tList clusters",
       "team\tManage teams",
@@ -111,7 +112,7 @@ class CB::Completion
     if @client
       options
     else
-      options.first 3
+      options.first 4
     end
   end
 
