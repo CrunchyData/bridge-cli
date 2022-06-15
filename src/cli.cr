@@ -1,5 +1,6 @@
 #!/usr/bin/env crystal
 require "./cb"
+require "./cb/action"
 require "./ext/option_parser"
 require "raven"
 
@@ -11,7 +12,7 @@ end
 PROG = CB::Program.new
 
 macro set_action(cl)
-  action = CB::{{cl}}.new PROG.client, PROG.input, PROG.output
+  action = CB::Action::{{cl}}.new PROG.client, PROG.input, PROG.output
 end
 
 def show_deprecated(msg : String)
@@ -52,7 +53,7 @@ op = OptionParser.new do |parser|
 
   parser.on("login", "Store API key") do
     parser.banner = "cb login"
-    action = CB::Login.new
+    action = CB::Action::Login.new
   end
 
   parser.on("list", "List clusters") do
@@ -440,9 +441,9 @@ op = OptionParser.new do |parser|
 
   parser.on("token", "Return a bearer token for use in the api") do
     parser.banner = "cb token [-H]"
-    token = action = CB::TokenAction.new PROG.token, PROG.input, PROG.output
+    token = action = CB::Action::Token.new PROG.token, PROG.input, PROG.output
 
-    parser.on("-H", "Authorization header format") { token.format = CB::TokenAction::Format::Header }
+    parser.on("-H", "Authorization header format") { token.format = CB::Action::Token::Format::Header }
   end
 
   parser.on("version", "Show the version") do

@@ -1,11 +1,11 @@
 require "log"
-require "./client"
+require "../client"
 
-module CB
+module CB::Action
   # Action is the base class for all actions performed by `cb`.
   abstract class Action
     Log   = ::Log.for("Action")
-    Error = Program::Error
+    Error = CB::Program::Error
 
     property input : IO
     property output : IO
@@ -22,7 +22,7 @@ module CB
       property {{property}} : String?
 
       def {{property}}=(str : String)
-        raise_arg_error {{description || property.stringify.gsub(/_/, " ")}}, str unless str =~ EID_PATTERN
+        raise_arg_error {{description || property.stringify.gsub(/_/, " ")}}, str unless str =~ CB::EID_PATTERN
         @{{property}} = str
       end
     end
@@ -99,7 +99,7 @@ module CB
 
   # APIAction performs some action utilizing the API.
   abstract class APIAction < Action
-    property client : Client
+    property client : CB::Client
 
     def initialize(@client, @input = STDIN, @output = STDOUT)
     end

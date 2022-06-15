@@ -23,9 +23,9 @@ private class ClusterURITestClient < CB::Client
   end
 end
 
-describe CB::ClusterURI do
+describe CB::Action::ClusterURI do
   it "ensures 'default' if role not specified" do
-    action = CB::ClusterURI.new(ClusterURITestClient.new(TEST_TOKEN))
+    action = CB::Action::ClusterURI.new(ClusterURITestClient.new(TEST_TOKEN))
     action.output = IO::Memory.new
 
     action.call
@@ -34,7 +34,7 @@ describe CB::ClusterURI do
   end
 
   it "#run errors on invalid role" do
-    action = CB::ClusterURI.new(ClusterURITestClient.new(TEST_TOKEN))
+    action = CB::Action::ClusterURI.new(ClusterURITestClient.new(TEST_TOKEN))
     action.output = IO::Memory.new
 
     action.role_name = "invalid"
@@ -51,7 +51,7 @@ describe CB::ClusterURI do
         HTTP::Client::Response.new(HTTP::Status::BAD_REQUEST))
     }
 
-    action = CB::ClusterURI.new(c)
+    action = CB::Action::ClusterURI.new(c)
     action.output = IO::Memory.new
 
     msg = /invalid input/
@@ -62,7 +62,7 @@ describe CB::ClusterURI do
   it "#run prints uri" do
     c = ClusterURITestClient.new(TEST_TOKEN)
 
-    action = CB::ClusterURI.new(c)
+    action = CB::Action::ClusterURI.new(c)
     action.output = output = IO::Memory.new
 
     action.call

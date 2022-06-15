@@ -29,9 +29,9 @@ private class RoleTestClient < CB::Client
   end
 end
 
-describe CB::RoleCreate do
+describe CB::Action::RoleCreate do
   it "validates that required arguments are present" do
-    action = CB::RoleCreate.new(RoleTestClient.new(TEST_TOKEN))
+    action = CB::Action::RoleCreate.new(RoleTestClient.new(TEST_TOKEN))
 
     msg = /Missing required argument/
 
@@ -41,7 +41,7 @@ describe CB::RoleCreate do
   end
 
   it "#run prints confirmation" do
-    action = CB::RoleCreate.new(RoleTestClient.new(TEST_TOKEN))
+    action = CB::Action::RoleCreate.new(RoleTestClient.new(TEST_TOKEN))
     action.output = output = IO::Memory.new
 
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
@@ -52,9 +52,9 @@ describe CB::RoleCreate do
   end
 end
 
-describe CB::RoleUpdate do
+describe CB::Action::RoleUpdate do
   it "validates that required arguments are present" do
-    action = CB::RoleUpdate.new(RoleTestClient.new(TEST_TOKEN))
+    action = CB::Action::RoleUpdate.new(RoleTestClient.new(TEST_TOKEN))
 
     msg = /Missing required argument/
 
@@ -65,7 +65,7 @@ describe CB::RoleUpdate do
   end
 
   it "#run errors on invalid role" do
-    action = CB::RoleUpdate.new(RoleTestClient.new(TEST_TOKEN))
+    action = CB::Action::RoleUpdate.new(RoleTestClient.new(TEST_TOKEN))
     action.output = IO::Memory.new
 
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
@@ -77,7 +77,7 @@ describe CB::RoleUpdate do
   end
 
   it "#run translates 'user' role" do
-    action = CB::RoleUpdate.new(RoleTestClient.new(TEST_TOKEN))
+    action = CB::Action::RoleUpdate.new(RoleTestClient.new(TEST_TOKEN))
     action.output = IO::Memory.new
 
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
@@ -89,7 +89,7 @@ describe CB::RoleUpdate do
   end
 
   it "#run prints confirmation" do
-    action = CB::RoleUpdate.new(RoleTestClient.new(TEST_TOKEN))
+    action = CB::Action::RoleUpdate.new(RoleTestClient.new(TEST_TOKEN))
     action.output = output = IO::Memory.new
 
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
@@ -101,9 +101,9 @@ describe CB::RoleUpdate do
   end
 end
 
-describe CB::RoleDelete do
+describe CB::Action::RoleDelete do
   it "validate that required arguments are present" do
-    action = CB::RoleDelete.new(RoleTestClient.new(TEST_TOKEN))
+    action = CB::Action::RoleDelete.new(RoleTestClient.new(TEST_TOKEN))
     action.output = IO::Memory.new
 
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
@@ -111,7 +111,7 @@ describe CB::RoleDelete do
   end
 
   it "#run errors on invalid role" do
-    action = CB::RoleDelete.new(RoleTestClient.new(TEST_TOKEN))
+    action = CB::Action::RoleDelete.new(RoleTestClient.new(TEST_TOKEN))
     action.output = IO::Memory.new
 
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
@@ -121,7 +121,7 @@ describe CB::RoleDelete do
   end
 
   it "#run translates 'user' role" do
-    action = CB::RoleDelete.new(RoleTestClient.new(TEST_TOKEN))
+    action = CB::Action::RoleDelete.new(RoleTestClient.new(TEST_TOKEN))
     action.output = IO::Memory.new
 
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
@@ -133,7 +133,7 @@ describe CB::RoleDelete do
   end
 
   it "#run prints confirmation" do
-    action = CB::RoleDelete.new(RoleTestClient.new(TEST_TOKEN))
+    action = CB::Action::RoleDelete.new(RoleTestClient.new(TEST_TOKEN))
     action.output = output = IO::Memory.new
 
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"

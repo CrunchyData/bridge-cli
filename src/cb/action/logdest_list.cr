@@ -1,6 +1,6 @@
 require "./action"
 
-module CB
+module CB::Action
   class LogDestinationList < APIAction
     eid_setter cluster_id
 

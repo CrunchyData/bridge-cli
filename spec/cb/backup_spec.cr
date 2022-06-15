@@ -42,18 +42,18 @@ private class BackupTestClient < CB::Client
 end
 
 private def make_ba
-  CB::BackupCapture.new(BackupTestClient.new(TEST_TOKEN))
+  CB::Action::BackupCapture.new(BackupTestClient.new(TEST_TOKEN))
 end
 
 private def make_bl
-  CB::BackupList.new(BackupTestClient.new(TEST_TOKEN))
+  CB::Action::BackupList.new(BackupTestClient.new(TEST_TOKEN))
 end
 
 private def make_bt
-  CB::BackupToken.new(BackupTestClient.new(TEST_TOKEN))
+  CB::Action::BackupToken.new(BackupTestClient.new(TEST_TOKEN))
 end
 
-describe CB::BackupCapture do
+describe CB::Action::BackupCapture do
   it "validates that cluster_id is correct" do
     ba = make_ba
     ba.cluster_id = "afpvoqooxzdrriu6w3bhqo55c4"
@@ -61,7 +61,7 @@ describe CB::BackupCapture do
   end
 end
 
-describe CB::BackupList do
+describe CB::Action::BackupList do
   it "validates that cluster_id is correct" do
     bl = make_bl
     bl.cluster_id = "afpvoqooxzdrriu6w3bhqo55c4"
@@ -87,7 +87,7 @@ describe CB::BackupList do
   end
 end
 
-describe CB::BackupToken do
+describe CB::Action::BackupToken do
   it "validates that cluster_id is correct" do
     bt = make_bt
     bt.cluster_id = "afpvoqooxzdrriu6w3bhqo55c4"

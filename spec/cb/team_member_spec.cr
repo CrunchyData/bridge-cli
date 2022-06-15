@@ -49,9 +49,9 @@ private class TeamMemberTestClient < CB::Client
   end
 end
 
-describe CB::TeamMemberAdd do
+describe CB::Action::TeamMemberAdd do
   it "validates that required arguments are present" do
-    action = CB::TeamMemberAdd.new(TeamMemberTestClient.new(TEST_TOKEN))
+    action = CB::Action::TeamMemberAdd.new(TeamMemberTestClient.new(TEST_TOKEN))
 
     msg = /Missing required argument/
     expect_cb_error(msg) { action.validate }
@@ -66,7 +66,7 @@ describe CB::TeamMemberAdd do
   end
 
   it "#run prints confirmation" do
-    action = CB::TeamMemberAdd.new(TeamMemberTestClient.new(TEST_TOKEN))
+    action = CB::Action::TeamMemberAdd.new(TeamMemberTestClient.new(TEST_TOKEN))
     action.output = output = IO::Memory.new
 
     action.team_id = "pkdpq6yynjgjbps4otxd7il2u4"
@@ -78,16 +78,16 @@ describe CB::TeamMemberAdd do
   end
 end
 
-describe CB::TeamMemberInfo do
+describe CB::Action::TeamMemberInfo do
   it "validates that required arguments are present" do
-    action = CB::TeamMemberInfo.new(TeamMemberTestClient.new(TEST_TOKEN))
+    action = CB::Action::TeamMemberInfo.new(TeamMemberTestClient.new(TEST_TOKEN))
 
     msg = /Missing required argument/
     expect_cb_error(msg) { action.call }
   end
 
   it "#run prints unknown member" do
-    action = CB::TeamMemberInfo.new(TeamMemberTestClient.new(TEST_TOKEN))
+    action = CB::Action::TeamMemberInfo.new(TeamMemberTestClient.new(TEST_TOKEN))
     action.output = output = IO::Memory.new
 
     action.team_id = "pkdpq6yynjgjbps4otxd7il2u4"
@@ -100,16 +100,16 @@ describe CB::TeamMemberInfo do
   end
 end
 
-describe CB::TeamMemberList do
+describe CB::Action::TeamMemberList do
   it "validates that required arguments are present" do
-    action = CB::TeamMemberList.new(TeamMemberTestClient.new(TEST_TOKEN))
+    action = CB::Action::TeamMemberList.new(TeamMemberTestClient.new(TEST_TOKEN))
 
     msg = /Missing required argument/
     expect_cb_error(msg) { action.call }
   end
 
   it "#run" do
-    action = CB::TeamMemberList.new(TeamMemberTestClient.new(TEST_TOKEN))
+    action = CB::Action::TeamMemberList.new(TeamMemberTestClient.new(TEST_TOKEN))
     action.output = IO::Memory.new
 
     action.team_id = "pkdpq6yynjgjbps4otxd7il2u4"
@@ -118,16 +118,16 @@ describe CB::TeamMemberList do
   end
 end
 
-describe CB::TeamMemberUpdate do
+describe CB::Action::TeamMemberUpdate do
   it "validates that required arguments are present" do
-    action = CB::TeamMemberUpdate.new(TeamMemberTestClient.new(TEST_TOKEN))
+    action = CB::Action::TeamMemberUpdate.new(TeamMemberTestClient.new(TEST_TOKEN))
 
     msg = /Missing required argument/
     expect_cb_error(msg) { action.call }
   end
 
   it "validates argument conflicts" do
-    action = CB::TeamMemberUpdate.new(TeamMemberTestClient.new(TEST_TOKEN))
+    action = CB::Action::TeamMemberUpdate.new(TeamMemberTestClient.new(TEST_TOKEN))
 
     action.team_id = "pkdpq6yynjgjbps4otxd7il2u4"
     action.account_id = "4pfqoxothfagnfdryk2og7noei"
@@ -138,7 +138,7 @@ describe CB::TeamMemberUpdate do
   end
 
   it "#run" do
-    action = CB::TeamMemberUpdate.new(TeamMemberTestClient.new(TEST_TOKEN))
+    action = CB::Action::TeamMemberUpdate.new(TeamMemberTestClient.new(TEST_TOKEN))
     action.output = IO::Memory.new
 
     # TODO (abrightwell): There's got to be a better way to test the output. For
@@ -150,7 +150,7 @@ describe CB::TeamMemberUpdate do
     action.call.should_not be nil
     action.output.to_s.should_not eq ""
 
-    action = CB::TeamMemberUpdate.new(TeamMemberTestClient.new(TEST_TOKEN))
+    action = CB::Action::TeamMemberUpdate.new(TeamMemberTestClient.new(TEST_TOKEN))
     action.output = IO::Memory.new
 
     action.team_id = "pkdpq6yynjgjbps4otxd7il2u4"
@@ -160,7 +160,7 @@ describe CB::TeamMemberUpdate do
   end
 
   it "#run unknown team member" do
-    action = CB::TeamMemberUpdate.new(TeamMemberTestClient.new(TEST_TOKEN))
+    action = CB::Action::TeamMemberUpdate.new(TeamMemberTestClient.new(TEST_TOKEN))
 
     action.team_id = "pkdpq6yynjgjbps4otxd7il2u4"
     action.email = "unknown@example.com"
@@ -170,16 +170,16 @@ describe CB::TeamMemberUpdate do
   end
 end
 
-describe CB::TeamMemberRemove do
+describe CB::Action::TeamMemberRemove do
   it "validates that required arguments are present" do
-    action = CB::TeamMemberRemove.new(TeamMemberTestClient.new(TEST_TOKEN))
+    action = CB::Action::TeamMemberRemove.new(TeamMemberTestClient.new(TEST_TOKEN))
 
     msg = /Missing required argument/
     expect_cb_error(msg) { action.call }
   end
 
   it "validates argument conflicts" do
-    action = CB::TeamMemberRemove.new(TeamMemberTestClient.new(TEST_TOKEN))
+    action = CB::Action::TeamMemberRemove.new(TeamMemberTestClient.new(TEST_TOKEN))
 
     action.team_id = "pkdpq6yynjgjbps4otxd7il2u4"
     action.account_id = "4pfqoxothfagnfdryk2og7noei"
@@ -190,7 +190,7 @@ describe CB::TeamMemberRemove do
   end
 
   it "#run" do
-    action = CB::TeamMemberRemove.new(TeamMemberTestClient.new(TEST_TOKEN))
+    action = CB::Action::TeamMemberRemove.new(TeamMemberTestClient.new(TEST_TOKEN))
     action.output = IO::Memory.new
 
     action.team_id = "pkdpq6yynjgjbps4otxd7il2u4"
@@ -198,7 +198,7 @@ describe CB::TeamMemberRemove do
     action.call.should_not be nil
     action.output.to_s.should_not eq ""
 
-    action = CB::TeamMemberRemove.new(TeamMemberTestClient.new(TEST_TOKEN))
+    action = CB::Action::TeamMemberRemove.new(TeamMemberTestClient.new(TEST_TOKEN))
     action.output = IO::Memory.new
 
     action.team_id = "pkdpq6yynjgjbps4otxd7il2u4"
@@ -208,7 +208,7 @@ describe CB::TeamMemberRemove do
   end
 
   it "#run unknown team member" do
-    action = CB::TeamMemberRemove.new(TeamMemberTestClient.new(TEST_TOKEN))
+    action = CB::Action::TeamMemberRemove.new(TeamMemberTestClient.new(TEST_TOKEN))
 
     action.team_id = "pkdpq6yynjgjbps4otxd7il2u4"
     action.email = "unknown@example.com"

@@ -1,14 +1,14 @@
 require "./action"
 
-require "./dirs"
+require "../dirs"
 require "ssh2"
 
-module CB
+module CB::Action
   class Logs < APIAction
     eid_setter cluster_id
 
     def run
-      tk = Tempkey.for_cluster cluster_id, client: client
+      tk = CB::Tempkey.for_cluster cluster_id, client: client
 
       host = "p.#{cluster_id}.db.postgresbridge.com"
       socket = TCPSocket.new(host, 22, connect_timeout: 1)
@@ -24,7 +24,7 @@ module CB
         output.write buffer.to_slice[0, read_bytes]
       end
     rescue e
-      raise Program::Error.new(cause: e)
+      raise CB::Program::Error.new(cause: e)
     end
   end
 end

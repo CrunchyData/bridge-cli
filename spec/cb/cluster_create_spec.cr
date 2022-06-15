@@ -27,10 +27,10 @@ private class ClusterCreateTestClient < CB::Client
 end
 
 private def make_cc
-  CB::ClusterCreate.new(ClusterCreateTestClient.new(TEST_TOKEN))
+  CB::Action::ClusterCreate.new(ClusterCreateTestClient.new(TEST_TOKEN))
 end
 
-describe CB::ClusterCreate do
+describe CB::Action::ClusterCreate do
   it "#run prints info about the cluster that was created" do
     cc = make_cc
     cc.output = output = IO::Memory.new
