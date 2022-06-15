@@ -34,4 +34,8 @@ struct CB::Creds
   def delete
     File.delete CONFIG/host
   end
+
+  def self.delete(host)
+    File.delete(CONFIG/host) if File.exists?(CONFIG/host)
+  end
 end

@@ -55,6 +55,11 @@ op = OptionParser.new do |parser|
     action = CB::Login.new
   end
 
+  parser.on("logout", "Remove stored API key and tokens") do
+    parser.banner = "cb logout"
+    action = CB::Logout.new
+  end
+
   parser.on("list", "List clusters") do
     parser.banner = "cb list"
     set_action List

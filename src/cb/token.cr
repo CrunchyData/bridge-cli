@@ -41,6 +41,10 @@ struct CB::Token
     fetch? host
   end
 
+  def self.delete(host)
+    File.delete(file_path(host)) if File.exists?(file_path(host))
+  end
+
   def expires_at : Time
     Time.unix expires
   end
