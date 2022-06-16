@@ -14,6 +14,18 @@ macro set_action(cl)
   action = CB::{{cl}}.new PROG.client, PROG.input, PROG.output
 end
 
+macro positional_args(*action_setters)
+  parser.unknown_args do |args|
+    unless args.size == {{action_setters.size}}
+      STDERR.puts parser
+      exit 1
+    end
+    {% for setter, idx in action_setters %}
+      {{setter}} = args[{{idx}}]
+    {% end %}
+  end
+end
+
 def show_deprecated(msg : String)
   printf "%s: %s\n\n", "Deprecated".colorize.t_warn, msg
 end
@@ -34,14 +46,6 @@ end
 
 action = nil
 op = OptionParser.new do |parser|
-  get_id_arg = ->(args : Array(String)) do
-    if args.empty?
-      STDERR.puts parser
-      exit 1
-    end
-    args.first
-  end
-
   parser.banner = "cb <command>"
 
   parser.on("--_completion CMDSTRING") do |cmdstring|
@@ -68,24 +72,14 @@ op = OptionParser.new do |parser|
   parser.on("info", "Detailed cluster information") do
     parser.banner = "cb info <cluster id>"
     info = set_action ClusterInfo
-
-    parser.unknown_args do |args|
-      info.cluster_id = get_id_arg.call(args)
-    end
+    positional_args info.cluster_id
   end
 
   parser.on("rename", "Change cluster name") do
     parser.banner = "cb rename <cluster id> <new name>"
     rename = set_action ClusterRename
 
-    parser.unknown_args do |args|
-      unless args.size == 2
-        STDERR.puts parser
-        exit 1
-      end
-      rename.cluster_id = args.first
-      rename.new_name = args.last
-    end
+    positional_args rename.cluster_id, rename.new_name
   end
 
   parser.on("uri", "Display connection URI for a cluster") do
@@ -93,10 +87,7 @@ op = OptionParser.new do |parser|
     uri = set_action ClusterURI
 
     parser.on("--role NAME", "Role name (default: default)") { |arg| uri.role_name = arg }
-
-    parser.unknown_args do |args|
-      uri.cluster_id = get_id_arg.call(args)
-    end
+    positional_args uri.cluster_id
   end
 
   parser.on("psql", "Connect to the database using `psql`") do
@@ -104,10 +95,7 @@ op = OptionParser.new do |parser|
     psql = set_action Psql
 
     parser.on("--database NAME", "Database name (default: postgres)") { |arg| psql.database = arg }
-
-    parser.unknown_args do |args|
-      psql.cluster_id = get_id_arg.call(args)
-    end
+    positional_args psql.cluster_id
   end
 
   parser.on("firewall", "Manage firewall rules") do
@@ -179,9 +167,7 @@ op = OptionParser.new do |parser|
     parser.banner = "cb destroy <cluster id>"
     destroy = set_action ClusterDestroy
 
-    parser.unknown_args do |args|
-      destroy.cluster_id = get_id_arg.call(args)
-    end
+    positional_args destroy.cluster_id
   end
 
   parser.on("detach", "Detach a cluster") do
@@ -192,9 +178,7 @@ op = OptionParser.new do |parser|
       detach.confirmed = true
     end
 
-    parser.unknown_args do |args|
-      detach.cluster_id = get_id_arg.call(args)
-    end
+    positional_args detach.cluster_id
   end
 
   parser.on("restart", "Restart a cluster") do
@@ -204,9 +188,7 @@ op = OptionParser.new do |parser|
     parser.on("--confirm", "Confirm cluster restart") { restart.confirmed = true }
     parser.on("--full", "Full restart of server") { restart.full = true }
 
-    parser.unknown_args do |args|
-      restart.cluster_id = get_id_arg.call(args)
-    end
+    positional_args restart.cluster_id
   end
 
   parser.on("scope", "Run diagnostic queries on a cluster") do
@@ -224,9 +206,7 @@ op = OptionParser.new do |parser|
     parser.banner = "cb scope <cluster>"
     logs = set_action Logs
 
-    parser.unknown_args do |args|
-      logs.cluster_id = get_id_arg.call(args)
-    end
+    positional_args logs.cluster_id
   end
 
   parser.on("logdest", "Manage log destinations") do
@@ -308,9 +288,7 @@ op = OptionParser.new do |parser|
       info = set_action TeamInfo
       parser.banner = "cb team info <team id>"
 
-      parser.unknown_args do |args|
-        info.team_id = get_id_arg.call(args)
-      end
+      positional_args info.team_id
     end
 
     parser.on("update", "Update a team.") do
@@ -320,12 +298,8 @@ op = OptionParser.new do |parser|
       parser.on("--billing-email EMAIL", "Team billing email address.") { |arg| update.billing_email = arg }
       parser.on("--enforce-sso <true|false>", "Enforce SSO access to team.") { |arg| update.enforce_sso = arg }
       parser.on("--name NAME", "Name of the team.") { |arg| update.name = arg }
-
       parser.on("--confirm", "Confirm team update.") { |_| update.confirmed = true }
-
-      parser.unknown_args do |args|
-        update.team_id = get_id_arg.call(args)
-      end
+      positional_args update.team_id
     end
 
     parser.on("destroy", "Delete a team.") do
@@ -333,10 +307,7 @@ op = OptionParser.new do |parser|
       parser.banner = "cb team destroy <team id> [options]"
 
       parser.on("--confirm", "Confirm team deletion.") { destroy.confirmed = true }
-
-      parser.unknown_args do |args|
-        destroy.team_id = get_id_arg.call(args)
-      end
+      positional_args destroy.team_id
     end
   end
 
@@ -401,42 +372,39 @@ op = OptionParser.new do |parser|
     parser.on("capture", "Start capturing a new backup for a cluster") do
       capture = set_action BackupCapture
       parser.banner = "cb backup capture <cluster id>"
-      parser.unknown_args { |args| capture.cluster_id = get_id_arg.call(args) }
+      positional_args capture.cluster_id
     end
 
     parser.on("list", "List backups for a cluster") do
       list = set_action BackupList
       parser.banner = "cb backup list <cluster id>"
-      parser.unknown_args { |args| list.cluster_id = get_id_arg.call(args) }
+      positional_args list.cluster_id
     end
 
     parser.on("token", "Create backup token") do
       token = set_action BackupToken
       parser.on("--format=FORMAT", "<default|pgbackrest>") { |arg| token.format = arg }
       parser.banner = "cb backup token <cluster id>"
-      parser.unknown_args { |args| token.cluster_id = get_id_arg.call(args) }
+      positional_args token.cluster_id
     end
   end
 
   parser.on("suspend", "Temporarily turn off a cluster") do
     parser.banner = "cb suspend <cluster id>"
     suspend = set_action ClusterSuspend
-    parser.unknown_args { |args| suspend.cluster_id = get_id_arg.call(args) }
+    positional_args suspend.cluster_id
   end
 
   parser.on("resume", "Turn on a previously suspended cluster") do
     parser.banner = "cb resume <cluster id>"
     resume = set_action ClusterResume
-    parser.unknown_args { |args| resume.cluster_id = get_id_arg.call(args) }
+    positional_args resume.cluster_id
   end
 
   parser.on("teamcert", "Show public TLS cert for a team") do
     parser.banner = "cb teamcert <team id>"
     teamcert = set_action TeamCert
-
-    parser.unknown_args do |args|
-      teamcert.team_id = get_id_arg.call(args)
-    end
+    positional_args teamcert.team_id
   end
 
   parser.on("whoami", "Information on current user") do
