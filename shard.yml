@@ -8,6 +8,8 @@ dependencies:
     github: sija/raven.cr
   ssh2:
     github: spider-gazelle/ssh2.cr
+  promise:
+    github: spider-gazelle/promise
 
 development_dependencies:
   ameba:

@@ -20,9 +20,13 @@ shards:
     git: https://github.com/will/crystal-pg.git
     version: 0.26.0
 
+  promise:
+    git: https://github.com/spider-gazelle/promise.git
+    version: 3.0.0
+
   raven:
     git: https://github.com/sija/raven.cr.git
-    version: 1.9.1
+    version: 1.9.2
 
   ssh2:
     git: https://github.com/spider-gazelle/ssh2.cr.git

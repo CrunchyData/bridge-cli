@@ -1,6 +1,7 @@
 require "http/client"
 require "json"
 require "log"
+require "promise"
 require "../ext/stdlib_ext"
 
 class CB::Client
@@ -235,11 +236,7 @@ class CB::Client
   end
 
   def get_clusters(teams : Array(Team))
-    ch = Channel(Array(Cluster)).new
-    clusters = [] of Cluster
-    teams.each { |t| spawn { ch.send get_clusters(t.id) } }
-    teams.size.times { clusters += ch.receive }
-    clusters.sort_by(&.name)
+    Promise.map(teams) { |t| get_clusters t.id }.get.flatten.sort_by!(&.name)
   end
 
   def get_clusters(team_id : String)
