@@ -26,7 +26,7 @@ private class RestartTestClient < CB::Client
   end
 end
 
-describe CB::Restart do
+Spectator.describe CB::Restart do
   it "validates that required arguments are present" do
     action = CB::Restart.new(RestartTestClient.new(TEST_TOKEN))
 

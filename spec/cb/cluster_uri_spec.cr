@@ -26,7 +26,7 @@ private class ClusterURITestClient < CB::Client
   end
 end
 
-describe CB::ClusterURI do
+Spectator.describe CB::ClusterURI do
   it "ensures 'default' if role not specified" do
     action = CB::ClusterURI.new(ClusterURITestClient.new(TEST_TOKEN))
     action.output = IO::Memory.new

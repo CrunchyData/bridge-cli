@@ -11,7 +11,7 @@ private def expect_validation_err(lda, part)
   expect_cb_error(/Missing required argument.+#{part}/) { lda.validate }
 end
 
-describe CB::LogDestinationAdd do
+Spectator.describe CB::LogDestinationAdd do
   it "validates that required arguments are present" do
     lda = make_lda
 
