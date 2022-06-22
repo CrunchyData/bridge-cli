@@ -53,7 +53,7 @@ private def make_bt
   CB::BackupToken.new(BackupTestClient.new(TEST_TOKEN))
 end
 
-describe CB::BackupCapture do
+Spectator.describe CB::BackupCapture do
   it "validates that cluster_id is correct" do
     ba = make_ba
     ba.cluster_id = "afpvoqooxzdrriu6w3bhqo55c4"
@@ -61,7 +61,7 @@ describe CB::BackupCapture do
   end
 end
 
-describe CB::BackupList do
+Spectator.describe CB::BackupList do
   it "validates that cluster_id is correct" do
     bl = make_bl
     bl.cluster_id = "afpvoqooxzdrriu6w3bhqo55c4"
@@ -87,7 +87,7 @@ describe CB::BackupList do
   end
 end
 
-describe CB::BackupToken do
+Spectator.describe CB::BackupToken do
   it "validates that cluster_id is correct" do
     bt = make_bt
     bt.cluster_id = "afpvoqooxzdrriu6w3bhqo55c4"

@@ -28,6 +28,10 @@ shards:
     git: https://github.com/sija/raven.cr.git
     version: 1.9.2
 
+  spectator:
+    git: https://gitlab.com/arctic-fox/spectator.git
+    version: 0.10.5
+
   ssh2:
     git: https://github.com/spider-gazelle/ssh2.cr.git
     version: 1.5.3
