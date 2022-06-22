@@ -15,7 +15,7 @@ def key
   Random.rand(0x100000000).to_s(36)
 end
 
-describe CB::Cacheable, ".fetch?" do
+Spectator.describe CB::Cacheable, ".fetch?" do
   it "returns nil if the file does not exist" do
     Hi.fetch?(key).should eq nil
   end

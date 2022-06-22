@@ -1,4 +1,4 @@
 require "./spec_helper"
 
-describe CB do
+Spectator.describe CB do
 end

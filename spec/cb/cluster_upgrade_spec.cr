@@ -52,7 +52,7 @@ private class ClusterUpgradeTestClient < CB::Client
   end
 end
 
-describe CB::UpgradeStart do
+Spectator.describe CB::UpgradeStart do
   it "validates that required arguments are present" do
     action = CB::UpgradeStart.new(ClusterUpgradeTestClient.new(TEST_TOKEN))
 
@@ -76,7 +76,7 @@ describe CB::UpgradeStart do
   end
 end
 
-describe CB::UpgradeStatus do
+Spectator.describe CB::UpgradeStatus do
   it "validates that required arguments are present" do
     action = CB::UpgradeStatus.new(ClusterUpgradeTestClient.new(TEST_TOKEN))
 
@@ -99,7 +99,7 @@ describe CB::UpgradeStatus do
   end
 end
 
-describe CB::UpgradeCancel do
+Spectator.describe CB::UpgradeCancel do
   it "validates that required arguments are present" do
     action = CB::UpgradeCancel.new(ClusterUpgradeTestClient.new(TEST_TOKEN))
 

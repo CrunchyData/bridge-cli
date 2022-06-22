@@ -31,7 +31,7 @@ private def make_cc
   CB::ClusterCreate.new(ClusterCreateTestClient.new(TEST_TOKEN))
 end
 
-describe CB::ClusterCreate do
+Spectator.describe CB::ClusterCreate do
   it "#run prints info about the cluster that was created" do
     cc = make_cc
     cc.output = output = IO::Memory.new

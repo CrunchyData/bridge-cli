@@ -75,7 +75,7 @@ private class RoleTestClient < CB::Client
   end
 end
 
-describe CB::RoleCreate do
+Spectator.describe CB::RoleCreate do
   it "validates that required arguments are present" do
     action = CB::RoleCreate.new(RoleTestClient.new(TEST_TOKEN))
 
@@ -166,7 +166,7 @@ describe CB::RoleList do
   end
 end
 
-describe CB::RoleUpdate do
+Spectator.describe CB::RoleUpdate do
   it "validates that required arguments are present" do
     action = CB::RoleUpdate.new(RoleTestClient.new(TEST_TOKEN))
 
@@ -215,7 +215,7 @@ describe CB::RoleUpdate do
   end
 end
 
-describe CB::RoleDelete do
+Spectator.describe CB::RoleDelete do
   it "validate that required arguments are present" do
     action = CB::RoleDelete.new(RoleTestClient.new(TEST_TOKEN))
     action.output = IO::Memory.new
