@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- `cb psql` to take `--role` to specify the name of the role to connect.
 - `cb logout` to logout a user from the CLI.
 
 

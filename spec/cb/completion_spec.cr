@@ -359,6 +359,21 @@ describe CB::Completion do
     result.should have_option "--cluster"
   end
 
+  it "completes psql" do
+    result = parse("cb psql ")
+    result.should eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb psql abc ")
+    result.should have_option "--database"
+    result.should have_option "--role"
+
+    result = parse("cb psql abc --database ")
+    result.empty?.should be_true
+
+    result = parse("cb psql abc --role ")
+    result.should eq CB::VALID_CLUSTER_ROLES.to_a
+  end
+
   it "completes scope" do
     result = parse("cb scope ")
     result.should have_option "--cluster"
