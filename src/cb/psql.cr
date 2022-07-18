@@ -3,10 +3,16 @@ require "./action"
 class CB::Psql < CB::APIAction
   eid_setter cluster_id
   property database : String?
+  property role_name : String = "default"
 
   def run
     c = client.get_cluster cluster_id
-    uri = client.get_role(cluster_id, "default").uri
+
+    if @role_name == "user"
+      @role_name = "u_#{client.get_account.id}"
+    end
+
+    uri = client.get_role(cluster_id, @role_name).uri
     raise Error.new "null uri" if uri.nil?
 
     database.tap { |db| uri.path = db if db }

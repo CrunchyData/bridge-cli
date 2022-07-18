@@ -405,11 +405,16 @@ class CB::Completion
     return cluster_suggestions if @args.size == 2
 
     if last_arg?("--database")
-      [] of String
+      return [] of String
+    end
+
+    if last_arg?("--role")
+      return VALID_CLUSTER_ROLES.to_a
     end
 
     suggest = [] of String
     suggest << "--database\tName of database" unless has_full_flag? :database
+    suggest << "--role\trole name" unless has_full_flag? :role
     suggest
   end
 
