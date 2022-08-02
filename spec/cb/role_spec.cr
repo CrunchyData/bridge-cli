@@ -1,146 +1,117 @@
 require "../spec_helper"
+include CB
 
-private class RoleTestClient < CB::Client
-  ACCOUNT = Account.new(
-    id: "123",
-    name: "user",
-  )
+private TEST_ROLE = Client::Role.new name: "u_123", password: "secret", uri: URI.parse "postgres://u_123@foo.com"
 
-  ROLE = Role.new(
-    name: "u_" + ACCOUNT.id,
-    password: "secret",
-    uri: URI.parse "postgres://u_123:secret@localhost:5432/postgres"
-  )
+Spectator.describe RoleCreate do
+  subject(action) { described_class.new client: client, output: IO::Memory.new }
+  let(client) { Client.new TEST_TOKEN }
+  let(role) { TEST_ROLE }
 
-  def get_account
-    ACCOUNT
+  mock Client do
+    stub create_role(id)
   end
 
-  def create_role(id : String)
-    ROLE
-  end
-
-  def update_role(id : String, name : String, opts)
-    ROLE
-  end
-
-  def delete_role(id : String, name : String)
-    ROLE
-  end
-end
-
-describe CB::RoleCreate do
   it "validates that required arguments are present" do
-    action = CB::RoleCreate.new(RoleTestClient.new(TEST_TOKEN))
+    expect(&.validate).to raise_error Program::Error, /Missing required argument/
 
-    msg = /Missing required argument/
-
-    expect_cb_error(msg) { action.validate }
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
-    action.validate.should eq true
+    expect(&.validate).to be_true
   end
 
   it "#run prints confirmation" do
-    action = CB::RoleCreate.new(RoleTestClient.new(TEST_TOKEN))
-    action.output = output = IO::Memory.new
-
+    action.output = IO::Memory.new
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
 
+    expect(client).to receive(:create_role).with(action.cluster_id).and_return role
     action.call
 
-    output.to_s.should eq "Role u_123 created on cluster #{action.cluster_id}.\n"
+    expect(&.output.to_s).to eq "Role u_123 created on cluster #{action.cluster_id}.\n"
   end
 end
 
-describe CB::RoleUpdate do
-  it "validates that required arguments are present" do
-    action = CB::RoleUpdate.new(RoleTestClient.new(TEST_TOKEN))
+Spectator.describe RoleUpdate do
+  subject(action) { described_class.new client: client, output: IO::Memory.new }
+  let(client) { Client.new TEST_TOKEN }
 
-    msg = /Missing required argument/
+  mock Client do
+    stub get_account { Client::Account.new id: "123", name: "accounty mcaccounterson" }
+    stub update_role(cluster_id, role_name, ur) { TEST_ROLE }
+  end
 
-    expect_cb_error(msg) { action.validate }
+  before_each do
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
     action.role_name = "user"
-    action.validate.should eq true
+  end
+
+  it "validates that required arguments are present" do
+    action.cluster_id = nil
+    expect(&.validate).to raise_error Program::Error, /Missing required argument/
+
+    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
+    action.role_name = "user"
+    expect(&.validate).to be_true
   end
 
   it "#run errors on invalid role" do
-    action = CB::RoleUpdate.new(RoleTestClient.new(TEST_TOKEN))
-    action.output = IO::Memory.new
-
-    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
     action.role_name = "invalid"
 
-    msg = /invalid role '#{action.role_name}'/
-
-    expect_cb_error(msg) { action.call }
+    expect(&.call).to raise_error Program::Error, /invalid role '#{action.role_name}'/
   end
 
   it "#run translates 'user' role" do
-    action = CB::RoleUpdate.new(RoleTestClient.new(TEST_TOKEN))
-    action.output = IO::Memory.new
-
-    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
     action.role_name = "user"
-
     action.call
 
-    action.role_name.should eq "u_123"
+    expect(&.role_name).to eq "u_123"
   end
 
   it "#run prints confirmation" do
-    action = CB::RoleUpdate.new(RoleTestClient.new(TEST_TOKEN))
-    action.output = output = IO::Memory.new
-
-    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
-    action.role_name = "user"
-
     action.call
 
-    output.to_s.should eq "Role u_123 updated on cluster #{action.cluster_id}.\n"
+    expect(&.output.to_s).to eq "Role u_123 updated on cluster #{action.cluster_id}.\n"
   end
 end
 
-describe CB::RoleDelete do
+Spectator.describe RoleDelete do
+  subject(action) { described_class.new client: client, output: IO::Memory.new }
+  let(client) { Client.new TEST_TOKEN }
+
+  mock Client do
+    stub delete_role(cluster_id, role_name) { TEST_ROLE }
+  end
+
+  before_each do
+    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
+    action.role_name = "user"
+  end
+
   it "validate that required arguments are present" do
-    action = CB::RoleDelete.new(RoleTestClient.new(TEST_TOKEN))
-    action.output = IO::Memory.new
+    action.cluster_id = nil
+    expect(&.run).to raise_error Program::Error, /Missing required argument/
 
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
     action.role_name = "user"
+    expect(&.run).to_not raise_error
   end
 
   it "#run errors on invalid role" do
-    action = CB::RoleDelete.new(RoleTestClient.new(TEST_TOKEN))
-    action.output = IO::Memory.new
-
-    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
     action.role_name = "invalid"
 
-    expect_raises(CB::Program::Error, "invalid role '#{action.role_name}'") { action.call }
+    expect(&.call).to raise_error Program::Error, /invalid role '#{action.role_name}'/
   end
 
   it "#run translates 'user' role" do
-    action = CB::RoleDelete.new(RoleTestClient.new(TEST_TOKEN))
-    action.output = IO::Memory.new
-
-    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
     action.role_name = "user"
 
     action.call
 
-    action.role_name.should eq "u_123"
+    expect(&.role_name).to eq "u_123"
   end
 
   it "#run prints confirmation" do
-    action = CB::RoleDelete.new(RoleTestClient.new(TEST_TOKEN))
-    action.output = output = IO::Memory.new
-
-    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
-    action.role_name = "user"
-
     action.call
 
-    output.to_s.should eq "Role u_123 deleted from cluster #{action.cluster_id}.\n"
+    expect(&.output.to_s).to eq "Role u_123 deleted from cluster #{action.cluster_id}.\n"
   end
 end

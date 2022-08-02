@@ -67,7 +67,7 @@ private def parse(str)
   CB::Completion.new(CompletionTestClient.new(TEST_TOKEN), str).parse
 end
 
-describe CB::Completion do
+Spectator.describe CB::Completion do
   it "returns suggestions for top level commands" do
     result = parse("cb ")
     result.any?(&.starts_with?("login")).should be_true

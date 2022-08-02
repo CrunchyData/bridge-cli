@@ -49,7 +49,7 @@ private class TeamMemberTestClient < CB::Client
   end
 end
 
-describe CB::TeamMemberAdd do
+Spectator.describe CB::TeamMemberAdd do
   it "validates that required arguments are present" do
     action = CB::TeamMemberAdd.new(TeamMemberTestClient.new(TEST_TOKEN))
 
@@ -78,7 +78,7 @@ describe CB::TeamMemberAdd do
   end
 end
 
-describe CB::TeamMemberInfo do
+Spectator.describe CB::TeamMemberInfo do
   it "validates that required arguments are present" do
     action = CB::TeamMemberInfo.new(TeamMemberTestClient.new(TEST_TOKEN))
 
@@ -100,7 +100,7 @@ describe CB::TeamMemberInfo do
   end
 end
 
-describe CB::TeamMemberList do
+Spectator.describe CB::TeamMemberList do
   it "validates that required arguments are present" do
     action = CB::TeamMemberList.new(TeamMemberTestClient.new(TEST_TOKEN))
 
@@ -118,7 +118,7 @@ describe CB::TeamMemberList do
   end
 end
 
-describe CB::TeamMemberUpdate do
+Spectator.describe CB::TeamMemberUpdate do
   it "validates that required arguments are present" do
     action = CB::TeamMemberUpdate.new(TeamMemberTestClient.new(TEST_TOKEN))
 
@@ -170,7 +170,7 @@ describe CB::TeamMemberUpdate do
   end
 end
 
-describe CB::TeamMemberRemove do
+Spectator.describe CB::TeamMemberRemove do
   it "validates that required arguments are present" do
     action = CB::TeamMemberRemove.new(TeamMemberTestClient.new(TEST_TOKEN))
 
