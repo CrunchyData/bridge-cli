@@ -32,3 +32,7 @@ shards:
     git: https://github.com/spider-gazelle/ssh2.cr.git
     version: 1.5.3
 
+  tallboy:
+    git: https://github.com/epoch/tallboy.git
+    version: 0.9.3
+

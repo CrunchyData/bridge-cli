@@ -465,6 +465,7 @@ describe CB::Completion do
     # cb role
     result = parse("cb role ")
     result.should have_option "create"
+    result.should have_option "list"
     result.should have_option "update"
     result.should have_option "destroy"
 
@@ -474,6 +475,19 @@ describe CB::Completion do
 
     result = parse("cb role create --cluster ")
     result.should eq ["abc\tmy team/my cluster"]
+
+    # cb role list
+    result = parse("cb role list ")
+    result.should have_option "--cluster"
+
+    result = parse("cb role list --cluster ")
+    result.should eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb role list --cluster abc ")
+    result.should have_option "--format"
+
+    result = parse("cb role list --cluster abc --format ")
+    result.should eq ["default", "json"]
 
     # cb role update
     result = parse("cb role update ")

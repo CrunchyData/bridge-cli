@@ -250,6 +250,20 @@ op = OptionParser.new do |parser|
       parser.on("--cluster ID", "Choose cluster") { |arg| create.cluster_id = arg }
     end
 
+    parser.on("destroy", "Destroy a cluster role") do
+      destroy = set_action RoleDelete
+      parser.banner = "cb role destroy <--cluster> <--name>"
+      parser.on("--cluster ID", "Choose cluster") { |arg| destroy.cluster_id = arg }
+      parser.on("--name NAME", "Role name") { |arg| destroy.role_name = arg }
+    end
+
+    parser.on("list", "List cluster roles") do
+      list = set_action RoleList
+      parser.banner = "cb role list <--cluster>"
+      parser.on("--cluster ID", "Choose cluster") { |arg| list.cluster_id = arg }
+      parser.on("--format FORMAT", "Choose output format") { |arg| list.format = CB::RoleList::Format.parse(arg) }
+    end
+
     parser.on("update", "Update a cluster role") do
       update = set_action RoleUpdate
       parser.banner = "cb role update <--cluster> <--name> [--mode] [--rotate-password]"
@@ -257,13 +271,6 @@ op = OptionParser.new do |parser|
       parser.on("--name NAME", "Role name") { |arg| update.role_name = arg }
       parser.on("--read-only <true|false>", "Read-only") { |arg| update.read_only = arg }
       parser.on("--rotate-password <true|false>", "Rotate password") { |arg| update.rotate_password = arg }
-    end
-
-    parser.on("destroy", "Destroy a cluster role") do
-      destroy = set_action RoleDelete
-      parser.banner = "cb role destroy <--cluster> <--name>"
-      parser.on("--cluster ID", "Choose cluster") { |arg| destroy.cluster_id = arg }
-      parser.on("--name NAME", "Role name") { |arg| destroy.role_name = arg }
     end
   end
 
