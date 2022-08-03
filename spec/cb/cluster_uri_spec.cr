@@ -4,9 +4,12 @@ private class ClusterURITestClient < CB::Client
   ACCOUNT = Account.new(
     id: "123",
     name: "user",
+    email: "test@example.com"
   )
 
   ROLE = Role.new(
+    account_id: ACCOUNT.id,
+    account_email: ACCOUNT.email,
     name: "u_" + ACCOUNT.id,
     password: "secret",
     uri: URI.parse "postgres://u_123:secret@localhost:5432/postgres",

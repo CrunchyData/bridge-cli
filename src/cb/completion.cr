@@ -282,12 +282,15 @@ class CB::Completion
       role_create
     when "destroy"
       role_destroy
+    when "list"
+      role_list
     when "update"
       role_update
     else
       [
         "create\tcreate a role for a cluster",
         "destroy\tremove a role from a cluster",
+        "list\tlist roles for a cluster",
         "update\tupdate a role for a cluster",
       ]
     end
@@ -320,6 +323,24 @@ class CB::Completion
 
     suggest = [] of String
     suggest << "--name\trole name" unless has_full_flag? :name
+    suggest
+  end
+
+  def role_list
+    return ["--cluster\tcluster id"] if args.size == 3
+
+    cluster = find_arg_value "--cluster"
+
+    if last_arg?("--cluster")
+      return cluster.nil? ? cluster_suggestions : [] of String
+    end
+
+    if last_arg?("--format")
+      return ["default", "json"]
+    end
+
+    suggest = [] of String
+    suggest << "--format\toutput format" unless has_full_flag? :format
     suggest
   end
 

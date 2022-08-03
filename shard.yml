@@ -10,6 +10,8 @@ dependencies:
     github: spider-gazelle/ssh2.cr
   promise:
     github: spider-gazelle/promise
+  tallboy:
+    github: epoch/tallboy
 
 development_dependencies:
   ameba:

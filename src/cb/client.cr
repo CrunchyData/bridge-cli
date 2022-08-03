@@ -97,7 +97,10 @@ class CB::Client
   # Account
   #
 
-  jrecord Account, id : String, name : String
+  jrecord Account,
+    id : String,
+    name : String,
+    email : String
 
   # https://crunchybridgeapi.docs.apiary.io/#reference/0/account/get-account
   def get_account
@@ -446,7 +449,12 @@ class CB::Client
   # Cluster Roles
   #
 
-  jrecord Role, name : String?, password : String?, uri : URI?
+  jrecord Role,
+    account_id : String? = nil,
+    account_email : String? = nil,
+    name : String = "",
+    password : String? = nil,
+    uri : URI? = nil
 
   # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridroles/create-role
   def create_role(cluster_id)
@@ -458,6 +466,12 @@ class CB::Client
   def get_role(cluster_id, role_name)
     resp = get "clusters/#{cluster_id}/roles/#{role_name}"
     Role.from_json resp.body
+  end
+
+  # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridroles/list-roles
+  def list_roles(cluster_id)
+    resp = get "clusters/#{cluster_id}/roles"
+    Array(Role).from_json resp.body, root: "roles"
   end
 
   # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridrolesrolename/update-role
