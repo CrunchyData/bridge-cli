@@ -18,9 +18,9 @@ class CB::TokenAction < CB::Action
 
   def run
     case @format
-    when "header"
+    when Format::Header
       output << "Authorization: Bearer #{token.token}"
-    when "default"
+    when Format::Default
       output << token.token
     end
   end
