@@ -258,6 +258,7 @@ class CB::Client
     state : String?,
     created_at : Time,
     cpu : Int32,
+    host : String,
     is_ha : Bool,
     plan_id : String,
     major_version : Int32,
