@@ -9,6 +9,7 @@ class CB::ClusterInfo < CB::APIAction
 
     details = {
       "state"    => c.state,
+      "host"     => c.host,
       "created"  => c.created_at.to_rfc3339,
       "plan"     => "#{c.plan_id} (#{c.memory}GiB ram, #{c.cpu}vCPU)",
       "version"  => c.major_version,

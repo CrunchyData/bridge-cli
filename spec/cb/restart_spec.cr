@@ -8,6 +8,7 @@ private class RestartTestClient < CB::Client
       name: "source cluster",
       state: "na",
       created_at: Time.utc(2016, 2, 15, 10, 20, 30),
+      host: "p.#{id}.test.crunchybridge.com",
       is_ha: false,
       major_version: 12,
       plan_id: "memory-4",
