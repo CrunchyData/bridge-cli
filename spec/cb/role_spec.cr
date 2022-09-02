@@ -1,15 +1,35 @@
 require "../spec_helper"
 include CB
 
-private TEST_ROLE = Client::Role.new name: "u_123", password: "secret", uri: URI.parse "postgres://u_123@foo.com"
+private TEST_ROLE = Client::Role.new(
+  account_email: "test@example.com",
+  name: "u_123",
+  password: "secret",
+  uri: URI.parse "postgres://u_123@foo.com",
+)
 
-CLUSTER = ClusterDetail.new(
+private SYSTEM_ROLE = Client::Role.new(
+  name: "application",
+  password: "secret",
+  uri: URI.parse "postgres://application@foo.com",
+)
+
+private TEST_TEAM = Client::Team.new(
+  id: "l2gnkxjv3beifk6abkraerv7de",
+  name: "Test Team",
+  is_personal: false,
+  role: nil,
+  billing_email: nil,
+  enforce_sso: nil,
+)
+
+private TEST_CLUSTER = Client::ClusterDetail.new(
   id: "pkdpq6yynjgjbps4otxd7il2u4",
-  team_id: "teamid",
+  host: "p.pkdpq6yynjgjbps4otxd7il2u4.example.com",
+  team_id: "l2gnkxjv3beifk6abkraerv7de",
   name: "abc",
   state: "na",
   created_at: Time.utc(2016, 2, 15, 10, 20, 30),
-  host: "p.pkdpq6yynjgjbps4otxd7il2u4.test.crunchybridge.com",
   is_ha: false,
   major_version: 12,
   plan_id: "memory-4",
@@ -51,11 +71,16 @@ end
 
 Spectator.describe RoleList do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
+
   let(client) { Client.new TEST_TOKEN }
-  let(role) { TEST_ROLE }
+  let(roles) { [SYSTEM_ROLE, TEST_ROLE] }
+  let(team) { TEST_TEAM }
+  let(cluster) { TEST_CLUSTER }
 
   mock Client do
-    stub list_roles
+    stub list_roles(id)
+    stub get_cluster(id)
+    stub get_team(id)
   end
 
   it "validates that required arguments are present" do
@@ -69,7 +94,10 @@ Spectator.describe RoleList do
     action.output = IO::Memory.new
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
 
-    expect(client).to receive(:list_roles).with(action.cluster_id).and_return [role]
+    expect(client).to receive(:get_cluster).with(action.cluster_id).and_return cluster
+    expect(client).to receive(:get_team).with(cluster.team_id).and_return team
+    expect(client).to receive(:list_roles).with(action.cluster_id).and_return roles
+
     action.call
 
     expected = <<-EXPECTED
@@ -92,27 +120,30 @@ Spectator.describe RoleList do
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
     action.format = CB::RoleList::Format::JSON
 
-    expect(client).to receive(:list_roles).with(action.cluster_id).and_return [role]
+    expect(client).to receive(:get_cluster).with(action.cluster_id).and_return cluster
+    expect(client).to receive(:get_team).with(cluster.team_id).and_return team
+    expect(client).to receive(:list_roles).with(action.cluster_id).and_return roles
+
     action.call
 
     expected = <<-EXPECTED
-    {
-      "cluster": "abc",
-      "team": "Test Team",
-      "roles": [
-        {
-          "role": "application",
-          "account": "system"
-        },
-        {
-          "role": "u_123",
-          "account": "test@example.com"
-        }
-      ]
-    }\n
-    EXPECTED
+     {
+       "cluster": "abc",
+       "team": "Test Team",
+       "roles": [
+         {
+           "role": "application",
+           "account": "system"
+         },
+         {
+           "role": "u_123",
+           "account": "test@example.com"
+         }
+       ]
+     }\n
+     EXPECTED
 
-    expect(&output.to_s).to eq expected
+    expect(&.output.to_s).to eq expected
   end
 end
 
@@ -121,7 +152,7 @@ Spectator.describe RoleUpdate do
   let(client) { Client.new TEST_TOKEN }
 
   mock Client do
-    stub get_account { Client::Account.new id: "123", name: "accounty mcaccounterson" }
+    stub get_account { Client::Account.new id: "123", name: "accounty mcaccounterson", email: "mcaccounterson@example.com" }
     stub update_role(cluster_id, role_name, ur) { TEST_ROLE }
   end
 
