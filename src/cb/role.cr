@@ -9,6 +9,12 @@ end
 abstract class CB::RoleAction < CB::APIAction
   eid_setter cluster_id
   property role_name : String?
+
+  def validate_role_name(role)
+    unless VALID_CLUSTER_ROLES.includes? @role_name
+      raise Error.new("invalid role: '#{@role_name}'. Must be one of: #{VALID_CLUSTER_ROLES.join ", "}")
+    end
+  end
 end
 
 # Action to create a cluster role for the calling user.
@@ -117,7 +123,9 @@ class CB::RoleUpdate < CB::RoleAction
 
     # Ensure the role name
     @role_name = "default" unless @role_name
-    raise Error.new("invalid role '#{@role_name}'") unless VALID_CLUSTER_ROLES.includes? @role_name
+
+    validate_role_name @role_name
+
     if @role_name == "user"
       @role_name = "u_" + client.get_account.id
     end
@@ -139,7 +147,9 @@ class CB::RoleDelete < CB::RoleAction
 
     # Ensure the role name
     @role_name = "default" unless @role_name
-    raise Error.new("invalid role '#{@role_name}'") unless VALID_CLUSTER_ROLES.includes? @role_name
+
+    validate_role_name @role_name
+
     if @role_name == "user"
       @role_name = "u_" + client.get_account.id
     end

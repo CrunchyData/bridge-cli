@@ -173,7 +173,7 @@ Spectator.describe RoleUpdate do
   it "#run errors on invalid role" do
     action.role_name = "invalid"
 
-    expect(&.call).to raise_error Program::Error, /invalid role '#{action.role_name}'/
+    expect(&.call).to raise_error Program::Error, /invalid role: '#{action.role_name}'/
   end
 
   it "#run translates 'user' role" do
@@ -215,7 +215,7 @@ Spectator.describe RoleDelete do
   it "#run errors on invalid role" do
     action.role_name = "invalid"
 
-    expect(&.call).to raise_error Program::Error, /invalid role '#{action.role_name}'/
+    expect(&.call).to raise_error Program::Error, /invalid role: '#{action.role_name}'/
   end
 
   it "#run translates 'user' role" do
