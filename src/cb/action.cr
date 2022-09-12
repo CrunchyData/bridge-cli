@@ -27,6 +27,19 @@ module CB
       end
     end
 
+    macro cluster_identifier_setter(property)
+      property {{property}} : Hash(Symbol, Identifier) = Hash(Symbol, Identifier).new
+
+      def {{property}}=(str : String)
+        raise Program::Error.new "invalid cluster identifier" if str.empty?
+
+        parts = str.split '/'
+
+        @{{property}}[:team] =  Identifier.new(parts.shift) unless parts.size == 1
+        @{{property}}[:cluster] = Identifier.new(parts.shift)
+      end
+    end
+
     # For simple identifiers such as region names, or plan names where we
     # expect only lowercase, numbers, and -
     macro ident_setter(property)
