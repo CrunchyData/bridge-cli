@@ -2,7 +2,7 @@ require "./action"
 
 class CB::ClusterCreate < CB::APIAction
   bool_setter ha
-  property name : String?
+  name_setter? name
   ident_setter plan
   property platform : String?
   i32_setter postgres_version

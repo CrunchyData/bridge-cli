@@ -15,7 +15,7 @@ abstract class CB::TeamAction < CB::APIAction
 end
 
 class CB::TeamCreate < CB::TeamAction
-  property name : String = ""
+  name_setter name
 
   def run
     check_required_args do |missing|

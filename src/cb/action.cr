@@ -33,7 +33,27 @@ module CB
       property {{property}} : String?
 
       def {{property}}=(str : String)
-        raise_arg_error {{property.stringify}}, str unless str =~ /\A[a-z0-9\-]+\z/
+        raise_arg_error {{property.stringify}}, str unless str =~ IDENT_PATTERN
+        @{{property}} = str
+      end
+    end
+
+    # Non-nilable name setter. Used for name associated with API resources.
+    macro name_setter(property)
+      property {{property}} : String = ""
+
+      def {{property}}=(str : String)
+        raise_arg_error {{property.stringify}}, str unless str =~ API_NAME_PATTERN
+        @{{property}} = str
+      end
+    end
+
+    # Nilable name setter. Used for name associated with API resources.
+    macro name_setter?(property)
+      property {{property}} : String?
+
+      def {{property}}=(str : String)
+        raise_arg_error {{property.stringify}}, str unless str =~ API_NAME_PATTERN
         @{{property}} = str
       end
     end
