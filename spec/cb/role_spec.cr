@@ -14,34 +14,6 @@ private SYSTEM_ROLE = Client::Role.new(
   uri: URI.parse "postgres://application@foo.com",
 )
 
-private TEST_TEAM = Client::Team.new(
-  id: "l2gnkxjv3beifk6abkraerv7de",
-  name: "Test Team",
-  is_personal: false,
-  role: nil,
-  billing_email: nil,
-  enforce_sso: nil,
-)
-
-private TEST_CLUSTER = Client::ClusterDetail.new(
-  id: "pkdpq6yynjgjbps4otxd7il2u4",
-  host: "p.pkdpq6yynjgjbps4otxd7il2u4.example.com",
-  team_id: "l2gnkxjv3beifk6abkraerv7de",
-  name: "abc",
-  state: "na",
-  created_at: Time.utc(2016, 2, 15, 10, 20, 30),
-  is_ha: false,
-  major_version: 12,
-  plan_id: "memory-4",
-  cpu: 4,
-  memory: 111,
-  oldest_backup: nil,
-  provider_id: "aws",
-  region_id: "us-east-2",
-  network_id: "nfpvoqooxzdrriu6w3bhqo55c4",
-  storage: 1234
-)
-
 Spectator.describe RoleCreate do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
   let(client) { Client.new TEST_TOKEN }
@@ -74,8 +46,8 @@ Spectator.describe RoleList do
 
   let(client) { Client.new TEST_TOKEN }
   let(roles) { [SYSTEM_ROLE, TEST_ROLE] }
-  let(team) { TEST_TEAM }
-  let(cluster) { TEST_CLUSTER }
+  let(team) { Factory.team }
+  let(cluster) { Factory.cluster }
 
   mock Client do
     stub list_roles(id)
