@@ -6,7 +6,7 @@ Spectator.describe CB::Identifier do
     provided id: "pkdpq6yynjgjbps4otxd7il2u4" do
       expect(&.to_s).to eq id
       expect(&.eid?).to be_true
-      expect(&.api_name?).to be_true
+      expect(&.api_name?).to be_false
     end
 
     provided id: "test-cluster" do
