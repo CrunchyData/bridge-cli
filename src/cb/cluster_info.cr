@@ -1,10 +1,19 @@
 require "./action"
 
 class CB::ClusterInfo < CB::APIAction
-  eid_setter cluster_id
+  cluster_identifier_setter cluster_id
+
+  def validate
+    check_required_args do |missing|
+      missing << "cluster" if @cluster_id.empty?
+    end
+  end
 
   def run
-    c = client.get_cluster cluster_id
+    validate
+
+    c = client.get_cluster(cluster_id[:cluster])
+
     print_team_slash_cluster c
 
     details = {
@@ -31,7 +40,7 @@ class CB::ClusterInfo < CB::APIAction
       output << v << "\n"
     end
 
-    firewall_rules = client.get_firewall_rules cluster_id
+    firewall_rules = client.get_firewall_rules c.id
     output << "firewall".rjust(pad).colorize.bold << ": "
     if firewall_rules.empty?
       output << "no rules\n"

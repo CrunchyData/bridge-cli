@@ -51,7 +51,7 @@ Spectator.describe RoleList do
 
   mock Client do
     stub list_roles(id)
-    stub get_cluster(id)
+    stub get_cluster(id : String?)
     stub get_team(id)
   end
 

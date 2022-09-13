@@ -272,7 +272,17 @@ class CB::Client
     getter source_cluster_id : String?
   end
 
-  def get_cluster(id)
+  # Retrieve the cluster by id or by name.
+  def get_cluster(id : Identifier)
+    return get_cluster id.to_s if id.eid?
+    cluster = get_clusters.find { |c| id == c.name }
+    raise Program::Error.new "cluster #{id.to_s.colorize.t_name} does not exist." unless cluster
+    get_cluster cluster.id
+  end
+
+  # TODO (abrightwell): track down why this must be nilable. Seems reasonable
+  # that it shouldn't require it to be.
+  def get_cluster(id : String?)
     resp = get "clusters/#{id}"
     ClusterDetail.from_json resp.body
   rescue e : Error
