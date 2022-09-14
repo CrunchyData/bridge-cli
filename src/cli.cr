@@ -86,7 +86,7 @@ op = OptionParser.new do |parser|
     parser.banner = "cb uri <cluster id> [--role]"
     uri = set_action ClusterURI
 
-    parser.on("--role NAME", "Role name (default: default)") { |arg| uri.role_name = arg }
+    parser.on("--role NAME", "Role name (default: default)") { |arg| uri.role = CB::Role.new arg }
     positional_args uri.cluster_id
   end
 

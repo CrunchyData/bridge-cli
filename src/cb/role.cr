@@ -3,7 +3,6 @@ require "tallboy"
 
 abstract class CB::RoleAction < CB::APIAction
   eid_setter cluster_id
-  role_setter role
 end
 
 # Action to create a cluster role for the calling user.
@@ -97,6 +96,7 @@ end
 
 # Action to update a cluster role.
 class CB::RoleUpdate < CB::RoleAction
+  role_setter? role
   bool_setter? read_only
   bool_setter? rotate_password
 
@@ -123,6 +123,8 @@ class CB::RoleUpdate < CB::RoleAction
 end
 
 class CB::RoleDelete < CB::RoleAction
+  role_setter? role
+
   def validate
     check_required_args do |missing|
       missing << "cluster" unless cluster_id

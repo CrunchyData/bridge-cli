@@ -38,7 +38,7 @@ module Factory
       account_email: "user@example.com",
       name:          "u_mijrfkkuqvhernzfqcbqf7b6me",
       password:      "secret",
-      uri:           URI.parse "postgres://u_mijrfkkuqvhernzfqcbqf7b6me:secret@example.com",
+      uri:           URI.parse "postgres://u_mijrfkkuqvhernzfqcbqf7b6me:secret@example.com:5432/postgres",
     }.merge(params)
 
     CB::Client::Role.new **params
@@ -48,7 +48,7 @@ module Factory
     params = {
       name:     "application",
       password: "secret",
-      uri:      URI.parse "postgres://application:secret@example.com",
+      uri:      URI.parse "postgres://application:secret@example.com:5432/postgres",
     }.merge(params)
 
     CB::Client::Role.new **params

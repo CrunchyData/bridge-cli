@@ -41,6 +41,14 @@ module CB
     end
 
     macro role_setter(property)
+      property {{property}} : Role = Role.new
+
+      def {{property}}=(str : String)
+        @{{property}} = Role.new str
+      end
+    end
+
+    macro role_setter?(property)
       property {{property}} : Role?
 
       def {{property}}=(str : String)
