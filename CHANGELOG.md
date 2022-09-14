@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Support for using cluster name or id with `cb info`.
+- Support for using cluster name or id with `cb info` and `cb uri`.
 - `host` field to `cb info` output.
 
 ## [2.2.1] - 2022-08-22

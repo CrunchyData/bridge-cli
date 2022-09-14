@@ -1,75 +1,51 @@
 require "../spec_helper"
-
-private class ClusterURITestClient < CB::Client
-  ACCOUNT = Account.new(
-    id: "123",
-    name: "user",
-    email: "test@example.com"
-  )
-
-  ROLE = Role.new(
-    account_id: ACCOUNT.id,
-    account_email: ACCOUNT.email,
-    name: "u_" + ACCOUNT.id,
-    password: "secret",
-    uri: URI.parse "postgres://u_123:secret@localhost:5432/postgres",
-  )
-
-  def get_account
-    ACCOUNT
-  end
-
-  property p_get_role : Proc(Role) = -> : Role { ROLE }
-
-  def get_role(id, name)
-    p_get_role.call
-  end
-end
+include CB
 
 Spectator.describe CB::ClusterURI do
-  it "ensures 'default' if role not specified" do
-    action = CB::ClusterURI.new(ClusterURITestClient.new(TEST_TOKEN))
-    action.output = IO::Memory.new
+  subject(action) { described_class.new client: client, output: IO::Memory.new }
 
-    action.call
+  let(account) { Factory.account }
+  let(client) { Client.new TEST_TOKEN }
+  let(cluster) { Factory.cluster }
+  let(role) { Factory.user_role }
 
-    action.role_name.should eq "default"
+  mock Client do
+    stub get_account
+    stub get_role(cluster_id, role_name)
   end
 
-  it "#run errors on invalid role" do
-    action = CB::ClusterURI.new(ClusterURITestClient.new(TEST_TOKEN))
-    action.output = IO::Memory.new
-
-    action.role_name = "invalid"
-
-    msg = /invalid role: 'invalid'/
-
-    expect_cb_error(msg) { action.call }
+  describe "#initialize" do
+    it "ensures 'default' if role not specified" do
+      action.cluster_id = cluster.id
+      expect(&.role.to_s).to eq "default"
+    end
   end
 
-  it "#run handles client errors" do
-    c = ClusterURITestClient.new(TEST_TOKEN)
-    c.p_get_role = -> : CB::Client::Role {
-      raise CB::Client::Error.new("", "",
-        HTTP::Client::Response.new(HTTP::Status::BAD_REQUEST))
-    }
+  describe "#validate" do
+    it "ensures required arguments are present" do
+      expect(&.validate).to raise_error Program::Error, /Missing required argument/
 
-    action = CB::ClusterURI.new(c)
-    action.output = IO::Memory.new
-
-    msg = /invalid input/
-
-    expect_cb_error(msg) { action.call }
+      action.cluster_id = cluster.id
+      expect(&.validate).to be_true
+    end
   end
 
-  it "#run prints uri" do
-    c = ClusterURITestClient.new(TEST_TOKEN)
+  describe "#call" do
+    it "output default format" do
+      action.output = IO::Memory.new
+      action.cluster_id = cluster.id
+      action.role = "user"
 
-    action = CB::ClusterURI.new(c)
-    action.output = output = IO::Memory.new
+      expect(client).to receive(:get_account).and_return(account)
+      expect(client).to receive(:get_role).and_return(role)
 
-    action.call
+      action.call
 
-    output.to_s.should eq ClusterURITestClient::ROLE.uri.to_s
+      expected = <<-EXPECTED
+      postgres://u_mijrfkkuqvhernzfqcbqf7b6me:secret@example.com:5432/postgres
+      EXPECTED
+
+      expect(&.output.to_s).to eq expected
+    end
   end
 end

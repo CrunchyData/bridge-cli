@@ -275,6 +275,10 @@ class CB::Client
   # Retrieve the cluster by id or by name.
   def get_cluster(id : Identifier)
     return get_cluster id.to_s if id.eid?
+    get_cluster_by_name(id)
+  end
+
+  private def get_cluster_by_name(id : Identifier)
     cluster = get_clusters.find { |c| id == c.name }
     raise Program::Error.new "cluster #{id.to_s.colorize.t_name} does not exist." unless cluster
     get_cluster cluster.id
@@ -474,6 +478,12 @@ class CB::Client
   end
 
   # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridrolesrolename/get-role
+  def get_role(cluster_id : Identifier, role_name : String)
+    return get_role(cluster_id.to_s, role_name) if cluster_id.eid?
+    c = get_cluster_by_name(cluster_id)
+    get_role(c.id, role_name)
+  end
+
   def get_role(cluster_id, role_name)
     resp = get "clusters/#{cluster_id}/roles/#{role_name}"
     Role.from_json resp.body

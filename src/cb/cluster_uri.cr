@@ -1,18 +1,24 @@
 require "./action"
 
 class CB::ClusterURI < CB::APIAction
-  eid_setter cluster_id
-  property role_name : String = "default"
+  cluster_identifier_setter cluster_id
+  role_setter role
+
+  def validate
+    check_required_args do |missing|
+      missing << "cluster" if @cluster_id.empty?
+    end
+  end
 
   def run
-    # Ensure the role name
-    raise Error.new("invalid role: '#{@role_name}'") unless Role::VALID_CLUSTER_ROLES.includes? @role_name
-    if @role_name == "user"
-      @role_name = "u_#{client.get_account.id}"
+    validate
+
+    if @role == "user"
+      @role = Role.new "u_#{client.get_account.id}"
     end
 
     # Fetch the role.
-    role = client.get_role(cluster_id, @role_name)
+    role = client.get_role(@cluster_id[:cluster], @role.to_s)
 
     # Redact the password from the result. Redaction is handled by coloring the
     # foreground and background the same color. This benfits the user by not
@@ -34,7 +40,7 @@ class CB::ClusterURI < CB::APIAction
     when e.forbidden?
       msg = "not allowed."
     when e.not_found?
-      msg = "role '#{@role_name}' does not exist."
+      msg = "role '#{@role}' does not exist."
     end
 
     raise Error.new msg
