@@ -40,6 +40,14 @@ module CB
       end
     end
 
+    macro role_setter(property)
+      property {{property}} : Role?
+
+      def {{property}}=(str : String)
+        @{{property}} = Role.new str
+      end
+    end
+
     # For simple identifiers such as region names, or plan names where we
     # expect only lowercase, numbers, and -
     macro ident_setter(property)
