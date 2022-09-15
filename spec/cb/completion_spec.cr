@@ -379,7 +379,7 @@ Spectator.describe CB::Completion do
     result.empty?.should be_true
 
     result = parse("cb psql abc --role ")
-    result.should eq CB::VALID_CLUSTER_ROLES.to_a
+    result.should eq CB::Role::VALID_CLUSTER_ROLES.to_a
   end
 
   it "completes scope" do
@@ -526,7 +526,7 @@ Spectator.describe CB::Completion do
 
     result = parse("cb role destroy --name ")
     expect(result).to_not have_option "--name"
-    expect(result).to eq CB::VALID_CLUSTER_ROLES.to_a
+    expect(result).to eq CB::Role::VALID_CLUSTER_ROLES.to_a
   end
 
   it "completes uri" do
@@ -537,7 +537,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--role"
 
     result = parse("cb uri abc --role ")
-    expect(result).to eq CB::VALID_CLUSTER_ROLES.to_a
+    expect(result).to eq CB::Role::VALID_CLUSTER_ROLES.to_a
   end
 
   it "completes team" do

@@ -318,7 +318,7 @@ class CB::Completion
     end
 
     if last_arg? "--name"
-      return VALID_CLUSTER_ROLES.to_a
+      return Role::VALID_CLUSTER_ROLES.to_a
     end
 
     suggest = [] of String
@@ -354,7 +354,7 @@ class CB::Completion
     end
 
     if last_arg? "--name"
-      return VALID_CLUSTER_ROLES.to_a
+      return Role::VALID_CLUSTER_ROLES.to_a
     end
 
     if last_arg?("--read-only")
@@ -430,7 +430,7 @@ class CB::Completion
     end
 
     if last_arg?("--role")
-      return VALID_CLUSTER_ROLES.to_a
+      return Role::VALID_CLUSTER_ROLES.to_a
     end
 
     suggest = [] of String
@@ -771,7 +771,7 @@ class CB::Completion
     return cluster_suggestions if @args.size == 2
 
     if last_arg? "--role"
-      return VALID_CLUSTER_ROLES.to_a
+      return Role::VALID_CLUSTER_ROLES.to_a
     end
 
     suggest = [] of String

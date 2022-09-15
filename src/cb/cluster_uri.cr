@@ -6,7 +6,7 @@ class CB::ClusterURI < CB::APIAction
 
   def run
     # Ensure the role name
-    raise Error.new("invalid role: '#{@role_name}'") unless VALID_CLUSTER_ROLES.includes? @role_name
+    raise Error.new("invalid role: '#{@role_name}'") unless Role::VALID_CLUSTER_ROLES.includes? @role_name
     if @role_name == "user"
       @role_name = "u_#{client.get_account.id}"
     end

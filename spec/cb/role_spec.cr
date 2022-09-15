@@ -1,23 +1,11 @@
 require "../spec_helper"
 include CB
 
-private TEST_ROLE = Client::Role.new(
-  account_email: "test@example.com",
-  name: "u_123",
-  password: "secret",
-  uri: URI.parse "postgres://u_123@foo.com",
-)
-
-private SYSTEM_ROLE = Client::Role.new(
-  name: "application",
-  password: "secret",
-  uri: URI.parse "postgres://application@foo.com",
-)
-
 Spectator.describe RoleCreate do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
   let(client) { Client.new TEST_TOKEN }
-  let(role) { TEST_ROLE }
+
+  let(user_role) { Factory.user_role }
 
   mock Client do
     stub create_role(id)
@@ -34,10 +22,11 @@ Spectator.describe RoleCreate do
     action.output = IO::Memory.new
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
 
-    expect(client).to receive(:create_role).with(action.cluster_id).and_return role
+    expect(client).to receive(:create_role).with(action.cluster_id).and_return user_role
+
     action.call
 
-    expect(&.output.to_s).to eq "Role u_123 created on cluster #{action.cluster_id}.\n"
+    expect(&.output.to_s).to eq "Role #{user_role.name} created on cluster #{action.cluster_id}.\n"
   end
 end
 
@@ -45,7 +34,7 @@ Spectator.describe RoleList do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
 
   let(client) { Client.new TEST_TOKEN }
-  let(roles) { [SYSTEM_ROLE, TEST_ROLE] }
+  let(roles) { [Factory.system_role, Factory.user_role] }
   let(team) { Factory.team }
   let(cluster) { Factory.cluster }
 
@@ -73,15 +62,15 @@ Spectator.describe RoleList do
     action.call
 
     expected = <<-EXPECTED
-    +-------------------------------------+
-    | Cluster: abc                        |
-    | Team:    Test Team                  |
-    +------------------+------------------+
-    | Role             | Account          |
-    +------------------+------------------+
-    | application      | system           |
-    | u_123            | test@example.com |
-    +------------------+------------------+\n
+    +-------------------------------------------------+
+    | Cluster: abc                                    |
+    | Team:    Test Team                              |
+    +------------------------------+------------------+
+    | Role                         | Account          |
+    +------------------------------+------------------+
+    | application                  | system           |
+    | u_mijrfkkuqvhernzfqcbqf7b6me | user@example.com |
+    +------------------------------+------------------+\n
     EXPECTED
 
     expect(&.output.to_s).to eq expected
@@ -108,8 +97,8 @@ Spectator.describe RoleList do
            "account": "system"
          },
          {
-           "role": "u_123",
-           "account": "test@example.com"
+           "role": "u_mijrfkkuqvhernzfqcbqf7b6me",
+           "account": "user@example.com"
          }
        ]
      }\n
@@ -121,86 +110,78 @@ end
 
 Spectator.describe RoleUpdate do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
+
+  let(account) { Factory.account }
   let(client) { Client.new TEST_TOKEN }
 
   mock Client do
-    stub get_account { Client::Account.new id: "123", name: "accounty mcaccounterson", email: "mcaccounterson@example.com" }
-    stub update_role(cluster_id, role_name, ur) { TEST_ROLE }
+    stub get_account { Factory.account }
+    stub update_role(cluster_id, role_name, ur) { Factory.user_role }
   end
 
-  before_each do
-    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
-    action.role_name = "user"
+  describe "#validate" do
+    it "validates that required arguments are present" do
+      action.cluster_id = nil
+      expect(&.validate).to raise_error Program::Error, /Missing required argument/
+
+      action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
+      expect(&.validate).to raise_error Program::Error, /Missing required argument/
+
+      action.role = "user"
+      expect(&.validate).to be_true
+    end
   end
 
-  it "validates that required arguments are present" do
-    action.cluster_id = nil
-    expect(&.validate).to raise_error Program::Error, /Missing required argument/
+  describe "#call" do
+    before_each do
+      action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
+      action.role = "user"
+    end
 
-    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
-    action.role_name = "user"
-    expect(&.validate).to be_true
-  end
-
-  it "#run errors on invalid role" do
-    action.role_name = "invalid"
-
-    expect(&.call).to raise_error Program::Error, /invalid role: '#{action.role_name}'/
-  end
-
-  it "#run translates 'user' role" do
-    action.role_name = "user"
-    action.call
-
-    expect(&.role_name).to eq "u_123"
-  end
-
-  it "#run prints confirmation" do
-    action.call
-
-    expect(&.output.to_s).to eq "Role u_123 updated on cluster #{action.cluster_id}.\n"
+    it "prints confirmation" do
+      expect(client).to receive(:get_account).and_return account
+      action.call
+      expect(&.output.to_s).to eq "Role #{action.role} updated on cluster #{action.cluster_id}.\n"
+    end
   end
 end
 
 Spectator.describe RoleDelete do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
+
+  let(account) { Factory.account }
   let(client) { Client.new TEST_TOKEN }
 
   mock Client do
-    stub delete_role(cluster_id, role_name) { TEST_ROLE }
+    stub delete_role(cluster_id, role_name) { Factory.user_role }
+    stub get_account
   end
 
-  before_each do
-    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
-    action.role_name = "user"
+  describe "#validate" do
+    it "ensures required arguments are present" do
+      action.cluster_id = nil
+      expect(&.validate).to raise_error Program::Error, /Missing required argument/
+
+      action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
+      expect(&.validate).to raise_error Program::Error, /Missing required argument/
+
+      action.role = Role.new
+      expect(&.validate).to_not raise_error
+    end
   end
 
-  it "validate that required arguments are present" do
-    action.cluster_id = nil
-    expect(&.run).to raise_error Program::Error, /Missing required argument/
+  describe "#call" do
+    before_each do
+      action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
+      action.role = "user"
+    end
 
-    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
-    action.role_name = "user"
-    expect(&.run).to_not raise_error
-  end
+    it "prints confirmation" do
+      expect(client).to receive(:get_account).and_return account
 
-  it "#run errors on invalid role" do
-    action.role_name = "invalid"
+      action.call
 
-    expect(&.call).to raise_error Program::Error, /invalid role: '#{action.role_name}'/
-  end
-
-  it "#run translates 'user' role" do
-    action.role_name = "user"
-
-    action.call
-
-    expect(&.role_name).to eq "u_123"
-  end
-
-  it "#run prints confirmation" do
-    action.call
-
-    expect(&.output.to_s).to eq "Role u_123 deleted from cluster #{action.cluster_id}.\n"
+      expect(&.output.to_s).to eq "Role #{action.role} deleted from cluster #{action.cluster_id}.\n"
+    end
   end
 end
