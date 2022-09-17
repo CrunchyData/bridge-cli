@@ -176,6 +176,11 @@ class CB::Client
     Team.from_json resp.body
   end
 
+  def get_team_cert(id)
+    resp = get "teams/#{id}.pem"
+    resp.body
+  end
+
   #
   # Team Members
   #

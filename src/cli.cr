@@ -95,7 +95,7 @@ op = OptionParser.new do |parser|
     psql = set_action Psql
 
     parser.on("--database NAME", "Database name (default: postgres)") { |arg| psql.database = arg }
-    parser.on("--role NAME", "Role name (default: default)") { |arg| psql.role_name = arg }
+    parser.on("--role NAME", "Role name (default: default)") { |arg| psql.role = arg }
     positional_args psql.cluster_id
   end
 

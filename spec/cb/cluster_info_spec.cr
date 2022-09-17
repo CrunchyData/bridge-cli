@@ -10,8 +10,8 @@ Spectator.describe CB::ClusterInfo do
 
   mock Client do
     stub get_cluster(id : Identifier)
-    stub get_team(id)
     stub get_firewall_rules(id)
+    stub get_team(id)
   end
 
   describe "#validate" do
