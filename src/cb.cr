@@ -27,3 +27,4 @@ end
 require "./ext/stdlib_ext"
 require "./openssl_cert"
 require "./cb/*"
+require "./client/*"

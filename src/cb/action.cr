@@ -1,5 +1,4 @@
 require "log"
-require "./client"
 
 module CB
   # Action is the base class for all actions performed by `cb`.
