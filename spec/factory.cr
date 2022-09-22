@@ -10,6 +10,52 @@ module Factory
     CB::Client::Account.new **params
   end
 
+  def backup(**params)
+    params = {
+      name:        "a backup",
+      started_at:  Time.utc(2022, 1, 1, 0, 0, 0),
+      finished_at: Time.utc(2022, 2, 1, 0, 0, 0),
+      lsn_start:   "1/a",
+      lsn_stop:    "2/b",
+      size_bytes:  123.to_u64,
+    }.merge(params)
+
+    CB::Client::Backup.new **params
+  end
+
+  def backup_token_aws(**params)
+    params = {
+      type:      "s3",
+      repo_path: "/the-path",
+      stanza:    "h3zwxm6bafaq3mqbgou5zj56su",
+      aws:       CB::Client::AWSBackrestCredential.new(
+        s3_key: "key",
+        s3_key_secret: "secret",
+        s3_token: "token",
+        s3_region: "us-west-1",
+        s3_bucket: "the-bucket",
+      ),
+    }.merge(params)
+
+    CB::Client::BackupToken.new **params
+  end
+
+  def backup_token_azr(**params)
+    params = {
+      type:      "azure",
+      repo_path: "/",
+      stanza:    "h3zwxm6bafaq3mqbgou5zj56su",
+      azure:     CB::Client::AzureBackrestCredential.new(
+        azure_account: "test_account",
+        azure_key: "test_token",
+        azure_key_type: "sas",
+        azure_container: "test_container",
+      ),
+    }.merge(params)
+
+    CB::Client::BackupToken.new **params
+  end
+
   def cluster(**params)
     params = {
       id:            "pkdpq6yynjgjbps4otxd7il2u4",
