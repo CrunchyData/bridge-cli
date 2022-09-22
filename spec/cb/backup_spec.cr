@@ -1,115 +1,120 @@
 require "../spec_helper"
-
-private class BackupTestClient < CB::Client
-  def backup_list(id)
-    if id.try &.starts_with? 'z'
-      [Backup.new(name: "a backup", started_at: Time.utc, finished_at: Time.utc, lsn_start: "1/a", lsn_stop: "2/b", size_bytes: 123)]
-    else
-      [] of Backup
-    end
-  end
-
-  def backup_token(id)
-    if id.try &.starts_with? "aws"
-      BackupToken.new(
-        type: "s3",
-        repo_path: "/the-path",
-        stanza: "h3zwxm6bafaq3mqbgou5zj56su",
-        aws: AWSBackrestCredential.new(
-          s3_key: "key",
-          s3_key_secret: "secret",
-          s3_token: "token",
-          s3_region: "us-west-1",
-          s3_bucket: "the-bucket",
-        )
-      )
-    elsif id.try &.starts_with? "azr"
-      BackupToken.new(
-        type: "azure",
-        repo_path: "/",
-        stanza: "h3zwxm6bafaq3mqbgou5zj56su",
-        azure: AzureBackrestCredential.new(
-          azure_account: "test_account",
-          azure_key: "test_token",
-          azure_key_type: "sas",
-          azure_container: "test_container",
-        )
-      )
-    else
-      nil
-    end
-  end
-end
-
-private def make_ba
-  CB::BackupCapture.new(BackupTestClient.new(TEST_TOKEN))
-end
-
-private def make_bl
-  CB::BackupList.new(BackupTestClient.new(TEST_TOKEN))
-end
-
-private def make_bt
-  CB::BackupToken.new(BackupTestClient.new(TEST_TOKEN))
-end
+include CB
 
 Spectator.describe CB::BackupCapture do
-  it "validates that cluster_id is correct" do
-    ba = make_ba
-    ba.cluster_id = "afpvoqooxzdrriu6w3bhqo55c4"
-    expect_cb_error(/cluster id/) { ba.cluster_id = "notaneid" }
+  subject(action) { described_class.new client: client, output: IO::Memory.new }
+
+  let(client) { Client.new TEST_TOKEN }
+  let(cluster) { Factory.cluster }
+
+  mock Client do
+    stub get_cluster(id : Identifier)
+    stub backup_start(id : Identifier)
+    stub get_cluster_by_name(name : Identifier)
+  end
+
+  describe "#validate" do
+    it "ensures required arguments are present" do
+      expect(&.validate).to raise_error Program::Error, /Missing required argument/
+
+      action.cluster_id = cluster.id
+      expect(&.validate).to be_true
+    end
+  end
+
+  describe "#call" do
+    it "confirms backup requested" do
+      action.cluster_id = cluster.id
+
+      expect(client).to receive(:get_cluster).and_return(cluster)
+      expect(client).to receive(:backup_start).and_return(CB::Client::Message.new)
+      action.call
+
+      expect(&.output.to_s).to match /requested backup capture of /
+    end
   end
 end
 
 Spectator.describe CB::BackupList do
-  it "validates that cluster_id is correct" do
-    bl = make_bl
-    bl.cluster_id = "afpvoqooxzdrriu6w3bhqo55c4"
-    expect_cb_error(/cluster id/) { bl.cluster_id = "notaneid" }
+  subject(action) { described_class.new client: client, output: IO::Memory.new }
+
+  let(client) { Client.new TEST_TOKEN }
+  let(cluster) { Factory.cluster }
+
+  mock Client do
+    stub backup_list(id)
   end
 
-  it "says when there is no backups" do
-    bl = make_bl
-    bl.cluster_id = "afpvoqooxzdrriu6w3bhqo55c4"
-    bl.output = output = IO::Memory.new
+  describe "#validate" do
+    it "ensures required arguments are presentt" do
+      expect(&.validate).to raise_error Program::Error, /Missing required argument/
 
-    bl.call
-    output.to_s.should eq "no backups yet"
+      action.cluster_id = cluster.id
+      expect(&.validate).to be_true
+    end
   end
 
-  it "prints bap info when there are backups" do
-    bl = make_bl
-    bl.cluster_id = "zzzzzzzzzzzzriu6w3bhqo55c4"
-    bl.output = output = IO::Memory.new
+  describe "#call" do
+    it "says when there are no backups" do
+      action.cluster_id = cluster.id
 
-    bl.call
-    output.to_s.should match /a backup/
+      expect(client).to receive(:backup_list).and_return([] of CB::Client::Backup)
+
+      action.call
+
+      expect(&.output.to_s).to eq "no backups yet"
+    end
+
+    it "prints info when there are backups" do
+      action.cluster_id = cluster.id
+
+      expect(client).to receive(:backup_list).and_return([Factory.backup])
+
+      action.call
+
+      expected = <<-EXPECTED
+      a backup\t                 123\t2022-01-01T00:00:00Z\t2022-02-01T00:00:00Z\t1/a      \t2/b\n
+      EXPECTED
+
+      expect(&.output.to_s).to eq expected
+    end
   end
 end
 
 Spectator.describe CB::BackupToken do
-  it "validates that cluster_id is correct" do
-    bt = make_bt
-    bt.cluster_id = "afpvoqooxzdrriu6w3bhqo55c4"
-    expect_cb_error(/cluster id/) { bt.cluster_id = "notaneid" }
+  subject(action) { described_class.new client: client, output: IO::Memory.new }
+
+  let(client) { Client.new TEST_TOKEN }
+  let(cluster) { Factory.cluster }
+
+  mock Client do
+    stub backup_token(id : Identifier)
   end
 
-  it "says when there are no backups" do
-    bt = make_bt
-    bt.cluster_id = "awszzzzzzzzzriu6w3bhqo55c4"
-    bt.output = output = IO::Memory.new
+  describe "#validate" do
+    it "ensures required arguments are presentt" do
+      expect(&.validate).to raise_error Program::Error, /Missing required argument/
 
-    bt.call
-    output.to_s.should match /Type:.*s3.*/
-
-    bt = make_bt
-    bt.cluster_id = "azrzzzzzzzzzriu6w3bhqo55c4"
-    bt.output = output = IO::Memory.new
-
-    bt.call
-    output.to_s.should match /Type:.*azure.*/
+      action.cluster_id = cluster.id
+      expect(&.validate).to be_true
+    end
   end
 
-  it "prints token when available" do
+  describe "#call" do
+    before_each {
+      action.cluster_id = cluster.id
+    }
+
+    it "outputs aws backup token" do
+      expect(client).to receive(:backup_token).and_return(Factory.backup_token_aws)
+      action.call
+      expect(&.output.to_s).to match /Type:.*s3.*/
+    end
+
+    it "ouputs azr backup token" do
+      expect(client).to receive(:backup_token).and_return(Factory.backup_token_azr)
+      action.call
+      expect(&.output.to_s).to match /Type:.*azure.*/
+    end
   end
 end

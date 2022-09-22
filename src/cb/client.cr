@@ -94,6 +94,11 @@ class CB::Client
   end
 
   #
+  # Message
+  #
+  jrecord Message, message : String = ""
+
+  #
   # Account
   #
 

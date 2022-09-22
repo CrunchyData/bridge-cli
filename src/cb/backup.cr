@@ -2,15 +2,19 @@ require "./action"
 
 module CB
   class BackupCapture < APIAction
-    eid_setter cluster_id
+    cluster_identifier_setter cluster_id
+
+    def validate
+      check_required_args do |missing|
+        missing << "cluster id" if cluster_id.empty?
+      end
+    end
 
     def run
-      check_required_args do |missing|
-        missing << "cluster id" unless cluster_id
-      end
+      validate
 
-      client.put "clusters/#{cluster_id}/actions/start-backup"
-      c = client.get_cluster cluster_id
+      client.backup_start cluster_id[:cluster]
+      c = client.get_cluster cluster_id[:cluster]
       output << "requested backup capture of " << c.name.colorize.t_name << "\n"
     end
   end
@@ -49,20 +53,29 @@ module CB
       aws : AWSBackrestCredential? = nil,
       azure : AzureBackrestCredential? = nil
 
-    def backup_token(id)
-      resp = post "clusters/#{id}/backup-tokens"
+    def backup_token(id : Identifier)
+      cluster_id = id.eid? ? id.to_s : get_cluster_by_name(id).id
+      resp = post "clusters/#{cluster_id}/backup-tokens"
       BackupToken.from_json resp.body
+    end
+
+    def backup_start(id : Identifier)
+      cluster_id = id.eid? ? id.to_s : get_cluster_by_name(id).id
+      resp = put "clusters/#{cluster_id}/actions/start-backup"
+      Message.from_json resp.body
     end
   end
 
   class BackupList < APIAction
-    eid_setter cluster_id
+    cluster_identifier_setter cluster_id
+
+    def validate
+      check_required_args do |missing|
+        missing << "cluster id" if cluster_id.empty?
+      end
+    end
 
     def run
-      check_required_args do |missing|
-        missing << "cluster id" unless cluster_id
-      end
-
       backups = client.backup_list cluster_id
 
       if backups.empty?
@@ -89,16 +102,18 @@ module CB
   end
 
   class BackupToken < APIAction
-    eid_setter cluster_id
+    cluster_identifier_setter cluster_id
     eid_setter stanza
     ident_setter format
 
-    def run
+    def validate
       check_required_args do |missing|
-        missing << "cluster id" unless cluster_id
+        missing << "cluster id" if cluster_id.empty?
       end
+    end
 
-      token = client.backup_token cluster_id
+    def run
+      token = client.backup_token cluster_id[:cluster]
       raise Error.new("backup token not created") if token.nil?
 
       cred = case
