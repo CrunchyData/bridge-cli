@@ -1,5 +1,4 @@
 require "../spec_helper"
-include CB
 
 Spectator.describe CB::Restart do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
@@ -22,7 +21,7 @@ Spectator.describe CB::Restart do
   end
 
   describe "#call" do
-    it "#confirms restart requested" do
+    it "confirms restart requested" do
       action.cluster_id = cluster.id
       action.confirmed = true
 
