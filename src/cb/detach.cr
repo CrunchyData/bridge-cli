@@ -1,13 +1,19 @@
 require "./action"
 
 class CB::Detach < CB::APIAction
-  eid_setter cluster_id
+  cluster_identifier_setter cluster_id
   property confirmed : Bool = false
+
+  def validate
+    check_required_args do |missing|
+      missing << "cluster" if cluster_id.empty?
+    end
+  end
 
   def run
     validate
 
-    c = client.get_cluster cluster_id
+    c = client.get_cluster cluster_id[:cluster]
 
     unless confirmed
       output << "About to " << "detach".colorize.t_warn << " cluster " << c.name.colorize.t_name
@@ -19,13 +25,7 @@ class CB::Detach < CB::APIAction
       end
     end
 
-    client.detach_cluster cluster_id
+    client.detach_cluster cluster_id[:cluster]
     output.puts "Cluster #{c.id.colorize.t_id} detached."
-  end
-
-  def validate
-    check_required_args do |missing|
-      missing << "cluster" unless cluster_id
-    end
   end
 end
