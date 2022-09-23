@@ -1,51 +1,37 @@
 require "../spec_helper"
-
-private class RestartTestClient < CB::Client
-  def get_cluster(id : String)
-    ClusterDetail.new(
-      id: id,
-      team_id: "teamid",
-      name: "source cluster",
-      state: "na",
-      created_at: Time.utc(2016, 2, 15, 10, 20, 30),
-      host: "p.#{id}.test.crunchybridge.com",
-      is_ha: false,
-      major_version: 12,
-      plan_id: "memory-4",
-      cpu: 4,
-      memory: 111,
-      oldest_backup: nil,
-      provider_id: "aws",
-      region_id: "us-east-2",
-      network_id: "nfpvoqooxzdrriu6w3bhqo55c4",
-      storage: 1234
-    )
-  end
-
-  def restart_cluster(id, service : String)
-  end
-end
+include CB
 
 Spectator.describe CB::Restart do
-  it "validates that required arguments are present" do
-    action = CB::Restart.new(RestartTestClient.new(TEST_TOKEN))
+  subject(action) { described_class.new client: client, output: IO::Memory.new }
 
-    msg = /Missing required argument/
-    expect_cb_error(msg) { action.validate }
+  let(client) { Client.new TEST_TOKEN }
+  let(cluster) { Factory.cluster }
 
-    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
-    action.validate.should eq true
+  mock Client do
+    stub get_cluster(id : Identifier)
+    stub restart_cluster(id, service : String)
   end
 
-  it "#run prints confirmation" do
-    action = CB::Restart.new(RestartTestClient.new(TEST_TOKEN))
-    action.output = IO::Memory.new
+  describe "#validate" do
+    it "ensures required arguments are present" do
+      expect(&.validate).to raise_error Program::Error, /Missing required argument/
 
-    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
-    action.confirmed = true
+      action.cluster_id = cluster.id
+      expect(&.validate).to be_true
+    end
+  end
 
-    action.call
+  describe "#call" do
+    it "#confirms restart requested" do
+      action.cluster_id = cluster.id
+      action.confirmed = true
 
-    action.output.to_s.should eq "Cluster #{action.cluster_id} restarted.\n"
+      expect(client).to receive(:get_cluster).and_return(cluster)
+      expect(client).to receive(:restart_cluster).and_return(cluster)
+
+      action.call
+
+      expect(&.output.to_s).to eq "Cluster #{cluster.id} restarted.\n"
+    end
   end
 end
