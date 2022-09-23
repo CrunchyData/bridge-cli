@@ -147,7 +147,8 @@ module CB
 
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridrestart/restart-cluster
     def restart_cluster(id, service : String)
-      put "clusters/#{id}/restart", {service: service}
+      resp = put "clusters/#{id}/restart", {service: service}
+      ClusterDetail.from_json resp.body
     end
 
     jrecord Message, message : String = ""
