@@ -157,5 +157,17 @@ module CB
       resp = post "clusters/#{cluster_id}/tempkeys"
       Tempkey.from_json resp.body
     end
+
+    # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridactionssuspend/suspend-cluster
+    def suspend_cluster(id : Identifier)
+      resp = put "clusters/#{id}/actions/suspend"
+      ClusterDetail.from_json resp.body
+    end
+
+    # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridactionsresume/resume-cluster
+    def resume_cluster(id : Identifier)
+      resp = put "clusters/#{id}/actions/resume"
+      ClusterDetail.from_json resp.body
+    end
   end
 end
