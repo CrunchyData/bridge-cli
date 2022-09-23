@@ -2,21 +2,35 @@ require "./action"
 
 module CB
   class ClusterSuspend < APIAction
-    eid_setter cluster_id
+    cluster_identifier_setter cluster_id
+
+    def validate
+      check_required_args do |missing|
+        missing << "cluster" if cluster_id.empty?
+      end
+    end
 
     def run
-      client.put "clusters/#{cluster_id}/actions/suspend"
-      c = client.get_cluster cluster_id
+      validate
+
+      c = client.suspend_cluster cluster_id[:cluster]
       output << "suspended cluster " << c.name.colorize.t_name << "\n"
     end
   end
 
   class ClusterResume < APIAction
-    eid_setter cluster_id
+    cluster_identifier_setter cluster_id
+
+    def validate
+      check_required_args do |missing|
+        missing << "cluster" if cluster_id.empty?
+      end
+    end
 
     def run
-      client.put "clusters/#{cluster_id}/actions/resume"
-      c = client.get_cluster cluster_id
+      validate
+
+      c = client.resume_cluster cluster_id[:cluster]
       output << "resumed cluster " << c.name.colorize.t_name << "\n"
     end
   end
