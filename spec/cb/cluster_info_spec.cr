@@ -1,5 +1,4 @@
 require "../spec_helper"
-include CB
 
 Spectator.describe CB::ClusterInfo do
   subject(action) { described_class.new client: client, output: IO::Memory.new }

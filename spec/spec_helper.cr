@@ -4,6 +4,8 @@ require "spec"
 require "spectator"
 require "spectator/should"
 
+include CB
+
 Colorize.enabled = false
 TEST_TOKEN = CB::Token.new("localhost", "token", Time.local.to_unix + 1.hour.seconds, "userid", "user name")
 
