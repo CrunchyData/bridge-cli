@@ -144,7 +144,8 @@ module CB
     end
 
     def destroy_cluster(id)
-      delete "clusters/#{id}"
+      resp = delete "clusters/#{id}"
+      ClusterDetail.from_json resp.body
     end
 
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridrestart/restart-cluster
