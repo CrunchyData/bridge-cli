@@ -85,8 +85,10 @@ module CB
       Cluster.from_json resp.body
     end
 
-    def detach_cluster(id)
-      put "clusters/#{id}/detach", ""
+    def detach_cluster(id : Identifier)
+      cluster_id = id.eid? ? id : get_cluster_by_name(id).id
+      resp = put "clusters/#{cluster_id}/detach"
+      ClusterDetail.from_json resp.body
     end
 
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridforks/post
