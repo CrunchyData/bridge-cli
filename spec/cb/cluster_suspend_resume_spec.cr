@@ -3,12 +3,9 @@ require "../spec_helper"
 Spectator.describe CB::ClusterSuspend do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
 
-  let(client) { Client.new TEST_TOKEN }
-  let(cluster) { Factory.cluster }
+  mock_client
 
-  mock Client do
-    stub suspend_cluster(id : Identifier)
-  end
+  let(cluster) { Factory.cluster }
 
   describe "#validate" do
     it "ensures required arguments are present" do
@@ -35,12 +32,9 @@ end
 Spectator.describe CB::ClusterResume do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
 
-  let(client) { Client.new TEST_TOKEN }
-  let(cluster) { Factory.cluster }
+  mock_client
 
-  mock Client do
-    stub resume_cluster(id : Identifier)
-  end
+  let(cluster) { Factory.cluster }
 
   describe "#validate" do
     it "ensures required arguments are present" do

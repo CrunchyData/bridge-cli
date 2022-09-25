@@ -18,27 +18,41 @@ class CB::ClusterCreate < CB::APIAction
     if (id = fork || replica)
       source = client.get_cluster id
 
-      self.name ||= "#{fork ? "Fork" : "Replica"} of #{source.name}"
-      self.platform ||= source.provider_id
-      self.region ||= source.region_id
-      self.storage ||= source.storage
-      self.plan ||= source.plan_id
+      @name ||= "#{fork ? "Fork" : "Replica"} of #{source.name}"
+      @platform ||= source.provider_id
+      @region ||= source.region_id
+      @storage ||= source.storage
+      @plan ||= source.plan_id
     else
-      self.storage ||= 100
-      self.name ||= "Cluster #{Time.utc.to_s("%F %H_%M_%S")}"
+      @storage ||= 100
+      @name ||= "Cluster #{Time.utc.to_s("%F %H_%M_%S")}"
     end
   end
 
   def run
     validate
+
+    params = {
+      "is_ha":               @ha,
+      "name":                @name,
+      "plan_id":             @plan,
+      "provider_id":         @platform,
+      "postgres_version_id": @postgres_version,
+      "region_id":           @region,
+      "storage":             @storage,
+      "team_id":             @team,
+      "network_id":          @network,
+    }
+
     cluster = if fork
                 @client.fork_cluster self
               elsif replica
                 @client.replicate_cluster self
               else
-                @client.create_cluster self
+                @client.create_cluster params
               end
-    @output.puts %(Created cluster #{cluster.id.colorize.t_id} "#{cluster.name.colorize.t_name}")
+
+    @output << "Created cluster #{cluster.id.colorize.t_id} \"#{cluster.name.colorize.t_name}\"\n"
   end
 
   def validate
@@ -55,7 +69,7 @@ class CB::ClusterCreate < CB::APIAction
   end
 
   def at=(str : String)
-    self.at = Time.parse_rfc3339(str).to_utc
+    @at = Time.parse_rfc3339(str).to_utc
   rescue Time::Format::Error
     raise_arg_error "at (not RFC3339)", str
   end

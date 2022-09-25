@@ -3,15 +3,10 @@ require "../spec_helper"
 Spectator.describe CB::ClusterInfo do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
 
-  let(client) { Client.new TEST_TOKEN }
-  let(cluster) { Factory.cluster }
-  let(team) { Factory.team }
+  mock_client
 
-  mock Client do
-    stub get_cluster(id : Identifier)
-    stub get_firewall_rules(id)
-    stub get_team(id)
-  end
+  let(team) { Factory.team }
+  let(cluster) { Factory.cluster }
 
   describe "#validate" do
     it "ensures required arguments are present" do

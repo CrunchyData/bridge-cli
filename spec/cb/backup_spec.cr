@@ -1,17 +1,11 @@
 require "../spec_helper"
-include CB
 
 Spectator.describe CB::BackupCapture do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
 
-  let(client) { Client.new TEST_TOKEN }
-  let(cluster) { Factory.cluster }
+  mock_client
 
-  mock Client do
-    stub get_cluster(id : Identifier)
-    stub backup_start(id : Identifier)
-    stub get_cluster_by_name(name : Identifier)
-  end
+  let(cluster) { Factory.cluster }
 
   describe "#validate" do
     it "ensures required arguments are present" do
@@ -28,6 +22,7 @@ Spectator.describe CB::BackupCapture do
 
       expect(client).to receive(:get_cluster).and_return(cluster)
       expect(client).to receive(:backup_start).and_return(CB::Client::Message.new)
+
       action.call
 
       expect(&.output.to_s).to match /requested backup capture of /
@@ -38,12 +33,9 @@ end
 Spectator.describe CB::BackupList do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
 
-  let(client) { Client.new TEST_TOKEN }
-  let(cluster) { Factory.cluster }
+  mock_client
 
-  mock Client do
-    stub backup_list(id : Identifier)
-  end
+  let(cluster) { Factory.cluster }
 
   describe "#validate" do
     it "ensures required arguments are presentt" do
@@ -84,12 +76,9 @@ end
 Spectator.describe CB::BackupToken do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
 
-  let(client) { Client.new TEST_TOKEN }
-  let(cluster) { Factory.cluster }
+  mock_client
 
-  mock Client do
-    stub backup_token(id : Identifier)
-  end
+  let(cluster) { Factory.cluster }
 
   describe "#validate" do
     it "ensures required arguments are presentt" do

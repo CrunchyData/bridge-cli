@@ -11,10 +11,10 @@ module CB
     end
 
     def initialize(@name : String = "default")
-      raise Program::Error.new INVALID_ROLE_MESSAGE % @name unless is_valid?
+      raise Program::Error.new INVALID_ROLE_MESSAGE % @name unless valid?
     end
 
-    def is_valid?
+    def valid?
       return true if EID_PATTERN.matches? @name.lchop("u_")
       VALID_CLUSTER_ROLES.includes? @name
     end

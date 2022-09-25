@@ -70,19 +70,19 @@ module CB
     end
 
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clusters/post
-    def create_cluster(cc)
-      body = {
-        is_ha:               cc.ha,
-        name:                cc.name,
-        plan_id:             cc.plan,
-        provider_id:         cc.platform,
-        postgres_version_id: cc.postgres_version,
-        region_id:           cc.region,
-        storage:             cc.storage,
-        team_id:             cc.team,
-        network_id:          cc.network,
-      }
-      resp = post "clusters", body
+    def create_cluster(params)
+      # body = {
+      #   is_ha:               cc.ha,
+      #   name:                cc.name,
+      #   plan_id:             cc.plan,
+      #   provider_id:         cc.platform,
+      #   postgres_version_id: cc.postgres_version,
+      #   region_id:           cc.region,
+      #   storage:             cc.storage,
+      #   team_id:             cc.team,
+      #   network_id:          cc.network,
+      # }
+      resp = post "clusters", params
       Cluster.from_json resp.body
     end
 

@@ -1,234 +1,172 @@
 require "../spec_helper"
 
-private class ClusterCreateTestClient < CB::Client
-  def create_cluster(arg)
-    Cluster.new("abc", "def", "my cluster", [] of Cluster)
-  end
-
-  def get_cluster(id : String)
-    ClusterDetail.new(
-      id: id,
-      team_id: "teamid",
-      name: "source cluster",
-      state: "na",
-      created_at: Time.utc(2016, 2, 15, 10, 20, 30),
-      host: "p.#{id}.test.crunchybridge.com",
-      is_ha: false,
-      major_version: 12,
-      plan_id: "memory-4",
-      cpu: 4,
-      memory: 111,
-      oldest_backup: nil,
-      provider_id: "aws",
-      region_id: "us-east-2",
-      maintenance_window_start: nil,
-      network_id: "nfpvoqooxzdrriu6w3bhqo55c4",
-      storage: 1234
-    )
-  end
-end
-
-private def make_cc
-  CB::ClusterCreate.new(ClusterCreateTestClient.new(TEST_TOKEN))
-end
-
 Spectator.describe CB::ClusterCreate do
-  it "#run prints info about the cluster that was created" do
-    cc = make_cc
-    cc.output = output = IO::Memory.new
-    cc.plan = "hobby-2"
-    cc.platform = "aws"
-    cc.region = "east"
-    cc.team = "afpvoqooxzdrriu6w3bhqo55c4"
+  subject(action) { described_class.new client: client, output: IO::Memory.new }
 
-    cc.call
-    output.to_s.should eq "Created cluster abc \"my cluster\"\n"
+  mock_client
+
+  let(cluster) { Factory.cluster }
+  let(team) { Factory.team }
+
+  describe "#validate" do
+    it "ensures required arguments are present" do
+      expect_missing_arg_error
+      action.name = "some cluster"
+      expect_missing_arg_error
+      action.plan = "plan"
+      expect_missing_arg_error
+      action.platform = "aws"
+      expect_missing_arg_error
+      action.region = "us-east-1"
+      expect_missing_arg_error
+      action.team = team.id
+
+      expect(&.validate).to be_true
+    end
   end
 
-  it "validates that required arguments are present" do
-    cc = make_cc
-    msg = /Missing required argument/
+  describe "#at=" do
+    sample ["", "hi", "2021-03-06T00:00:00"] do |at|
+      it "does not allow invalid values" do
+        expect(&.at = at).to raise_error(Program::Error, /Invalid at/)
+      end
+    end
 
-    expect_cb_error(msg) { cc.validate }
-    cc.name = "some cluster"
-    expect_cb_error(msg) { cc.validate }
-    cc.plan = "plan"
-    expect_cb_error(msg) { cc.validate }
-    cc.platform = "aws"
-    expect_cb_error(msg) { cc.validate }
-    cc.region = "us-east-1"
-    expect_cb_error(msg) { cc.validate }
-    cc.team = "afpvoqooxzdrriu6w3bhqo55c4"
-    cc.validate.should eq true
+    it "allows valid values" do
+      expect(&.at = "2021-03-06T00:00:00Z").to eq Time.utc(2021, 3, 6)
+      expect(&.at = "2021-03-06T00:00:00+08:00").to eq Time.utc(2021, 3, 5, 16)
+    end
   end
 
-  it "checks storage input" do
-    cc = make_cc
-    msg = /Invalid storage/
+  describe "#storage=" do
+    sample ["hi", "", "123mb"] do |storage|
+      it "does not allow invalid values" do
+        expect(&.storage = storage).to raise_error(Program::Error, /Invalid storage/)
+      end
+    end
 
-    expect_cb_error(msg) { cc.storage = "hi" }
-    expect_cb_error(msg) { cc.storage = "" }
-    expect_cb_error(msg) { cc.storage = "123mb" }
-
-    cc.storage = "101"
-    cc.storage.should eq 101
-    cc.storage = "1_024"
-    cc.storage.should eq 1024
-    cc.storage = "01234"
-    cc.storage.should eq 1234
+    sample ["101", "1_024", "01234"] do |storage|
+      it "allows valid values" do
+        expect(&.storage = storage).to_not raise_error
+      end
+    end
   end
 
-  it "checks ha input" do
-    cc = make_cc
-    msg = /Invalid ha/
-
-    cc.ha.should eq false
-
-    expect_cb_error(msg) { cc.ha = "yes" }
-    expect_cb_error(msg) { cc.ha = "no" }
-    expect_cb_error(msg) { cc.ha = "34" }
-    expect_cb_error(msg) { cc.ha = "" }
-
-    cc.ha = "true"
-    cc.ha.should eq true
-    cc.ha = "false"
-    cc.ha.should eq false
-    cc.ha = "TRUE"
-    cc.ha.should eq true
+  describe "#ha=" do
+    sample ["yes", "no", "34", ""] do |ha|
+      it "does not allow invalid values" do
+        expect(&.ha = ha).to raise_error(Program::Error, /Invalid ha/)
+      end
+    end
   end
 
-  it "checks team input" do
-    cc = make_cc
-    msg = /Invalid team id/
-
-    expect_cb_error(msg) { cc.team = "yes" }
-    expect_cb_error(msg) { cc.team = "afpvoqooxzdrriu6w3bhqo55c3" }
-    expect_cb_error(msg) { cc.team = "aafpvoqooxzdrriu6w3bhqo55c4" }
-    expect_cb_error(msg) { cc.team = "fpvoqooxzdrriu6w3bhqo55c4" }
-
-    cc.team.should eq nil
-    cc.team = "afpvoqooxzdrriu6w3bhqo55c4"
-    cc.team.should eq "afpvoqooxzdrriu6w3bhqo55c4"
+  describe "#team=" do
+    sample invalid_ids do |team|
+      it "does not allow invalid values" do
+        expect(&.team = team).to raise_error(Program::Error, /Invalid team id/)
+      end
+    end
   end
 
-  it "checks network input" do
-    cc = make_cc
-    msg = /Invalid network id/
-
-    expect_cb_error(msg) { cc.network = "yes" }
-    expect_cb_error(msg) { cc.network = "afpvoqooxzdrriu6w3bhqo55c3" }
-    expect_cb_error(msg) { cc.network = "aafpvoqooxzdrriu6w3bhqo55c4" }
-    expect_cb_error(msg) { cc.network = "fpvoqooxzdrriu6w3bhqo55c4" }
-
-    cc.network.should eq nil
-    cc.network = "afpvoqooxzdrriu6w3bhqo55c4"
-    cc.network.should eq "afpvoqooxzdrriu6w3bhqo55c4"
+  describe "#network=" do
+    sample invalid_ids do |network|
+      it "does not allow invalid values" do
+        expect(&.network = network).to raise_error(Program::Error, /Invalid network id/)
+      end
+    end
   end
 
-  it "checks provider input" do
-    cc = make_cc
-    msg = /Invalid platform/
+  describe "#platform" do
+    sample ["idk", "<ok"] do |platform|
+      it "does not allow invalid values" do
+        expect(&.platform = platform).to raise_error(Program::Error, /Invalid platform/)
+      end
+    end
 
-    expect_cb_error(msg) { cc.platform = "idk" }
-    expect_cb_error(msg) { cc.platform = "<ok" }
-
-    cc.platform.should eq nil
-    cc.platform = "aws"
-    cc.platform.should eq "aws"
-    cc.platform = "azr"
-    cc.platform.should eq "azure"
-    cc.platform = "gcp"
-    cc.platform.should eq "gcp"
-    cc.platform = "azure"
-    cc.platform.should eq "azure"
-    cc.platform = "AWS"
-    cc.platform.should eq "aws"
+    sample ["aws", "azr", "azure", "gcp"] do |platform|
+      it "allows valid values" do
+        expect(&.platform = platform).to_not raise_error
+      end
+    end
   end
 
-  it "checks region input" do
-    cc = make_cc
-    msg = /Invalid region/
-
-    expect_cb_error(msg) { cc.region = "<ok" }
-
-    cc.region = "thing-place3"
-    cc.region.should eq "thing-place3"
+  describe "#region=" do
+    it "does not allow invalid values" do
+      expect(&.region = "<ok").to raise_error(Program::Error, /Invalid region/)
+    end
   end
 
-  it "checks plan input" do
-    cc = make_cc
-    msg = /Invalid plan/
-
-    expect_cb_error(msg) { cc.plan = "<ok" }
-
-    cc.plan = "my-plan3"
-    cc.plan.should eq "my-plan3"
+  describe "#plan=" do
+    it "does not allow invalid values" do
+      expect(&.plan = "<ok").to raise_error(Program::Error, /Invalid plan/)
+    end
   end
 
-  it "checks postgres_version input" do
-    cc = make_cc
-    msg = /Invalid postgres_version/
-
-    expect_cb_error(msg) { cc.postgres_version = "<ok" }
-
-    cc.postgres_version = 14
-    cc.postgres_version.should eq 14
+  describe "#postgres_version=" do
+    it "does not allow invalid values" do
+      expect(&.postgres_version = "<ok").to raise_error(Program::Error, /Invalid postgres_version/)
+    end
   end
 
-  context "fork" do
+  describe "#call" do
+    it "#prints info about the cluster that was created" do
+      action.plan = "hobby-2"
+      action.platform = "aws"
+      action.region = "east"
+      action.team = team.id
+
+      expect(client).to receive(:create_cluster).and_return(CB::Client::Cluster.new("abc", "def", "my cluster", [] of CB::Client::Cluster))
+
+      action.call
+
+      expect(&.output.to_s).to eq "Created cluster abc \"my cluster\"\n"
+    end
+  end
+
+  describe "#call - replica", skip: "Not implemented yet" do
+  end
+
+  describe "#call - fork" do
+    before_each {
+      expect(client).to receive(:get_cluster).and_return(cluster)
+    }
+
     it "fills in defaults from the source cluster" do
-      cc = make_cc
+      expect(&.name).to be_nil
+      expect(&.platform).to be_nil
+      expect(&.region).to be_nil
+      expect(&.storage).to be_nil
+      expect(&.plan).to be_nil
 
-      cc.name.should be_nil
-      cc.platform.should be_nil
-      cc.region.should be_nil
-      cc.storage.should be_nil
-      cc.plan.should be_nil
+      action.fork = cluster.id
+      expect(&.pre_validate).to_not raise_error
 
-      cc.fork = "afpvoqooxzdrriu6w3bhqo55c4"
-      cc.pre_validate
+      expect(&.name).to eq "Fork of abc"
+      expect(&.platform).to eq "aws"
+      expect(&.region).to eq "us-east-2"
+      expect(&.storage).to eq 1234
+      expect(&.plan).to eq "memory-4"
 
-      cc.name.should eq "Fork of source cluster"
-      cc.platform.should eq "aws"
-      cc.region.should eq "us-east-2"
-      cc.storage.should eq 1234
-      cc.plan.should eq "memory-4"
-
-      cc.validate.should eq true
+      expect(&.validate).to be_true
     end
 
     it "does not overwrite values given with defaults from source cluster" do
-      cc = make_cc
-      cc.fork = "afpvoqooxzdrriu6w3bhqo55c4"
+      action.fork = cluster.id
+      action.name = "given name"
+      action.platform = "gcp"
+      action.region = "centralus"
+      action.plan = "cpu-100"
+      action.storage = 4321
 
-      cc.name = "given name"
-      cc.platform = "gcp"
-      cc.region = "centralus"
-      cc.plan = "cpu-100"
-      cc.storage = 4321
+      expect(&.pre_validate).to_not raise_error
 
-      cc.pre_validate
+      expect(&.name).to eq "given name"
+      expect(&.platform).to eq "gcp"
+      expect(&.region).to eq "centralus"
+      expect(&.plan).to eq "cpu-100"
+      expect(&.storage).to eq 4321
 
-      cc.name.should eq "given name"
-      cc.platform.should eq "gcp"
-      cc.region.should eq "centralus"
-      cc.plan.should eq "cpu-100"
-      cc.storage.should eq 4321
-    end
-
-    it "can set the target time" do
-      cc = make_cc
-      msg = /Invalid at/
-
-      expect_cb_error(msg) { cc.at = "hi" }
-      expect_cb_error(msg) { cc.at = "" }
-      expect_cb_error(msg) { cc.at = "2021-03-06T00:00:00" }
-
-      cc.at = "2021-03-06T00:00:00Z"
-      cc.at.should eq Time.utc(2021, 3, 6)
-
-      cc.at = "2021-03-06T00:00:00+08:00"
-      cc.at.should eq Time.utc(2021, 3, 5, 16)
+      expect(&.validate).to be_true
     end
   end
 end
