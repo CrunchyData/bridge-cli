@@ -7,10 +7,7 @@ Spectator.describe MaintenanceInfo do
   let(cluster) { Factory.cluster }
   let(team) { Factory.team }
 
-  mock Client do
-    stub get_cluster(id : Identifier)
-    stub get_team(id)
-  end
+  mock_client
 
   it "validates that required arguments are present" do
     expect(&.validate).to raise_error Program::Error, /Missing required argument/
@@ -35,9 +32,7 @@ Spectator.describe MaintenanceUpdate do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
   let(client) { Client.new TEST_TOKEN }
 
-  mock Client do
-    stub update_cluster(id, body)
-  end
+  mock_client
 
   it "validates that required arguments are present" do
     expect(&.validate).to raise_error Program::Error, /Missing required argument: cluster/

@@ -114,6 +114,18 @@ module Factory
     CB::Client::Team.new **params
   end
 
+  def team_member(**params)
+    params = {
+      id:         "abc",
+      team_id:    "pkdpq6yynjgjbps4otxd7il2u4",
+      account_id: "4pfqoxothfagnfdryk2og7noei",
+      role:       "member",
+      email:      "test@example.com",
+    }.merge(params)
+
+    CB::Client::TeamMember.new **params
+  end
+
   def tempkey(**params)
     params = {
       private_key: "private_key",

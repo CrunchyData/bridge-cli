@@ -7,31 +7,30 @@ private def make_lda
   CB::LogDestinationAdd.new(LogDestinationAddTestClient.new(TEST_TOKEN))
 end
 
-private def expect_validation_err(lda, part)
-  expect_cb_error(/Missing required argument.+#{part}/) { lda.validate }
-end
-
 Spectator.describe CB::LogDestinationAdd do
-  it "validates that required arguments are present" do
-    lda = make_lda
+  subject(action) { described_class.new client: client, output: IO::Memory.new }
 
-    expect_validation_err lda, "cluster"
-    lda.cluster_id = "afpvoqooxzdrriu6w3bhqo55c4"
-    expect_validation_err lda, "port"
-    lda.port = 2345
-    expect_validation_err lda, "desc"
-    lda.description = "hello"
-    expect_validation_err lda, "host"
-    lda.host = "example.com"
-    expect_validation_err lda, "template"
-    lda.template = "some stuff"
-    lda.validate.should eq true
-  end
+  mock_client
 
-  it "only allows valid eids for cluster arg" do
-    lda = make_lda
-    lda.cluster_id = "afpvoqooxzdrriu6w3bhqo55c4"
-    expect_cb_error(/cluster id/) { lda.cluster_id = "notaneid" }
+  let(cluster) { Factory.cluster }
+
+  it "ensures required arguments are present" do
+    expect_missing_arg_error
+    action.cluster_id = cluster.id
+
+    expect_missing_arg_error
+    action.port = 2345
+
+    expect_missing_arg_error
+    action.description = "hello"
+
+    expect_missing_arg_error
+    action.host = "example.com"
+
+    expect_missing_arg_error
+    action.template = "some stuff"
+
+    expect(&.validate).to be_true
   end
 
   it "sets a default description based on the host if missing" do

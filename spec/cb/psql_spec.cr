@@ -4,17 +4,15 @@ include CB
 Spectator.describe CB::Psql do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
 
-  let(client) { Client.new TEST_TOKEN }
+  mock_client do
+    def get_team_cert(team : String)
+      ""
+    end
+  end
+
   let(cluster) { Factory.cluster }
   let(role) { Factory.user_role }
   let(team) { Factory.team }
-
-  mock Client do
-    stub get_cluster(id : Identifier)
-    stub get_role(id : Identifier, name : String)
-    stub get_team(id)
-    stub get_team_cert(id) { "" }
-  end
 
   describe "#initialize" do
     it "ensures 'default' if role not specified" do

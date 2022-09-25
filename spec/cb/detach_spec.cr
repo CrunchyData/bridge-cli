@@ -3,13 +3,9 @@ require "../spec_helper"
 Spectator.describe CB::Detach do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
 
-  let(client) { Client.new TEST_TOKEN }
-  let(cluster) { Factory.cluster }
+  mock_client
 
-  mock Client do
-    stub get_cluster(id : Identifier)
-    stub detach_cluster(id : Identifier)
-  end
+  let(cluster) { Factory.cluster }
 
   describe "#validate" do
     it "ensures required arguments are present" do

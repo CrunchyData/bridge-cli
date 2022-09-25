@@ -5,9 +5,7 @@ Spectator.describe TailscaleConnect do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
   let(client) { Client.new TEST_TOKEN }
 
-  mock Client do
-    stub put(path, body)
-  end
+  mock_client
 
   it "validates that required arguments are present" do
     expect(&.validate).to raise_error Program::Error, /Missing required argument/
@@ -33,9 +31,7 @@ Spectator.describe TailscaleDisconnect do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
   let(client) { Client.new TEST_TOKEN }
 
-  mock Client do
-    stub put(path, body = nil) # ameba:disable Lint/UselessAssign
-  end
+  mock_client
 
   it "validates that required arguments are present" do
     expect(&.validate).to raise_error Program::Error, /Missing required argument/
