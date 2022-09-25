@@ -112,4 +112,16 @@ module Factory
 
     CB::Client::Team.new **params
   end
+
+  def tempkey(**params)
+    params = {
+      private_key: "private_key",
+      public_key:  "public_key",
+      cluster_id:  "pkdpq6yynjgjbps4otxd7il2u4",
+      team_id:     "l2gnkxjv3beifk6abkraerv7de",
+      expires_at:  Time.utc,
+    }.merge(params)
+
+    CB::Tempkey.new **params
+  end
 end
