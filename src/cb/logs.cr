@@ -5,9 +5,17 @@ require "ssh2"
 
 module CB
   class Logs < APIAction
-    eid_setter cluster_id
+    cluster_identifier_setter cluster_id
+
+    def validate
+      check_required_args do |missing|
+        missing << "cluster" if cluster_id.empty?
+      end
+    end
 
     def run
+      validate
+
       tk = Tempkey.for_cluster cluster_id, client: client
 
       host = "p.#{cluster_id}.db.postgresbridge.com"

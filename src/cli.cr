@@ -204,7 +204,7 @@ op = OptionParser.new do |parser|
   end
 
   parser.on("logs", "View live cluster logs") do
-    parser.banner = "cb scope <cluster>"
+    parser.banner = "cb logs <cluster>"
     logs = set_action Logs
 
     positional_args logs.cluster_id
