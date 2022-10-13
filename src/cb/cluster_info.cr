@@ -20,7 +20,7 @@ class CB::ClusterInfo < CB::APIAction
       "state"    => c.state,
       "host"     => c.host,
       "created"  => c.created_at.to_rfc3339,
-      "plan"     => "#{c.plan_id} (#{c.memory}GiB ram, #{c.cpu}vCPU)",
+      "plan"     => "#{c.plan_id} (#{format(c.memory)}GiB ram, #{format(c.cpu)}vCPU)",
       "version"  => c.major_version,
       "storage"  => "#{c.storage}GiB",
       "ha"       => (c.is_ha ? "on" : "off"),

@@ -143,6 +143,17 @@ module CB
       end
       true
     end
+
+    # Format floats such that if there are no significant digits to the right of
+    # the decimal that it will simply format it as if it were an integer.
+    # Effectively this is just simply truncating the formatted value.
+    #
+    # Example:
+    #   format(1.0) -> 1
+    #   format(1.1) -> 1.1
+    private def format(value : Float)
+      value.to_i == value ? value.format(decimal_places: 0) : value.format
+    end
   end
 
   # APIAction performs some action utilizing the API.
