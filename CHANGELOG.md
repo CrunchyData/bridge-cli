@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for using cluster name or id with `cb info` and `cb uri`.
 - `host` field to `cb info` output.
 
+### Fixed
+ - Fix `cpu` type due to recent API changes from `Int` to `Float`.
+
 ## [2.2.1] - 2022-08-22
 ### Fixed
 - No output from `cb token`.
