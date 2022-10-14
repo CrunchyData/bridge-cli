@@ -48,16 +48,11 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
+    container: crystallang/crystal:latest-alpine
 
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-
-    - name: Add Crystal repos
-      run: curl -sSL https://crystal-lang.org/install.sh | sudo bash
-
-    - name: Install crystal
-      run: sudo apt-get install -y crystal libevent-dev libpcre3-dev libreadline-dev
 
     - name: Format
       run: crystal tool format --check
