@@ -5,8 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [3.0.0] - 2022-10-18
 ### Added
-- Support for using cluster name or id with `cb info` and `cb uri`.
+- Support for using cluster name or id with most commonly used commands.
 - `host` field to `cb info` output.
 
 ### Fixed
