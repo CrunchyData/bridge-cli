@@ -42,7 +42,7 @@ Spectator.describe CB::BackupList do
   let(cluster) { Factory.cluster }
 
   mock Client do
-    stub backup_list(id)
+    stub backup_list(id : Identifier)
   end
 
   describe "#validate" do

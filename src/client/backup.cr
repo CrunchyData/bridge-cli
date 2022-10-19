@@ -10,8 +10,9 @@ module CB
       lsn_stop : String,
       size_bytes : UInt64
 
-    def backup_list(id)
-      resp = get "clusters/#{id}/backups"
+    def backup_list(id : Identifier)
+      cluster_id = id.eid? ? id.to_s : get_cluster_by_name(id).id
+      resp = get "clusters/#{cluster_id}/backups"
       Array(Backup).from_json resp.body, root: "backups"
     end
 
