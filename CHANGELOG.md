@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.1] - 2022-10-19
+### Fixed
+ - Fix cluster id parsing bug with `cb backup list`.
+
 ## [3.0.0] - 2022-10-18
 ### Added
 - Support for using cluster name or id with most commonly used commands.
