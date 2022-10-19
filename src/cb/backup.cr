@@ -29,7 +29,7 @@ module CB
     end
 
     def run
-      backups = client.backup_list cluster_id
+      backups = client.backup_list cluster_id[:cluster]
 
       if backups.empty?
         output << "no backups yet"
