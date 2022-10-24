@@ -156,7 +156,8 @@ module CB
 
     jrecord Message, message : String = ""
 
-    def get_tempkey(cluster_id)
+    def get_tempkey(id : Identifier)
+      cluster_id = id.eid? ? id.to_s : get_cluster_by_name(id).id
       resp = post "clusters/#{cluster_id}/tempkeys"
       Tempkey.from_json resp.body
     end
