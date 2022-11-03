@@ -41,6 +41,7 @@ module CB
       provider_id : String,
       network_id : String,
       region_id : String,
+      maintenance_window_start : Int32?,
       storage : Int32 do
       @[JSON::Field(key: "cluster_id")]
       getter source_cluster_id : String?
