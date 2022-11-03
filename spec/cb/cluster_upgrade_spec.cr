@@ -46,6 +46,7 @@ private class ClusterUpgradeTestClient < CB::Client
       oldest_backup: nil,
       provider_id: "aws",
       region_id: "us-east-2",
+      maintenance_window_start: nil,
       network_id: "nfpvoqooxzdrriu6w3bhqo55c4",
       storage: 1234
     )
