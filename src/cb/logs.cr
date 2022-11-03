@@ -26,9 +26,14 @@ module CB
       ch = ssh.open_session
       ch.shell
       ch.write "logs\n".to_slice
+      ch.flush
 
       buffer = uninitialized UInt8[4096]
       while (read_bytes = ch.read(buffer.to_slice)) > 0
+        output.write buffer.to_slice[0, read_bytes]
+      end
+
+      while (read_bytes = ch.read_stderr(buffer.to_slice)) > 0
         output.write buffer.to_slice[0, read_bytes]
       end
     rescue e
