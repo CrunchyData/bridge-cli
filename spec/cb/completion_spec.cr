@@ -469,6 +469,31 @@ Spectator.describe CB::Completion do
     result.empty?.should be_true
   end
 
+  it "completes tailscale" do
+    result = parse("cb ")
+    expect(result).to have_option "tailscale"
+
+    result = parse("cb tailscale ")
+    expect(result).to have_option "connect"
+    expect(result).to have_option "disconnect"
+
+    result = parse("cb tailscale connect ")
+    expect(result).to have_option "--cluster"
+    expect(result).to have_option "--authkey"
+
+    result = parse("cb tailscale connect --cluster ")
+    expect(result).to eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb tailscale connect --authkey ")
+    result.should be_empty
+
+    result = parse "cb tailscale disconnect "
+    expect(result).to have_option "--cluster"
+
+    result = parse("cb tailscale disconnect --cluster ")
+    expect(result).to eq ["abc\tmy team/my cluster"]
+  end
+
   it "completes role" do
     # cb role
     result = parse("cb role ")

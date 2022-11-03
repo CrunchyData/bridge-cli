@@ -238,6 +238,27 @@ op = OptionParser.new do |parser|
   end
 
   #
+  # Cluster Tailscale Management
+  #
+
+  parser.on("tailscale", "Manage Tailscale") do
+    parser.banner = "cb tailscale <connect|disconnect>"
+
+    parser.on("connect", "Add a cluster to Tailscale") do
+      connect = set_action TailscaleConnect
+      parser.banner = "cb tailscale connect <--cluster> <--authkey>"
+      parser.on("--cluster ID", "Choose cluster") { |arg| connect.cluster_id = arg }
+      parser.on("--authkey KEY", "Pre-authentication key") { |arg| connect.auth_key = arg }
+    end
+
+    parser.on("disconnect", "Remove a cluster from Tailscale") do
+      disconnect = set_action TailscaleDisconnect
+      parser.banner = "cb tailscale disconnect <--cluster>"
+      parser.on("--cluster ID", "Choose cluster") { |arg| disconnect.cluster_id = arg }
+    end
+  end
+
+  #
   # Cluster Role Management
   #
 

@@ -66,6 +66,8 @@ class CB::Completion
         team_member
       when "teamcert"
         teams
+      when "tailscale"
+        tailscale
       when "upgrade"
         upgrade
       when "uri"
@@ -93,6 +95,7 @@ class CB::Completion
       "team\tManage teams",
       "team-member\tManage a team's members",
       "teamcert\tGet team public cert",
+      "tailscale\tManage tailscale",
       "info\tDetailed cluster info",
       "uri\tConnection uri",
       "create\tProvision a new cluster",
@@ -274,6 +277,49 @@ class CB::Completion
         "destroy\tremove a new destination from a cluster",
       ]
     end
+  end
+
+  def tailscale
+    case @args[1]
+    when "connect"
+      tailscale_connect
+    when "disconnect"
+      tailscale_disconnect
+    else
+      [
+        "connect\tadd a cluster to tailscale",
+        "disconnect\tremove a cluster from tailscale",
+      ]
+    end
+  end
+
+  def tailscale_connect : Array(String)
+    cluster = find_arg_value "--cluster"
+
+    if last_arg?("--cluster")
+      return cluster.nil? ? cluster_suggestions : [] of String
+    end
+
+    if last_arg?("--authkey")
+      suggest_none
+    end
+
+    suggest = [] of String
+    suggest << "--cluster\tcluster id" unless has_full_flag? :cluster
+    suggest << "--authkey\tapreuthorization key" unless has_full_flag? :authkey
+    suggest
+  end
+
+  def tailscale_disconnect : Array(String)
+    return ["--cluster\tcluster id"] if @args.size == 3
+
+    cluster = find_arg_value "--cluster"
+
+    if last_arg?("--cluster")
+      return cluster.nil? ? cluster_suggestions : [] of String
+    end
+
+    suggest_none
   end
 
   def role
@@ -830,6 +876,7 @@ class CB::Completion
     full << :email if has_full_flag? "--email"
     full << :full if has_full_flag? "--full"
     full << :format if has_full_flag? "--format"
+    full << :authkey if has_full_flag? "--authkey"
     full
   end
 
