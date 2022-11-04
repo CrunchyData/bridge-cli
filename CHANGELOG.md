@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Add and remove a cluster to a Tailscale network with `cb tailscale (dis)connect`
+- New command `cb maintenance info|update` to manage cluster maintenance window
 
 ### Fixed
 - Fix cluster id bug with `cb restart`
