@@ -494,6 +494,35 @@ Spectator.describe CB::Completion do
     expect(result).to eq ["abc\tmy team/my cluster"]
   end
 
+  it "completes maintenance" do
+    result = parse("cb ")
+    expect(result).to have_option "maintenance"
+
+    result = parse("cb maintenance ")
+    expect(result).to have_option "info"
+    expect(result).to have_option "update"
+
+    result = parse("cb maintenance info ")
+    expect(result).to have_option "--cluster"
+
+    result = parse("cb maintenance info --cluster ")
+    expect(result).to eq ["abc\tmy team/my cluster"]
+
+    result = parse "cb maintenance update "
+    expect(result).to have_option "--cluster"
+    expect(result).to have_option "--window-start"
+    expect(result).to have_option "--unset"
+
+    result = parse("cb maintenance update --cluster ")
+    expect(result).to eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb maintenance update --window-start ")
+    result.should be_empty
+
+    result = parse("cb maintenance update --cluster xx --unset ")
+    result.should be_empty
+  end
+
   it "completes role" do
     # cb role
     result = parse("cb role ")
