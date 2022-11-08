@@ -87,7 +87,7 @@ module CB
 
     def detach_cluster(id : Identifier)
       cluster_id = id.eid? ? id : get_cluster_by_name(id).id
-      resp = put "clusters/#{cluster_id}/detach"
+      resp = put "clusters/#{cluster_id}/actions/detach"
       ClusterDetail.from_json resp.body
     end
 
@@ -150,7 +150,7 @@ module CB
 
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridrestart/restart-cluster
     def restart_cluster(id, service : String)
-      resp = put "clusters/#{id}/restart", {service: service}
+      resp = put "clusters/#{id}/actions/restart", {service: service}
       ClusterDetail.from_json resp.body
     end
 
