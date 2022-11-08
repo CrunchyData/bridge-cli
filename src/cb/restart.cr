@@ -30,7 +30,7 @@ class CB::Restart < CB::APIAction
 
     service = full ? "server" : "postgres"
 
-    client.restart_cluster cluster_id, service
+    client.restart_cluster cluster_id[:cluster], service
     output.puts "Cluster #{c.id.colorize.t_id} restarted."
   end
 end
