@@ -35,17 +35,18 @@ Spectator.describe CB::ClusterInfo do
 
       expected = <<-EXPECTED
       Test Team/abc
-           state: na
-            host: p.pkdpq6yynjgjbps4otxd7il2u4.example.com
-         created: 2016-02-15T10:20:30Z
-            plan: memory-4 (111GiB ram, 4vCPU)
-         version: 12
-         storage: 1234GiB
-              ha: off
-        platform: aws
-          region: us-east-2
-         network: nfpvoqooxzdrriu6w3bhqo55c4
-        firewall: no rules\n
+                     state: na
+                      host: p.pkdpq6yynjgjbps4otxd7il2u4.example.com
+                   created: 2016-02-15T10:20:30Z
+                      plan: memory-4 (111GiB ram, 4vCPU)
+                   version: 12
+                   storage: 1234GiB
+                        ha: off
+                  platform: aws
+                    region: us-east-2
+        maintenance window: no window set. Default to: 00:00-23:59
+                   network: nfpvoqooxzdrriu6w3bhqo55c4
+                  firewall: no rules\n
       EXPECTED
 
       expect(&.output.to_s).to eq expected
