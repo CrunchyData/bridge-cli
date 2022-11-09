@@ -17,15 +17,16 @@ class CB::ClusterInfo < CB::APIAction
     print_team_slash_cluster c
 
     details = {
-      "state"    => c.state,
-      "host"     => c.host,
-      "created"  => c.created_at.to_rfc3339,
-      "plan"     => "#{c.plan_id} (#{format(c.memory)}GiB ram, #{format(c.cpu)}vCPU)",
-      "version"  => c.major_version,
-      "storage"  => "#{c.storage}GiB",
-      "ha"       => (c.is_ha ? "on" : "off"),
-      "platform" => c.provider_id,
-      "region"   => c.region_id,
+      "state"              => c.state,
+      "host"               => c.host,
+      "created"            => c.created_at.to_rfc3339,
+      "plan"               => "#{c.plan_id} (#{format(c.memory)}GiB ram, #{format(c.cpu)}vCPU)",
+      "version"            => c.major_version,
+      "storage"            => "#{c.storage}GiB",
+      "ha"                 => (c.is_ha ? "on" : "off"),
+      "platform"           => c.provider_id,
+      "region"             => c.region_id,
+      "maintenance window" => MaintenanceWindow.new(c.maintenance_window_start).explain,
     }
 
     if source = c.source_cluster_id
