@@ -53,7 +53,8 @@ Spectator.describe CB::UpgradeStatus do
 
     expected = <<-EXPECTED
     #{team.name}/#{cluster.name}
-      no operations in progress\n
+      no operations in progress
+      maintenance window: no window set. Default to: 00:00-23:59\n
     EXPECTED
 
     expect(&.output.to_s).to eq expected
