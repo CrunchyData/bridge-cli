@@ -51,7 +51,7 @@ class CB::UpgradeCancel < CB::Upgrade
     print_team_slash_cluster c
 
     client.upgrade_cluster_cancel cluster_id
-    output << "  upgrade cancelled\n".colorize.bold
+    output << "  operation cancelled\n".colorize.bold
   end
 end
 
@@ -66,7 +66,7 @@ class CB::UpgradeStatus < CB::Upgrade
     operations = client.upgrade_cluster_status cluster_id
 
     if operations.empty?
-      output << "  no upgrades in progress\n".colorize.bold
+      output << "  no operations in progress\n".colorize.bold
     else
       pad = (operations.map(&.flavor.size).max || 8) + 2
       operations.each do |op|
