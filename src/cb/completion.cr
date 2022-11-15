@@ -331,10 +331,13 @@ class CB::Completion
       upgrade_status
     when "update"
       maintenance_update
+    when "cancel"
+      upgrade_cancel
     else
       [
         "info\tdetailed cluster maintenance information",
         "update\tupdate cluster maintenance",
+        "cancel\tcancel a cluster maintenance",
       ]
     end
   end

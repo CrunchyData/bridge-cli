@@ -501,11 +501,18 @@ Spectator.describe CB::Completion do
     result = parse("cb maintenance ")
     expect(result).to have_option "info"
     expect(result).to have_option "update"
+    expect(result).to have_option "cancel"
 
     result = parse("cb maintenance info ")
     expect(result).to have_option "--cluster"
 
     result = parse("cb maintenance info --cluster ")
+    expect(result).to eq ["abc\tmy team/my cluster"]
+
+    result = parse("cb maintenance cancel ")
+    expect(result).to have_option "--cluster"
+
+    result = parse("cb maintenance cancel --cluster ")
     expect(result).to eq ["abc\tmy team/my cluster"]
 
     result = parse "cb maintenance update "
