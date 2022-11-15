@@ -64,15 +64,22 @@ class CB::UpgradeStatus < CB::Upgrade
     print_team_slash_cluster c
 
     operations = client.upgrade_cluster_status cluster_id
+    details = {
+      "maintenance window" => MaintenanceWindow.new(c.maintenance_window_start).explain,
+    }
+
+    operations.each do |op|
+      details[op.flavor] = op.state
+    end
 
     if operations.empty?
       output << "  no operations in progress\n".colorize.bold
-    else
-      pad = (operations.map(&.flavor.size).max || 8) + 2
-      operations.each do |op|
-        output << op.flavor.rjust(pad).colorize.bold << ": "
-        output << op.state << "\n"
-      end
+    end
+
+    pad = (details.keys.map(&.size).max || 8) + 2
+    details.each do |k, v|
+      output << k.rjust(pad).colorize.bold << ": "
+      output << v << '\n'
     end
   end
 end
