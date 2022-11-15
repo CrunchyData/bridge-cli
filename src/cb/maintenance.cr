@@ -8,18 +8,6 @@ abstract class CB::MaintenanceAction < CB::APIAction
   end
 end
 
-# Action to get cluster maintenance information
-class CB::MaintenanceInfo < CB::MaintenanceAction
-  def run
-    validate
-
-    c = client.get_cluster(cluster_id[:cluster])
-    print_team_slash_cluster c
-
-    output << "maintenance window: " << MaintenanceWindow.new(c.maintenance_window_start).explain
-  end
-end
-
 # Action to update cluster maintenance window
 class CB::MaintenanceUpdate < CB::MaintenanceAction
   i32_setter window_start

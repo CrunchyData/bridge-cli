@@ -1,33 +1,6 @@
 require "../spec_helper"
 include CB
 
-Spectator.describe MaintenanceInfo do
-  subject(action) { described_class.new client: client, output: IO::Memory.new }
-  let(client) { Client.new TEST_TOKEN }
-  let(cluster) { Factory.cluster }
-  let(team) { Factory.team }
-
-  mock_client
-
-  it "validates that required arguments are present" do
-    expect(&.validate).to raise_error Program::Error, /Missing required argument/
-
-    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
-
-    expect(&.validate).to be_true
-  end
-
-  it "#run makes an api call" do
-    action.output = IO::Memory.new
-    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
-
-    expect(client).to receive(:get_cluster).with(action.cluster_id[:cluster]).and_return cluster
-    expect(client).to receive(:get_team).with(cluster.team_id).and_return team
-
-    action.call
-  end
-end
-
 Spectator.describe MaintenanceUpdate do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
   let(client) { Client.new TEST_TOKEN }
