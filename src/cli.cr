@@ -250,6 +250,13 @@ op = OptionParser.new do |parser|
       parser.on("--cluster ID", "Choose cluster") { |arg| upgrade.cluster_id = arg }
     end
 
+    parser.on("cancel", "Cancel a cluster maintenance") do
+      upgrade = set_action UpgradeCancel
+      parser.banner = "cb maintenance cancel <--cluster>"
+
+      parser.on("--cluster ID", "Choose cluster") { |arg| upgrade.cluster_id = arg }
+    end
+
     parser.on("update", "Update cluster maintenance") do
       update = set_action MaintenanceUpdate
       parser.banner = "cb maintenance update <--cluster> [--window-start] [--unset]"
