@@ -53,7 +53,7 @@ Spectator.describe CB::UpgradeStatus do
 
     expected = <<-EXPECTED
     #{team.name}/#{cluster.name}
-      no upgrades in progress\n
+      no operations in progress\n
     EXPECTED
 
     expect(&.output.to_s).to eq expected
@@ -85,7 +85,7 @@ Spectator.describe CB::UpgradeCancel do
 
     expected = <<-EXPECTED
     #{team.name}/#{cluster.name}
-      upgrade cancelled\n
+      operation cancelled\n
     EXPECTED
 
     expect(&.output.to_s).to eq expected
