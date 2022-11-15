@@ -328,7 +328,7 @@ class CB::Completion
   def maintenance
     case @args[1]
     when "info"
-      maintenance_info
+      upgrade_status
     when "update"
       maintenance_update
     else
@@ -337,18 +337,6 @@ class CB::Completion
         "update\tupdate cluster maintenance",
       ]
     end
-  end
-
-  def maintenance_info : Array(String)
-    return ["--cluster\tcluster id"] if @args.size == 3
-
-    cluster = find_arg_value "--cluster"
-
-    if last_arg?("--cluster")
-      return cluster.nil? ? cluster_suggestions : [] of String
-    end
-
-    suggest_none
   end
 
   def maintenance_update : Array(String)
