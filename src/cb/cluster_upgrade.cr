@@ -57,6 +57,8 @@ end
 
 # Action to get the cluster upgrade status.
 class CB::UpgradeStatus < CB::Upgrade
+  property maintenance_only : Bool = false
+
   def run
     validate
 
@@ -68,12 +70,18 @@ class CB::UpgradeStatus < CB::Upgrade
       "maintenance window" => MaintenanceWindow.new(c.maintenance_window_start).explain,
     }
 
+    operation_kind = "operations"
+    if maintenance_only
+      operation_kind = "maintenance operations"
+      operations = operations.select { |op| op.flavor != "ha_change" }
+    end
+
     operations.each do |op|
       details[op.flavor] = op.state
     end
 
     if operations.empty?
-      output << "  no operations in progress\n".colorize.bold
+      output << "  no #{operation_kind} in progress\n".colorize.bold
     end
 
     pad = (details.keys.map(&.size).max || 8) + 2

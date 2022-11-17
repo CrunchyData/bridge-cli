@@ -246,6 +246,8 @@ op = OptionParser.new do |parser|
 
     parser.on("info", "Detailed cluster maintenance information") do
       upgrade = set_action UpgradeStatus
+      upgrade.maintenance_only = true
+
       parser.banner = "cb maintenance info <--cluster>"
       parser.on("--cluster ID", "Choose cluster") { |arg| upgrade.cluster_id = arg }
     end
