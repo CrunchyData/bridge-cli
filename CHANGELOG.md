@@ -5,10 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [3.1.0] - 2022-11-18
 ### Added
-- Add and remove a cluster to a Tailscale network with `cb tailscale (dis)connect`
-- New command `cb maintenance info|update` to manage cluster maintenance window
-- `cb info` now also returns some maintenance window information
+- `cb tailscale` command added to add and remove a cluster from a Tailscale
+  network. Supports `connect` and `disconnect`.
+- `cb maintenance` command added to manage cluster maintenance windows. Supports
+  `info` and `update`.
+- `cb info` now returns some maintenance window information
 
 ### Fixed
 - Fix cluster id bug with `cb restart`
