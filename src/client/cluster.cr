@@ -134,12 +134,14 @@ module CB
       ClusterDetail.from_json resp.body
     end
 
+    # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridreplicas/create-cluster-replica
     def replicate_cluster(cc)
       resp = post "clusters/#{cc.replica}/replicas", {
         name:        cc.name,
         plan_id:     cc.plan,
         provider_id: cc.platform,
         region_id:   cc.region,
+        network_id:  cc.network,
       }
       Cluster.from_json resp.body
     end

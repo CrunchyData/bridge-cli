@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - `cb upgrade status` returns maintenance window information
-- `cb maintenance` command now supports `cancel` 
+- `cb maintenance` command now supports `cancel`
+
+### Fixed
+- Fix `--network` not being honored when passed with `cb create --replica`.
 
 ## [3.1.0] - 2022-11-18
 ### Added

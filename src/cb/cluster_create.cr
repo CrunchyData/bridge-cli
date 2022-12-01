@@ -23,6 +23,7 @@ class CB::ClusterCreate < CB::APIAction
       @region ||= source.region_id
       @storage ||= source.storage
       @plan ||= source.plan_id
+      @network ||= source.network_id
     else
       @storage ||= 100
       @name ||= "Cluster #{Time.utc.to_s("%F %H_%M_%S")}"
