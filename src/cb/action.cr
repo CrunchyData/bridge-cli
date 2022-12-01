@@ -112,6 +112,16 @@ module CB
       end
     end
 
+    macro time_setter(property)
+      property {{property}} : Time?
+
+      def {{property}}=(str : String)
+        self.{{property}} = Time.parse_rfc3339(str)
+      rescue Time::Format::Error
+        raise_arg_error "#{{{property.stringify}}} must be in rfc3339 format, e.g. 2022-01-01T00:00:00Z", str
+      end
+    end
+
     # Note: unlike the other macros, this one does not create a nilable boolean,
     # and instead creates one that defaults to false
     macro bool_setter(property)
