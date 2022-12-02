@@ -20,14 +20,14 @@ Spectator.describe MaintenanceUpdate do
     expect(&.validate).to be_true
   end
 
-  it "reject if both unset and window-start are present" do
+  it "rejects if both unset and window-start are present" do
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
     action.window_start = 14
     action.unset = true
     expect(&.validate).to raise_error Program::Error, /Must use '--window-start' or '--unset'/
   end
 
-  it "reject invalid window-start " do
+  it "rejects invalid window-start " do
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
 
     action.window_start = -1
