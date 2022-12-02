@@ -250,9 +250,9 @@ op = OptionParser.new do |parser|
   #
 
   parser.on("maintenance", "Manage cluster maintenance") do
-    parser.banner = "cb maintenance <info|set>"
+    parser.banner = "cb maintenance <info|set|cancel>"
 
-    parser.on("info", "Detailed cluster maintenance information") do
+    parser.on("info", "Display cluster maintenance information") do
       upgrade = set_action UpgradeStatus
       upgrade.maintenance_only = true
 
