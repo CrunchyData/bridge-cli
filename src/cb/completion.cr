@@ -343,7 +343,7 @@ class CB::Completion
       upgrade_cancel
     else
       [
-        "info\tdetailed cluster maintenance information",
+        "info\tdisplay cluster maintenance information",
         "set\tupdate the cluster default maintenance window",
         "cancel\tcancel a cluster maintenance",
       ]
