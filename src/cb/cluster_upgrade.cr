@@ -77,7 +77,7 @@ class CB::UpgradeStatus < CB::Upgrade
     end
 
     operations.each do |op|
-      details[op.flavor] = op.state
+      details[op.flavor] = op.one_line_state_display
     end
 
     if operations.empty?
