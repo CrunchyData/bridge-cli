@@ -6,7 +6,12 @@ module CB
       replicas : Array(Cluster)?
 
     # Upgrade operation.
-    jrecord Operation, flavor : String, state : String
+    jrecord Operation, flavor : String, state : String, starting_from : String? do
+      def one_line_state_display
+        from = " (Starting from: #{starting_from})" if starting_from
+        "#{state}#{from}"
+      end
+    end
 
     def get_clusters
       get_clusters(get_teams)

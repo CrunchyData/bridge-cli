@@ -65,7 +65,7 @@ Spectator.describe CB::UpgradeStatus do
 
     expect(client).to receive(:get_cluster).and_return(cluster)
     expect(client).to receive(:get_team).and_return(team)
-    expect(client).to receive(:upgrade_cluster_status).and_return([CB::Client::Operation.new("ha_change", "fake")])
+    expect(client).to receive(:upgrade_cluster_status).and_return([CB::Client::Operation.new("ha_change", "fake", nil)])
 
     action.call
 
@@ -78,13 +78,31 @@ Spectator.describe CB::UpgradeStatus do
     expect(&.output.to_s).to eq expected
   end
 
+  it "#run display failover windown starting if there is one" do
+    action.cluster_id = cluster.id
+
+    expect(client).to receive(:get_cluster).and_return(cluster)
+    expect(client).to receive(:get_team).and_return(team)
+    expect(client).to receive(:upgrade_cluster_status).and_return([CB::Client::Operation.new("resize", "fake", "2022-01-01T00:00:00Z")])
+
+    action.call
+
+    expected = <<-EXPECTED
+  #{team.name}/#{cluster.name}
+    maintenance window: no window set. Default to: 00:00-23:59
+                resize: fake (Starting from: 2022-01-01T00:00:00Z)\n
+  EXPECTED
+
+    expect(&.output.to_s).to eq expected
+  end
+
   it "#run filter ha operation if told so" do
     action.cluster_id = cluster.id
     action.maintenance_only = true
 
     expect(client).to receive(:get_cluster).and_return(cluster)
     expect(client).to receive(:get_team).and_return(team)
-    expect(client).to receive(:upgrade_cluster_status).and_return([CB::Client::Operation.new("ha_change", "fake")])
+    expect(client).to receive(:upgrade_cluster_status).and_return([CB::Client::Operation.new("ha_change", "fake", nil)])
 
     action.call
 
