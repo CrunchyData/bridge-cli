@@ -1,6 +1,8 @@
 require "option_parser"
 
 class OptionParser
+  property examples : String?
+
   # Allows for hiding an option from help.
   def on(flag : String, &block : String ->)
     flag, value_type = parse_flag_definition(flag)
@@ -26,7 +28,7 @@ class OptionParser
     end
 
     if !commands.empty?
-      io << '\n' << "Available Commands".colorize.bold << ":\n"
+      io << '\n' << "Commands".colorize.bold << ":\n"
       io << commands.sort.join io, '\n'
       io << '\n'
     end
@@ -34,6 +36,12 @@ class OptionParser
     if !flags.empty?
       io << '\n' << "Options".colorize.bold << ":\n"
       flags.sort_by(&.lstrip(" -")).join io, '\n'
+      io << '\n'
+    end
+
+    unless examples.nil?
+      io << '\n' << "Examples".colorize.bold << ":\n"
+      io << examples << '\n'
     end
   end
 end
