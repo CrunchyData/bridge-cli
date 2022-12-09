@@ -5,3 +5,11 @@ Metrics/CyclomaticComplexity:
   - src/cb/completion.cr
   Enabled: true
   Severity: Convention
+
+Layout/TrailingWhitespace:
+  Description: Disallows trailing whitespace.
+  Excluded:
+  # exclude spec files as some expected output might contain trailing
+  # whitespaces.
+  - spec/*/***
+  Enabled: true
