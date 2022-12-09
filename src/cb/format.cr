@@ -6,5 +6,9 @@ module CB
     List
     Table
     Tree
+
+    def to_s(io : IO)
+      io << self.to_s.downcase
+    end
   end
 end

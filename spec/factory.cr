@@ -183,6 +183,18 @@ module Factory
     CB::Model::Role.new **params
   end
 
+  def configuration_parameter(**params)
+    params = {
+      component:        "postgres",
+      name:             "postgres:max_connections",
+      parameter_name:   "max_connections",
+      requires_restart: false,
+      value:            "100",
+    }.merge(params)
+
+    CB::Model::ConfigurationParameter.new **params
+  end
+
   def role_user(**params)
     params = {
       account_email: "user@example.com",

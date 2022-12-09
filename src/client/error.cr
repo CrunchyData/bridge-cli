@@ -23,6 +23,12 @@ module CB
       end
     end
 
+    def message
+      JSON.parse(resp.body).as_h["message"].to_s
+    rescue JSON::ParseException
+      resp.body unless resp.body == ""
+    end
+
     def bad_request?
       resp.status == HTTP::Status::BAD_REQUEST
     end

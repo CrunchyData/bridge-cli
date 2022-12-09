@@ -261,6 +261,68 @@ Spectator.describe CB::Completion do
     expect(result).to_not have_option "-v"
   end
 
+  it "config-param" do
+    result = parse("cb config-param ")
+    expect(result).to have_option "get"
+    expect(result).to have_option "list-supported"
+    expect(result).to have_option "set"
+    expect(result).to have_option "reset"
+
+    # cb config-param get
+    result = parse("cb config-param get ")
+    expect(result).to have_option "--cluster"
+    expect(result).to have_option "--format"
+
+    result = parse("cb config-param get --cluster ")
+    expect(result).to eq expected_cluster_suggestion
+
+    result = parse("cb config-param get --cluster abc ")
+    expect(result).to have_option "--format"
+
+    result = parse("cb config-param get --format ")
+    expect(result).to eq ["json", "table"]
+
+    # cb config-param list-supported
+    result = parse("cb config-param list-supported ")
+    expect(result).to have_option "--format"
+
+    result = parse("cb config-param list-supported --format ")
+    expect(result).to eq ["json", "table"]
+
+    # cb config-param reset
+    result = parse("cb config-param reset ")
+    expect(result).to have_option "--allow-restart"
+    expect(result).to have_option "--cluster"
+    expect(result).to have_option "--format"
+
+    result = parse("cb config-param reset --cluster ")
+    expect(result).to eq expected_cluster_suggestion
+
+    result = parse("cb config-param reset --cluster abc ")
+    expect(result).to have_option "--format"
+
+    result = parse("cb config-param reset --allow-restart ")
+    expect(result).to eq ["false", "true"]
+
+    result = parse("cb config-param reset --format ")
+    expect(result).to eq ["json", "table"]
+
+    # cb config-param set
+    result = parse("cb config-param set ")
+    expect(result).to have_option "--allow-restart"
+    expect(result).to have_option "--cluster"
+    expect(result).to have_option "--format"
+
+    result = parse("cb config-param set --cluster ")
+    expect(result).to eq expected_cluster_suggestion
+
+    result = parse("cb config-param set --cluster abc ")
+    expect(result).to have_option "--allow-restart"
+
+    result = parse("cb config-param set --allow-restart ")
+    expect(result).to eq ["false", "true"]
+  end
+
   it "destroy" do
     result = parse("cb destroy ")
     expect(result).to eq expected_cluster_suggestion

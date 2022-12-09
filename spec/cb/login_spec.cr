@@ -21,6 +21,7 @@ Spectator.describe CB::Login do
     let(client) { mock(Client) }
 
     before_each {
+      ENV["CB_API_KEY"] = nil
       action.client = client
       action.open_browser = ->(_url : String) { true }
       action.store_credentials = ->(_account : String, _secret : String) { true }
@@ -42,6 +43,11 @@ Spectator.describe CB::Login do
 
       result = action.call
       expect(result).to_not be_empty
+    end
+
+    it "raises error if CB_API_KEY is set" do
+      ENV["CB_API_KEY"] = "cbkey_secret"
+      expect(&.call).to raise_error(CB::Program::Error)
     end
   end
 end
