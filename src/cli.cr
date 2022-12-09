@@ -131,6 +131,73 @@ op = OptionParser.new do |parser|
     parser.on("--at TIME", "Recovery point-in-time in RFC3339 (default: now)") { |arg| create.at = arg }
   end
 
+  #
+  # Custom Configuration Parameter Management
+  #
+
+  parser.on("config-param", "Manage custom configuration parameters") do
+    parser.banner = "cb config-param <command>"
+
+    # TODO (abrightwell): would be really cool to implement this kind of
+    # support.
+    #
+    # parser.on("edit", "interactively edit config values") do
+    # parser.on("--cluster ID", "Choose cluster")
+    # end
+
+    parser.on("get", "display one or more configuration parameters for a cluster") do
+      parser.banner = "cb config-param get <--cluster> [--name]"
+
+      get = set_action ConfigurationParameterGet
+      parser.on("--cluster ID", "Choose cluster") { |arg| get.cluster_id = arg }
+      parser.on("--name NAME", "Confguration parameter name") { |arg| get.name = arg }
+
+      parser.examples = <<-EXAMPLES
+        Get a single configuration parameter:
+        $ cb config-params get --cluster <ID> --name postgres:max_connections
+
+        Get all configuration parameters:
+        $ cb config-params get --cluster <ID>
+      EXAMPLES
+    end
+
+    parser.on("set", "set one or more configuration parameter values") do
+      parser.banner = "cb config-param set <--cluster> <NAME=VALUE> [...]"
+
+      set = set_action ConfigurationParameterSet
+      parser.on("--cluster ID", "Choose cluster") { |arg| set.cluster_id = arg }
+
+      parser.unknown_args { |args| set.args = args }
+
+      parser.examples = <<-EXAMPLES
+        Set a single configuration parameter:
+        $ cb config-params set --cluster <ID> postgres:max_connections=100
+
+        Set multiple configuration parameters:
+        $ cb config-params set --cluster <ID> postgres:max_connections=100 postgres:hot_standby=off
+      EXAMPLES
+    end
+
+    parser.on("reset", "reset one or more configuration parameter values to default") do
+      parser.banner = "cb config-params reset <--cluster> <NAME [...]>"
+
+      reset = set_action ConfigurationParameterReset
+      parser.on("--cluster ID", "Choose cluster") { |arg| reset.cluster_id = arg }
+      # parser.on("--confirm", "Confirm configuration revert") { reset.confirmed = true }
+
+      parser.examples = <<-EXAMPLES
+        Revert a single configuration parameter:
+        $ cb config-param revert --cluster <ID> postgres:max_connections
+
+        Revert multiple configuration parameters:
+        $ cb config-param revert --cluster <ID> postgres:max_connections postgres:hot_standby
+
+        Revert all configuration parameters:
+        $ cb config-param revert --cluster <ID> --all
+      EXAMPLES
+    end
+  end
+
   # Cluster Upgrade
   parser.on("upgrade", "Manage a cluster upgrades") do
     parser.on("start", "Start a cluster upgrade") do

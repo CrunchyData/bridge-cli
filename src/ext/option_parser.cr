@@ -39,7 +39,7 @@ class OptionParser
       io << '\n'
     end
 
-    unless examples.nil?
+    if examples
       io << '\n' << "Examples".colorize.bold << ":\n"
       io << examples << '\n'
     end

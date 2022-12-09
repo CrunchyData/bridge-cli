@@ -80,6 +80,17 @@ module Factory
     CB::Client::ClusterDetail.new **params
   end
 
+  def configuration_parameter(**params)
+    params = {
+      component:      "postgres",
+      name:           "postgres:max_connections",
+      parameter_name: "max_connections",
+      value:          "100",
+    }.merge(params)
+
+    CB::Client::ConfigurationParameter.new **params
+  end
+
   def user_role(**params)
     params = {
       account_email: "user@example.com",

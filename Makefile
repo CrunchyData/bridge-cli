@@ -108,6 +108,7 @@ clean:
 .PHONY: spec
 spec: libs deps $(SOURCES)
 	$(CRYSTAL_BIN) tool format --check
+	$(CURDIR)/bin/ameba
 	@if [ "$(TARGET_OS)" == "darwin" ]; then \
 		LIBRARY_PATH=$(STATIC_LIBS_DIR) $(CRYSTAL_BIN) spec -Dmt_no_expectations --error-trace; \
 	else \
