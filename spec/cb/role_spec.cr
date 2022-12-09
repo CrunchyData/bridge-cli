@@ -70,7 +70,7 @@ Spectator.describe RoleList do
   it "outputs json" do
     action.output = IO::Memory.new
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
-    action.format = CB::RoleList::Format::JSON
+    action.format = CB::Format::JSON
 
     expect(client).to receive(:get_cluster).and_return cluster
     expect(client).to receive(:get_team).and_return team
