@@ -16,6 +16,8 @@ Spectator.describe CB::Open do
     end
 
     it "creates a session and executes open" do
+      ENV["CB_API_KEY"] = nil
+
       open_args : Array(String)? = nil
 
       action.open = ->(args : Array(String), _env : Process::Env) do
@@ -35,6 +37,11 @@ Spectator.describe CB::Open do
 
       expected_login_url = "https://#{client_host}/sessions/#{session_id}/actions/login?one_time_token=#{session_one_time_token}"
       expect(open_args).to eq([expected_login_url])
+    end
+
+    it "raises error if CB_API_KEY set" do
+      ENV["CB_API_KEY"] = "cbkey_secret"
+      expect(&.call).to raise_error(CB::Program::Error)
     end
   end
 end

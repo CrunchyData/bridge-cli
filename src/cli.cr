@@ -171,6 +171,94 @@ op = OptionParser.new do |parser|
     EXAMPLES
   end
 
+  #
+  # Custom Configuration Parameter Management
+  #
+
+  parser.on("config-param", "Manage configuration parameters") do
+    parser.banner = "cb config-param <command>"
+
+    # TODO (abrightwell): would be really cool to implement this kind of
+    # support.
+    #
+    # parser.on("edit", "interactively edit config values") do
+    # parser.on("--cluster ID", "Choose cluster")
+    # end
+
+    parser.on("get", "display one or all configuration parameters for a cluster") do
+      parser.banner = "cb config-param get <--cluster> [NAME]"
+
+      get = set_action ConfigurationParameterGet
+      parser.on("--cluster ID", "Choose cluster") { |arg| get.cluster_id = arg }
+      parser.on("--format FORMAT", "Choose output format (default: table)") { |arg| get.format = arg }
+      parser.on("--no-header", "Do not display table header") { get.no_header = true }
+
+      parser.unknown_args { |args| get.args = args }
+
+      parser.examples = <<-EXAMPLES
+        Get a single configuration parameter:
+        $ cb config-params get --cluster <ID> postgres:max_connections
+
+        Get all configuration parameters:
+        $ cb config-params get --cluster <ID>
+      EXAMPLES
+    end
+
+    parser.on("list-supported", "display supported configuration parameters") do
+      parser.banner = "cb config-param list-supported"
+
+      supported = set_action ConfigurationParameterListSupported
+      parser.on("--format FORMAT", "Choose output format (default: table)") { |arg| supported.format = arg }
+      parser.on("--no-header", "Do not display table header") { supported.no_header = true }
+
+      parser.unknown_args { |args| supported.args = args }
+
+      parser.examples = <<-EXAMPLES
+        List all supported configuration parameters:
+        $ cb config-param list-supported
+
+        List all supported configuration parameters by component:
+        $ cb config-param list-supported postgres
+      EXAMPLES
+    end
+
+    parser.on("set", "set one or more configuration parameter values") do
+      parser.banner = "cb config-param set <--cluster> <NAME=VALUE> [...]"
+
+      set = set_action ConfigurationParameterSet
+      parser.on("--cluster ID", "Choose cluster") { |arg| set.cluster_id = arg }
+      parser.on("--allow-restart <true|false>", "Allow restarting the cluster (default: false).") { |arg| set.allow_restart = arg }
+
+      parser.unknown_args { |args| set.args = args }
+
+      parser.examples = <<-EXAMPLES
+        Set a single configuration parameter:
+        $ cb config-params set --cluster <ID> postgres:max_connections=100
+
+        Set multiple configuration parameters:
+        $ cb config-params set --cluster <ID> postgres:max_connections=100 postgres:hot_standby=off
+      EXAMPLES
+    end
+
+    parser.on("reset", "reset one or more configuration parameter values to default") do
+      parser.banner = "cb config-params reset <--cluster> <NAME [...]>"
+
+      reset = set_action ConfigurationParameterReset
+      parser.on("--cluster ID", "Choose cluster") { |arg| reset.cluster_id = arg }
+      parser.on("--allow-restart <true|false>", "Allow restarting the cluster (default: false).") { |arg| reset.allow_restart = arg }
+
+      parser.unknown_args { |args| reset.args = args }
+
+      parser.examples = <<-EXAMPLES
+        Reset a single configuration parameter:
+        $ cb config-param reset --cluster <ID> postgres:max_connections
+
+        Reset multiple configuration parameters:
+        $ cb config-param reset --cluster <ID> postgres:max_connections postgres:hot_standby
+      EXAMPLES
+    end
+  end
+
   # Cluster Upgrade
   parser.on("upgrade", "Manage a cluster upgrades") do
     parser.banner = "cb upgrade <start|status|cancel>"

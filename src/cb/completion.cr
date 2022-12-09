@@ -46,6 +46,8 @@ class CB::Completion
       case args.first
       when "info", "rename", "logs", "suspend", "resume"
         single_cluster_suggestion
+      when "config-param"
+        config_param
       when "create"
         create
       when "destroy"
@@ -124,6 +126,7 @@ class CB::Completion
       "logs\tView live cluster logs",
       "suspend\tTemporarily turn off a cluster",
       "resume\tTurn on a suspended cluster",
+      "config-param\tManage configuration parameters",
     ]
     if @client
       options
@@ -382,6 +385,85 @@ class CB::Completion
     suggest = [] of String
     suggest << "-H\toutput header format" unless has_full_flag? :header
     suggest << "--format\tchoose output format" unless has_full_flag? :format
+    suggest
+  end
+
+  def config_param
+    case @args[1]
+    when "get"
+      config_param_get
+    when "list-supported"
+      config_param_list_supported
+    when "reset"
+      config_param_reset
+    when "set"
+      config_param_set
+    else
+      [
+        "get\tdisplay configuration parameters",
+        "list-supported\tdisplay supported configuration parameters",
+        "reset\treset configuration parameters to the default value",
+        "set\tset configuration parameters",
+      ]
+    end
+  end
+
+  def config_param_get
+    cluster = find_arg_value "--cluster"
+
+    if last_arg?("--cluster")
+      return cluster.nil? ? cluster_suggestions : [] of String
+    end
+
+    if last_arg?("--format")
+      return ["json", "table"]
+    end
+
+    suggest = [] of String
+    suggest << "--cluster\tcluster id" unless has_full_flag? :cluster
+    suggest << "--format\toutput format" unless has_full_flag? :format
+    suggest
+  end
+
+  def config_param_list_supported
+    return ["json", "table"] if last_arg?("--format")
+
+    suggest = [] of String
+    suggest << "--format\toutput format" unless has_full_flag? :format
+    suggest
+  end
+
+  def config_param_reset
+    return ["false", "true"] if last_arg?("--allow-restart")
+
+    if last_arg?("--cluster")
+      cluster = find_arg_value "--cluster"
+      return cluster.nil? ? cluster_suggestions : [] of String
+    end
+
+    return ["json", "table"] if last_arg?("--format")
+
+    suggest = [] of String
+    suggest << "--allow-restart\tallow restart" unless has_full_flag? :allow_restart
+    suggest << "--cluster\tcluster id" unless has_full_flag? :cluster
+    suggest << "--format\toutput format" unless has_full_flag? :format
+    suggest
+  end
+
+  def config_param_set
+    return ["false", "true"] if last_arg?("--allow-restart")
+
+    if last_arg?("--cluster")
+      cluster = find_arg_value "--cluster"
+      return cluster.nil? ? cluster_suggestions : [] of String
+    end
+
+    return ["json", "table"] if last_arg?("--format")
+
+    suggest = [] of String
+    suggest << "--allow-restart\tallow restart" unless has_full_flag? :allow_restart
+    suggest << "--cluster\tcluster id" unless has_full_flag? :cluster
+    suggest << "--format\toutput format" unless has_full_flag? :format
     suggest
   end
 
@@ -1081,6 +1163,7 @@ class CB::Completion
   # only return the long version, but search for long and short
   def find_full_flags
     full = Set(Symbol).new
+    full << :allow_restart if has_full_flag? "--allow-restart"
     full << :ha if has_full_flag? "--ha"
     full << :plan if has_full_flag? "--plan"
     full << :name if has_full_flag? "--name", "-n"
