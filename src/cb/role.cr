@@ -22,12 +22,7 @@ class CB::RoleCreate < CB::RoleAction
 end
 
 class CB::RoleList < CB::RoleAction
-  enum Format
-    Default
-    JSON
-  end
-
-  property format : Format = Format::Default
+  format_setter format
 
   private property cluster : Client::ClusterDetail?
 
@@ -57,9 +52,9 @@ class CB::RoleList < CB::RoleAction
     end
 
     case @format
-    when Format::JSON
+    when CB::Format::JSON
       output_json
-    when Format::Default
+    when CB::Format::Default, CB::Format::Table
       output_default
     end
   end

@@ -39,6 +39,14 @@ module CB
       end
     end
 
+    macro format_setter(property)
+      property {{property}} : Format = Format::Default
+
+      def {{property}}=(str : String)
+        @{{property}} = Format.parse(str)
+      end
+    end
+
     macro role_setter(property)
       property {{property}} : Role = Role.new
 

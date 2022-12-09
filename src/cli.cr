@@ -313,7 +313,7 @@ op = OptionParser.new do |parser|
       list = set_action RoleList
       parser.banner = "cb role list <--cluster>"
       parser.on("--cluster ID", "Choose cluster") { |arg| list.cluster_id = arg }
-      parser.on("--format FORMAT", "Choose output format") { |arg| list.format = CB::RoleList::Format.parse(arg) }
+      parser.on("--format FORMAT", "Choose output format (default: table)") { |arg| list.format = arg }
     end
 
     parser.on("update", "Update a cluster role") do
@@ -475,7 +475,7 @@ op = OptionParser.new do |parser|
     parser.banner = "cb token [-H]"
     token = action = CB::TokenAction.new PROG.token, PROG.input, PROG.output
 
-    parser.on("-H", "Authorization header format") { token.format = CB::TokenAction::Format::Header }
+    parser.on("-H", "Authorization header format") { token.with_header = true }
   end
 
   parser.on("version", "Show the version") do
