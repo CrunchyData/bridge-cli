@@ -250,7 +250,7 @@ op = OptionParser.new do |parser|
   #
 
   parser.on("maintenance", "Manage cluster maintenance") do
-    parser.banner = "cb maintenance <info|update>"
+    parser.banner = "cb maintenance <info|set>"
 
     parser.on("info", "Detailed cluster maintenance information") do
       upgrade = set_action UpgradeStatus
@@ -267,9 +267,9 @@ op = OptionParser.new do |parser|
       parser.on("--cluster ID", "Choose cluster") { |arg| upgrade.cluster_id = arg }
     end
 
-    parser.on("update", "Update cluster maintenance") do
-      update = set_action MaintenanceUpdate
-      parser.banner = "cb maintenance update <--cluster> [--window-start] [--unset]"
+    parser.on("set", "Update the cluster default maintenance window") do
+      update = set_action MaintenanceWindowUpdate
+      parser.banner = "cb maintenance set <--cluster> [--window-start] [--unset]"
       parser.on("--cluster ID", "Choose cluster") { |arg| update.cluster_id = arg }
       parser.on("--window-start START", "Hour maintenance window start (UTC)") { |arg| update.window_start = arg }
       parser.on("--unset", "Unset mainetnance window") { |_| update.unset = true }

@@ -337,20 +337,20 @@ class CB::Completion
     case @args[1]
     when "info"
       upgrade_status
-    when "update"
-      maintenance_update
+    when "set"
+      maintenance_window_update
     when "cancel"
       upgrade_cancel
     else
       [
         "info\tdetailed cluster maintenance information",
-        "update\tupdate cluster maintenance",
+        "set\tupdate the cluster default maintenance window",
         "cancel\tcancel a cluster maintenance",
       ]
     end
   end
 
-  def maintenance_update : Array(String)
+  def maintenance_window_update : Array(String)
     cluster = find_arg_value "--cluster"
 
     if last_arg?("--cluster")
