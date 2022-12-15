@@ -9,7 +9,7 @@ abstract class CB::MaintenanceAction < CB::APIAction
 end
 
 # Action to update cluster maintenance window
-class CB::MaintenanceUpdate < CB::MaintenanceAction
+class CB::MaintenanceWindowUpdate < CB::MaintenanceAction
   i32_setter window_start
   bool_setter unset
 

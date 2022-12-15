@@ -1,7 +1,7 @@
 require "../spec_helper"
 include CB
 
-Spectator.describe MaintenanceUpdate do
+Spectator.describe MaintenanceWindowUpdate do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
   let(client) { Client.new TEST_TOKEN }
 

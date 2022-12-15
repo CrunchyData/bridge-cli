@@ -500,7 +500,7 @@ Spectator.describe CB::Completion do
 
     result = parse("cb maintenance ")
     expect(result).to have_option "info"
-    expect(result).to have_option "update"
+    expect(result).to have_option "set"
     expect(result).to have_option "cancel"
 
     result = parse("cb maintenance info ")
@@ -515,18 +515,18 @@ Spectator.describe CB::Completion do
     result = parse("cb maintenance cancel --cluster ")
     expect(result).to eq ["abc\tmy team/my cluster"]
 
-    result = parse "cb maintenance update "
+    result = parse "cb maintenance set "
     expect(result).to have_option "--cluster"
     expect(result).to have_option "--window-start"
     expect(result).to have_option "--unset"
 
-    result = parse("cb maintenance update --cluster ")
+    result = parse("cb maintenance set --cluster ")
     expect(result).to eq ["abc\tmy team/my cluster"]
 
-    result = parse("cb maintenance update --window-start ")
+    result = parse("cb maintenance set --window-start ")
     result.should be_empty
 
-    result = parse("cb maintenance update --cluster xx --unset ")
+    result = parse("cb maintenance set --cluster xx --unset ")
     result.should be_empty
   end
 
