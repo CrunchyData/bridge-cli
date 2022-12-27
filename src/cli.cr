@@ -314,6 +314,18 @@ op = OptionParser.new do |parser|
       parser.banner = "cb role list <--cluster>"
       parser.on("--cluster ID", "Choose cluster") { |arg| list.cluster_id = arg }
       parser.on("--format FORMAT", "Choose output format (default: table)") { |arg| list.format = arg }
+      parser.on("--no-header", "Do not display table header") { |arg| list.no_header = true }
+
+      parser.examples = <<-EXAMPLES
+        Get roles for a cluster. Output: table
+        $ cb role list --cluster <ID>
+
+        Get roles for a cluster. Output: table without header
+        $ cb role list --cluster <ID> --no-header
+
+        Get roles for a cluster. Output: json
+        $ cb role list --cluster <ID> --format=json
+      EXAMPLES
     end
 
     parser.on("update", "Update a cluster role") do

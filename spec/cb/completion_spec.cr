@@ -546,16 +546,23 @@ Spectator.describe CB::Completion do
 
     # cb role list
     result = parse("cb role list ")
-    result.should have_option "--cluster"
+    expect(result).to have_option "--cluster"
 
     result = parse("cb role list --cluster ")
-    result.should eq ["abc\tmy team/my cluster"]
+    expect(result).to eq ["abc\tmy team/my cluster"]
 
     result = parse("cb role list --cluster abc ")
-    result.should have_option "--format"
+    expect(result).to have_option "--format"
+    expect(result).to have_option "--no-header"
 
     result = parse("cb role list --cluster abc --format ")
-    result.should eq ["default", "json"]
+    expect(result).to eq ["table", "json"]
+
+    result = parse("cb role list --cluster abc --format table ")
+    expect(result).to have_option "--no-header"
+
+    result = parse("cb role list --cluster abc --format table --no-header ")
+    expect(result).to eq [] of String
 
     # cb role update
     result = parse("cb role update ")
