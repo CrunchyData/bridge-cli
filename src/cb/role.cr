@@ -1,5 +1,5 @@
 require "./action"
-require "tallboy"
+require "./table"
 
 abstract class CB::RoleAction < CB::APIAction
   eid_setter cluster_id
@@ -23,6 +23,8 @@ end
 
 class CB::RoleList < CB::RoleAction
   format_setter format
+
+  bool_setter? no_header
 
   private property cluster : Client::ClusterDetail?
 
@@ -60,24 +62,20 @@ class CB::RoleList < CB::RoleAction
   end
 
   def output_default
-    table = Tallboy.table do
+    table = Table::TableBuilder.new(border: :none) do
       columns do
         add "Role"
         add "Account"
       end
 
-      header <<-GENERAL_HEADER
-        Cluster: #{@cluster.try &.name}
-        Team:    #{@team.try &.name}
-        GENERAL_HEADER
-
-      header
+      header unless no_header
 
       @roles.each do |role|
         row [role["role"], role["account"]]
       end
     end
-    output << table.render(:ascii) << '\n'
+
+    output << table.render << '\n'
   end
 
   def output_json

@@ -35,67 +35,72 @@ Spectator.describe RoleList do
   let(team) { Factory.team }
   let(cluster) { Factory.cluster }
 
-  it "validates that required arguments are present" do
-    expect(&.validate).to raise_error Program::Error, /Missing required argument/
+  describe "#validate" do
+    it "validates that required arguments are present" do
+      expect(&.validate).to raise_error Program::Error, /Missing required argument/
 
-    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
-    expect(&.validate).to be_true
+      action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
+      expect(&.validate).to be_true
+    end
   end
 
-  it "outputs default" do
-    action.output = IO::Memory.new
-    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
+  describe "#call" do
+    before_each {
+      action.output = IO::Memory.new
+      action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
 
-    expect(client).to receive(:get_cluster).and_return cluster
-    expect(client).to receive(:get_team).and_return team
-    expect(client).to receive(:list_roles).and_return roles
+      expect(client).to receive(:get_cluster).and_return cluster
+      expect(client).to receive(:get_team).and_return team
+      expect(client).to receive(:list_roles).and_return roles
+    }
 
-    action.call
+    it "outputs table with header" do
+      action.call
 
-    expected = <<-EXPECTED
-    +-------------------------------------------------+
-    | Cluster: abc                                    |
-    | Team:    Test Team                              |
-    +------------------------------+------------------+
-    | Role                         | Account          |
-    +------------------------------+------------------+
-    | application                  | system           |
-    | u_mijrfkkuqvhernzfqcbqf7b6me | user@example.com |
-    +------------------------------+------------------+\n
-    EXPECTED
+      expected = <<-EXPECTED
+        Role                           Account           
+        application                    system            
+        u_mijrfkkuqvhernzfqcbqf7b6me   user@example.com  \n
+      EXPECTED
 
-    expect(&.output.to_s).to eq expected
-  end
+      expect(&.output.to_s).to eq expected
+    end
 
-  it "outputs json" do
-    action.output = IO::Memory.new
-    action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
-    action.format = CB::Format::JSON
+    it "outputs table without header" do
+      action.no_header = true
+      action.call
 
-    expect(client).to receive(:get_cluster).and_return cluster
-    expect(client).to receive(:get_team).and_return team
-    expect(client).to receive(:list_roles).and_return roles
+      expected = <<-EXPECTED
+        application                    system            
+        u_mijrfkkuqvhernzfqcbqf7b6me   user@example.com  \n
+      EXPECTED
 
-    action.call
+      expect(&.output.to_s).to eq expected
+    end
 
-    expected = <<-EXPECTED
-     {
-       "cluster": "abc",
-       "team": "Test Team",
-       "roles": [
-         {
-           "role": "application",
-           "account": "system"
-         },
-         {
-           "role": "u_mijrfkkuqvhernzfqcbqf7b6me",
-           "account": "user@example.com"
-         }
-       ]
-     }\n
-     EXPECTED
+    it "outputs json" do
+      action.format = CB::Format::JSON
+      action.call
 
-    expect(&.output.to_s).to eq expected
+      expected = <<-EXPECTED
+       {
+         "cluster": "abc",
+         "team": "Test Team",
+         "roles": [
+           {
+             "role": "application",
+             "account": "system"
+           },
+           {
+             "role": "u_mijrfkkuqvhernzfqcbqf7b6me",
+             "account": "user@example.com"
+           }
+         ]
+       }\n
+       EXPECTED
+
+      expect(&.output.to_s).to eq expected
+    end
   end
 end
 

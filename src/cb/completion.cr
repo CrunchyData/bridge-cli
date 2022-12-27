@@ -420,11 +420,12 @@ class CB::Completion
     end
 
     if last_arg?("--format")
-      return ["default", "json"]
+      return ["table", "json"]
     end
 
     suggest = [] of String
     suggest << "--format\toutput format" unless has_full_flag? :format
+    suggest << "--no-header\tomit table header" unless has_full_flag? :no_header
     suggest
   end
 
@@ -917,6 +918,7 @@ class CB::Completion
     full << :authkey if has_full_flag? "--authkey"
     full << :window_start if has_full_flag? "--window-start"
     full << :unset if has_full_flag? "--unset"
+    full << :no_header if has_full_flag? "--no-header"
     full
   end
 
