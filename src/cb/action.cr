@@ -39,6 +39,14 @@ module CB
       end
     end
 
+    macro identifier_setter(property)
+      property {{property}} : Identifier?
+
+      def {{property}}=(str : String)
+        @{{property}} = Identifier.new(str)
+      end
+    end
+
     macro format_setter(property)
       property {{property}} : Format = Format::Default
 
