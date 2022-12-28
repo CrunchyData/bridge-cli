@@ -56,6 +56,8 @@ class CB::Completion
         logdest
       when "maintenance"
         maintenance
+      when "network"
+        network
       when "psql"
         psql
       when "restart"
@@ -99,6 +101,7 @@ class CB::Completion
       "teamcert\tGet team public cert",
       "tailscale\tManage tailscale",
       "maintenance\tManage cluster maintenance",
+      "network\tManage networks",
       "info\tDetailed cluster info",
       "uri\tConnection uri",
       "create\tProvision a new cluster",
@@ -125,6 +128,11 @@ class CB::Completion
   def single_cluster_suggestion
     return cluster_suggestions if args.size == 2
     suggest_none
+  end
+
+  def team_suggestions
+    teams = client.get_teams
+    teams.map { |t| "#{t.id}\t#{t.name}" }
   end
 
   def cluster_suggestions
@@ -357,6 +365,50 @@ class CB::Completion
     suggest << "--cluster\tcluster id" unless has_full_flag? :cluster
     suggest << "--window-start\tmaintenance window start (UTC)" unless has_full_flag?(:unset) || has_full_flag?(:window_start)
     suggest << "--unset\tUnset mainetnance window" unless has_full_flag?(:unset) || has_full_flag?(:window_start)
+    suggest
+  end
+
+  def network
+    case @args[1]
+    when "info"
+      network_info
+    when "list"
+      network_list
+    else
+      [
+        "info\ndetailed network information",
+        "list\tlist available networks",
+      ]
+    end
+  end
+
+  def network_info
+    if last_arg?("--format")
+      return ["table", "json"]
+    end
+
+    if last_arg?("--network")
+      return [] of String
+    end
+
+    suggest = [] of String
+    suggest << "--format\tchoose output format" unless has_full_flag? :format
+    suggest << "--network\tnetwork id" unless has_full_flag? :network
+    suggest
+  end
+
+  def network_list
+    if last_arg?("--format")
+      return ["table", "json"]
+    end
+
+    if last_arg?("--team")
+      return team_suggestions
+    end
+
+    suggest = [] of String
+    suggest << "--format\tchoose output format" unless has_full_flag? :format
+    suggest << "--team\tchoose team" unless has_full_flag? :team
     suggest
   end
 

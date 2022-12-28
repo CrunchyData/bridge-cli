@@ -530,6 +530,37 @@ Spectator.describe CB::Completion do
     result.should be_empty
   end
 
+  it "completes network" do
+    result = parse("cb ")
+    expect(result).to have_option "network"
+
+    result = parse("cb network ")
+    expect(result).to have_option "info"
+    expect(result).to have_option "list"
+
+    result = parse("cb network info ")
+    expect(result).to have_option "--network"
+    expect(result).to have_option "--format"
+
+    result = parse("cb network info --network ")
+    expect(result).to be_empty
+
+    result = parse("cb network info --format ")
+    expect(result).to have_option "table"
+    expect(result).to have_option "json"
+
+    result = parse("cb network list ")
+    expect(result).to have_option "--team"
+    expect(result).to have_option "--format"
+
+    result = parse("cb network list --team ")
+    expect(result).to eq ["def\tmy team"]
+
+    result = parse("cb network list --format ")
+    expect(result).to have_option "table"
+    expect(result).to have_option "json"
+  end
+
   it "completes role" do
     # cb role
     result = parse("cb role ")

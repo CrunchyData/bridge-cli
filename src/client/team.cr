@@ -55,6 +55,12 @@ module CB
       Team.from_json resp.body
     end
 
+    private def get_team_by_name(name : Identifier)
+      team = get_teams.find { |t| name == t.name }
+      raise Program::Error.new "team #{name.colorize.t_name} does not exist." unless team
+      team
+    end
+
     # Delete a team.
     #
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/teamsteamid/destroy-team

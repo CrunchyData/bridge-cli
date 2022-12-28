@@ -80,6 +80,19 @@ module Factory
     CB::Client::ClusterDetail.new **params
   end
 
+  def network(**params)
+    params = {
+      cidr4:       "192.168.0.0/24",
+      id:          "oap3kavluvgm7cwtzgaaixzfoi",
+      name:        "Default Network",
+      provider_id: "aws",
+      region_id:   "us-east-1",
+      team_id:     "l2gnkxjv3beifk6abkraerv7de",
+    }.merge(params)
+
+    CB::Client::Network.new **params
+  end
+
   def user_role(**params)
     params = {
       account_email: "user@example.com",

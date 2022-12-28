@@ -269,6 +269,59 @@ op = OptionParser.new do |parser|
   end
 
   #
+  # Network Management
+  #
+
+  parser.on("network", "Manage networks") do
+    parser.banner = "cb network <info|list>"
+
+    parser.on("info", "Detailed network information") do
+      info = set_action NetworkInfo
+
+      parser.banner = "cb network info <--network>"
+
+      parser.on("--network ID", "Choose network") { |arg| info.network_id = arg }
+      parser.on("--format FORMAT", "Choose output format (default: table)") { |arg| info.format = arg }
+      parser.on("--no-header", "Do not display table header") { info.no_header = true }
+
+      parser.examples = <<-EXAMPLES
+      Get network details. Ouptut: table
+      $ cb network info --network <ID>
+
+      Get network details. Output: table without header
+      $ cb network info --network <ID> --no-header
+
+      Get network details. Output: json
+      $ cb network info --network <ID> --format=json
+      EXAMPLES
+    end
+
+    parser.on("list", "List all networks") do
+      list = set_action NetworkList
+
+      parser.banner = "cb network list [--team]"
+
+      parser.on("--team ID", "Choose team") { |arg| list.team_id = arg }
+      parser.on("--format FORMAT", "Choose output format (default: table)") { |arg| list.format = arg }
+      parser.on("--no-header", "Do not display table header") { list.no_header = true }
+
+      parser.examples = <<-EXAMPLES
+      List all networks for personal team (or preferred team if using SSO). Output: table
+      $ cb network list
+
+      List all networks for a specific team. Output: table
+      $ cb network list --team <ID>
+
+      List all networks for a specific team. Ouptut: table without header
+      $ cb network list --team <ID> --no-header
+
+      List all networks for a specific team. Output: json
+      $ cb network list --team <ID> --format=json
+      EXAMPLES
+    end
+  end
+
+  #
   # Cluster Tailscale Management
   #
 
