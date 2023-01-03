@@ -114,8 +114,8 @@ module CB
 
     # Note: unlike the other macros, this one does not create a nilable boolean,
     # and instead creates one that defaults to false
-    macro bool_setter(property)
-      property {{property}} : Bool = false
+    macro bool_setter(property, default = false)
+      property {{property}} : Bool  = {{default}}
 
       def {{property}}=(str : String)
         case str.downcase
