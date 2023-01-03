@@ -15,7 +15,6 @@ Spectator.describe RoleCreate do
   end
 
   it "#run prints confirmation" do
-    action.output = IO::Memory.new
     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
 
     expect(client).to receive(:create_role).and_return user_role
@@ -46,7 +45,6 @@ Spectator.describe RoleList do
 
   describe "#call" do
     before_each {
-      action.output = IO::Memory.new
       action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
 
       expect(client).to receive(:get_cluster).and_return cluster
