@@ -119,8 +119,8 @@ module Factory
       id:            "l2gnkxjv3beifk6abkraerv7de",
       name:          "Test Team",
       is_personal:   false,
-      role:          nil,
-      billing_email: nil,
+      role:          "admin",
+      billing_email: "test@example.com",
       enforce_sso:   nil,
     }.merge(params)
 

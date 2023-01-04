@@ -3,14 +3,18 @@ require "./action"
 abstract class CB::TeamAction < CB::APIAction
   eid_setter team_id
 
-  private def team_details(t : CB::Client::Team) : String
-    String.build do |str|
-      str << "ID:           \t" << t.id.colorize.t_id << "\n"
-      str << "Name:         \t" << t.name.colorize.t_name << "\n"
-      str << "Role:         \t" << t.role.to_s.titleize << "\n"
-      str << "Billing Email:\t" << t.billing_email << "\n"
-      str << "Enforce SSO:  \t" << (t.enforce_sso.nil? ? "disabled" : t.enforce_sso)
+  format_setter format
+
+  private def output_team_details(t : CB::Client::Team)
+    table = Table::TableBuilder.new(border: :none) do
+      row ["ID:", t.id.colorize.t_id]
+      row ["Name:", t.name.colorize.t_name]
+      row ["Role:", t.role.to_s.titleize]
+      row ["Billing Email:", t.billing_email]
+      row ["Enforce SSO:", (t.enforce_sso.nil? ? "disabled" : t.enforce_sso)]
     end
+
+    output << table.render << '\n'
   end
 end
 
@@ -43,7 +47,11 @@ end
 class CB::TeamInfo < CB::TeamAction
   def run
     team = client.get_team team_id
-    output << team_details(team) << "\n"
+
+    case @format
+    when Format::Default, Format::List
+      output_team_details(team)
+    end
   end
 end
 
@@ -80,7 +88,7 @@ class CB::TeamUpdate < CB::TeamAction
       "name"          => name,
     }
 
-    output << team_details(team) << "\n"
+    output_team_details(team)
   end
 end
 
