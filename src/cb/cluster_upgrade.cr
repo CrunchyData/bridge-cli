@@ -24,18 +24,7 @@ class CB::UpgradeStart < CB::Upgrade
     validate
 
     c = client.get_cluster cluster_id
-
-    unless confirmed
-      output << "About to " << "upgrade".colorize.t_warn << " cluster " << c.name.colorize.t_name
-      output << ".\n  Type the cluster's name to confirm: "
-      response = input.gets
-
-      if c.name == response
-        self.confirmed = true
-      else
-        raise Error.new "Response did not match, did not upgrade the cluster"
-      end
-    end
+    confirm_action("upgrade", "cluster", c.name) unless confirmed
 
     client.upgrade_cluster self
     output.puts "  Cluster #{c.id.colorize.t_id} upgrade started."

@@ -74,12 +74,7 @@ class CB::TeamUpdate < CB::TeamAction
 
     unless confirmed
       t = client.get_team team_id
-
-      output.printf "About to %s team %s.\n", "update".colorize.t_warn, t.name.colorize.t_name
-      output.printf "  Type the team's name to confirm: "
-      response = input.gets
-
-      raise Error.new "Response did not match, did not update the team" unless response == t.name
+      confirm_action("update", "team", t.name)
     end
 
     team = client.update_team team_id, {
@@ -102,12 +97,7 @@ class CB::TeamDestroy < CB::TeamAction
 
     unless confirmed
       t = client.get_team team_id
-
-      output.printf "About to %s team %s.\n", "delete".colorize.t_warn, t.name.colorize.t_name
-      output.printf "  Type the team's name to confirm: "
-      response = input.gets
-
-      raise Error.new "Response did not match, did not delete the team." unless response == t.name
+      confirm_action("destroy", "team", t.name)
     end
 
     team = client.destroy_team team_id

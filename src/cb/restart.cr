@@ -15,18 +15,7 @@ class CB::Restart < CB::APIAction
     validate
 
     c = client.get_cluster cluster_id[:cluster]
-
-    unless confirmed
-      output << "About to " << "restart".colorize.t_warn << " cluster " << c.name.colorize.t_name
-      output << ".\n  Type the cluster's name to confirm: "
-      response = input.gets
-
-      if c.name == response
-        self.confirmed = true
-      else
-        raise Error.new "Response did not match, did not restart the cluster."
-      end
-    end
+    confirm_action("restart", "cluster", c.name) unless confirmed
 
     service = full ? "server" : "postgres"
 

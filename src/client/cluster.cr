@@ -146,7 +146,11 @@ module CB
       Cluster.from_json resp.body
     end
 
-    def destroy_cluster(id)
+    def destroy_cluster(id : String)
+      destroy_cluster Identifier.new(id)
+    end
+
+    def destroy_cluster(id : Identifier)
       resp = delete "clusters/#{id}"
       ClusterDetail.from_json resp.body
     end
