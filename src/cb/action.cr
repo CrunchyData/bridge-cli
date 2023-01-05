@@ -160,6 +160,14 @@ module CB
       true
     end
 
+    private def confirm_action(action, type, name)
+      output << "About to #{action.colorize.t_warn} #{type} #{name.colorize.t_name}.\n"
+      output << "  Type the #{type}'s name to confirm: "
+      response = input.gets
+
+      raise Error.new "Response did not match, did not #{action} #{type}." unless response == name
+    end
+
     # Format floats such that if there are no significant digits to the right of
     # the decimal that it will simply format it as if it were an integer.
     # Effectively this is just simply truncating the formatted value.
