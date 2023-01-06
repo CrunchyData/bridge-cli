@@ -24,12 +24,16 @@ module CB
     end
 
     def self.get_token(creds : Creds) : Token
+      unless creds.secret.starts_with?("cbkey_")
+        STDERR << "error".colorize.t_warn << ": You're using an outdated API key. Please procure a new one with `cb login` to continue.\n"
+        exit 1
+      end
+
       req = {
         "grant_type"    => "client_credential",
-        "client_id"     => creds.id,
         "client_secret" => creds.secret,
       }
-      resp = HTTP::Client.post("https://#{creds.host}/token", form: req, tls: tls)
+      resp = HTTP::Client.post("https://#{creds.host}/access-tokens", form: req, tls: tls)
       raise Error.new("post", "token", resp) unless resp.status.success?
 
       parsed = JSON.parse(resp.body)
