@@ -5,12 +5,11 @@ struct CB::Creds
   include JSON::Serializable
 
   getter host : String
-  getter id : String
   getter secret : String
 
   CONFIG = Dirs::CONFIG
 
-  def initialize(@host, @id, @secret)
+  def initialize(@host, @secret)
   end
 
   def self.for_host(host) : Creds?

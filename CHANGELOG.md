@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `cb upgrade status` returns maintenance window information
 - `cb upgrade start` command accepts `--starting-from` and `--now` options that
    specify upgrade failover window.
+- Specifying an application ID when adding an API key is no longer necessary. A
+  "prefixed" API key starting with `cbkey_` is necessary for use with cb. (All
+  new API keys are prefixed.)
 
 ### Fixed
 - Fix `--network` not being honored when passed with `cb create --replica`.
