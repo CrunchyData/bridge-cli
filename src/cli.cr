@@ -75,6 +75,14 @@ op = OptionParser.new do |parser|
     positional_args info.cluster_id
   end
 
+  # Opens the Bridge dashboard.
+  #
+  # This is hidden from help because it's largely used for internal use.
+  parser.on("open") do
+    parser.banner = "cb open"
+    set_action Open
+  end
+
   parser.on("rename", "Change cluster name") do
     parser.banner = "cb rename <cluster id> <new name>"
     rename = set_action ClusterRename
