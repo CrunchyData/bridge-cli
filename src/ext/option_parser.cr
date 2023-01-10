@@ -4,6 +4,9 @@ class OptionParser
   property examples : String?
 
   # Allows for hiding an option from help.
+  #
+  # Note the only difference between this and the most commonly used form of
+  # `#on` is that the `description` string is omitted.
   def on(flag : String, &block : String ->)
     flag, value_type = parse_flag_definition(flag)
     @handlers[flag] = Handler.new(value_type, block)
