@@ -402,37 +402,101 @@ op = OptionParser.new do |parser|
       parser.banner = "cb team create <--name>"
 
       parser.on("--name NAME", "Team name") { |arg| create.name = arg }
+
+      # Output options.
+      parser.on("--format FORMAT", "Choose output format.") { |arg| create.format = arg }
+
+      parser.examples = <<-EXAMPLES
+      Create a new team.
+      $ cb team create --name <NAME>
+      EXAMPLES
     end
 
     parser.on("list", "List available teams.") do
-      set_action TeamList
+      list = set_action TeamList
       parser.banner = "cb team list"
+
+      # Output options.
+      parser.on("--format FORMAT", "Choose output format. (default: table)") { |arg| list.format = arg }
+      parser.on("--no-header", "Do not show header with table output.") { |_| list.show_header = false }
+
+      parser.examples = <<-EXAMPLES
+      List available teams. Output: table
+      $ cb team list
+
+      List available teams. Output: table without header
+      $ cb team list --no-header
+
+      List available teams. Output: json
+      $ cb team list --format=json
+      EXAMPLES
     end
 
     parser.on("info", "Show a teams details.") do
       info = set_action TeamInfo
-      parser.banner = "cb team info <team id>"
+      parser.banner = "cb team info <--team>"
 
-      positional_args info.team_id
+      parser.on("--team <ID>", "Choose team.") { |arg| info.team_id = arg }
+
+      # Output options.
+      parser.on("--format FORMAT", "Choose output format. (default: list)") { |arg| info.format = arg }
+      parser.on("--no-header", "Do not show header with table output.") { |_| info.show_header = false }
+
+      parser.examples = <<-EXAMPLES
+      Get team details. Output: list
+      $ cb team info --team <ID>
+
+      Get team details. Output: table
+      $ cb team info --team <ID> --format=table
+
+      Get team details. Output: table without header
+      $ cb team info --team <ID> --format=table --no-header
+
+      Get team details. Output: json
+      $ cb team info --team <ID> --format=json
+      EXAMPLES
     end
 
     parser.on("update", "Update a team.") do
       update = set_action TeamUpdate
-      parser.banner = "cb team update <team id> [options]"
+      parser.banner = "cb team update <--team> [options]"
 
+      parser.on("--team <ID>", "Choose team.") { |arg| update.team_id = arg }
       parser.on("--billing-email EMAIL", "Team billing email address.") { |arg| update.billing_email = arg }
       parser.on("--enforce-sso <true|false>", "Enforce SSO access to team.") { |arg| update.enforce_sso = arg }
       parser.on("--name NAME", "Name of the team.") { |arg| update.name = arg }
       parser.on("--confirm", "Confirm team update.") { |_| update.confirmed = true }
-      positional_args update.team_id
+
+      # Output options.
+      parser.on("--format FORMAT", "Choose output format. (default: list)") { |arg| update.format = arg }
+      parser.on("--no-header", "Do not show header with table output.") { |_| update.show_header = false }
+
+      parser.examples = <<-EXAMPLES
+      Update team with interactive confirmation.
+      $ cb team update --team <ID> --billing-email <EMAIL>
+
+      Update team without interactive confirmation.
+      $ cb team update --team <ID> --billing-email <EMAIL> --confirm
+
+      Update team. Output: json
+      $ cb team update --team <ID> --billing-email <EMAIL> --format=json
+      EXAMPLES
     end
 
     parser.on("destroy", "Delete a team.") do
       destroy = set_action TeamDestroy
-      parser.banner = "cb team destroy <team id> [options]"
+      parser.banner = "cb team destroy <--team> [options]"
 
-      parser.on("--confirm", "Confirm team deletion.") { destroy.confirmed = true }
-      positional_args destroy.team_id
+      parser.on("--team", "Choose team.") { |arg| destroy.team_id = arg }
+      parser.on("--confirm", "Confirm team deletion.") { |_| destroy.confirmed = true }
+
+      parser.examples = <<-EXAMPLES
+      Destroy team with interactive confirmation.
+      $ cb team destroy --team <ID>
+
+      Destroy team without interactive confirmation.
+      $ cb team destroy --team <ID> --confirm
+      EXAMPLES
     end
   end
 

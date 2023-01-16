@@ -150,6 +150,10 @@ module CB
       raise Error.new "Invalid #{field.colorize.bold}: '#{value.to_s.colorize.red}'"
     end
 
+    private def raise_invalid_format(format)
+      raise Error.new "Invalid format: #{format.to_s.downcase}"
+    end
+
     private def check_required_args
       missing = [] of String
       yield missing

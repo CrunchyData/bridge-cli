@@ -121,7 +121,7 @@ module Factory
       is_personal:   false,
       role:          "admin",
       billing_email: "test@example.com",
-      enforce_sso:   nil,
+      enforce_sso:   false,
     }.merge(params)
 
     CB::Client::Team.new **params

@@ -6,7 +6,7 @@ private class CompletionTestClient < CB::Client
   end
 
   def get_teams
-    [Team.new("def", "my team", false, "manager")]
+    [Factory.team(**{"id": "def", "name": "my team", "is_personal": false, "role": "manager"})]
   end
 
   def get_firewall_rules(id)
@@ -658,34 +658,49 @@ Spectator.describe CB::Completion do
 
     # cb team info
     result = parse("cb team info ")
-    expect(result).to eq ["def\tmy team"]
+    expect(result).to have_option "--format"
+    expect(result).to have_option "--team"
+    expect(result).to have_option "--no-header"
 
-    result = parse("cb team info def ")
-    expect(result).to eq [] of String
+    result = parse("cb team info --team def ")
+    expect(result).to_not have_option "--team"
+    expect(result).to have_option "--format"
+    expect(result).to have_option "--no-header"
+
+    result = parse("cb team info --team def --format ")
+    expect(result).to have_option "list"
+    expect(result).to have_option "json"
+    expect(result).to have_option "table"
 
     # cb team update
     result = parse("cb team update ")
-    expect(result).to eq ["def\tmy team"]
+    expect(result).to have_option "--billing-email"
+    expect(result).to have_option "--confirm"
+    expect(result).to have_option "--enforce-sso"
+    expect(result).to have_option "--format"
+    expect(result).to have_option "--name"
+    expect(result).to have_option "--team"
 
-    result = parse("cb team update def ")
+    result = parse("cb team update --team def ")
     expect(result).to have_option "--billing-email"
     expect(result).to have_option "--enforce-sso"
     expect(result).to have_option "--name"
 
-    result = parse("cb team update def --enforce-sso ")
+    result = parse("cb team update --team def --enforce-sso ")
     expect(result).to eq ["false", "true"]
 
-    result = parse("cb team update def --enforce-sso true ")
+    result = parse("cb team update --team def --enforce-sso true ")
     expect(result).to_not have_option "--enforce-sso"
     expect(result).to have_option "--billing-email"
     expect(result).to have_option "--name"
 
     # cb team destroy
     result = parse("cb team destroy ")
-    expect(result).to eq ["def\tmy team"]
+    expect(result).to have_option "--confirm"
+    expect(result).to have_option "--team"
 
-    result = parse("cb team destroy def ")
-    expect(result).to eq [] of String
+    result = parse("cb team destroy --team def ")
+    expect(result).to have_option "--confirm"
   end
 
   it "completes team-member" do

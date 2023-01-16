@@ -675,11 +675,16 @@ class CB::Completion
   end
 
   def team_create
+    if last_arg? "--format"
+      return ["json"]
+    end
+
     if last_arg? "--name"
       suggest_none
     end
 
     suggest = [] of String
+    suggest << "--format\tchoose output format" unless has_full_flag? :format
     suggest << "--name\tteam name" unless has_full_flag? :name
     suggest
   end
@@ -689,14 +694,27 @@ class CB::Completion
   end
 
   def team_info
-    return teams if @args.size == 3
-    suggest_none
+    if last_arg? "--format"
+      return ["json", "list", "table"]
+    end
+
+    if last_arg? "--team"
+      suggest_none
+    end
+
+    suggest = [] of String
+    suggest << "--format\tchoose output format" unless has_full_flag? :format
+    suggest << "--no-header" unless has_full_flag? :no_header
+    suggest << "--team\tteam ID" unless has_full_flag? :team
+    suggest
   end
 
   def team_update
-    return teams if @args.size == 3
-
     if last_arg? "--billing-email"
+      suggest_none
+    end
+
+    if last_arg? "--confirm"
       suggest_none
     end
 
@@ -704,21 +722,42 @@ class CB::Completion
       suggest_bool
     end
 
+    if last_arg? "--format"
+      ["json", "list", "table"]
+    end
+
     if last_arg? "--name"
+      suggest_none
+    end
+
+    if last_arg? "--team"
       suggest_none
     end
 
     suggest = [] of String
     suggest << "--billing-email\tteams billing email address" unless has_full_flag? :billing_email
+    suggest << "--confirm" unless has_full_flag? :confirm
     suggest << "--enforce-sso\tenforce SSO access to team" unless has_full_flag? :enforce_sso
+    suggest << "--format\tchoose output format" unless has_full_flag? :format
     suggest << "--help\tshow help" unless has_full_flag? :help
     suggest << "--name\tteam name" unless has_full_flag? :name
+    suggest << "--team\tteam ID" unless has_full_flag? :team
     suggest
   end
 
   def team_destroy
-    return teams if @args.size == 3
-    suggest_none
+    if last_arg? "--team"
+      suggest_none
+    end
+
+    if last_arg? "--confirm"
+      suggest_none
+    end
+
+    suggest = [] of String
+    suggest << "--confirm" unless has_full_flag? :confirm
+    suggest << "--team\tteam ID" unless has_full_flag? :team
+    suggest
   end
 
   #
