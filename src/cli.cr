@@ -141,6 +141,8 @@ op = OptionParser.new do |parser|
 
   # Cluster Upgrade
   parser.on("upgrade", "Manage a cluster upgrades") do
+    parser.banner = "cb upgrade <start|status|cancel>"
+
     parser.on("start", "Start a cluster upgrade") do
       upgrade = set_action UpgradeStart
       parser.banner = "cb upgrade start <--cluster>"
@@ -152,9 +154,23 @@ op = OptionParser.new do |parser|
       parser.on("-s GiB", "--storage GiB", "Storage size") { |arg| upgrade.storage = arg }
       parser.on("--starting-from START", "Starting time of upgrade. (RFC3339 format)") { |arg| upgrade.starting_from = arg }
       parser.on("--now", "Start the upgrade now") { |_| upgrade.now = true }
-      parser.on("--confirm", "Confirm cluster restart") do
+      parser.on("--confirm", "Confirm cluster upgrade") do
         upgrade.confirmed = true
       end
+
+      parser.examples = <<-EXAMPLES
+        Upgrade to high availability.
+        $ cb upgrade start --cluster <ID> --ha true
+
+        Upgrade storage and failover during the cluster maintenance window.
+        $ cb upgrade start --cluster <ID> --storage 200
+
+        Upgrade plan and failover as soon as possible.
+        $ cb upgrade start --cluster <ID> --plan memory-128 --now
+
+        Upgrade postgres major version and storage and failover at the given time.
+        $ cb upgrade start --cluster <ID> --version 15 --storage 800 --starting-from 2022-01-01T00:00:00Z
+      EXAMPLES
     end
 
     parser.on("cancel", "Cancel a cluster upgrade") do
