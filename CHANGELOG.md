@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fix `--network` not being honored when passed with `cb create --replica`.
+- `cb upgrade start` don't change `ha` by default.
 
 ## [3.1.0] - 2022-11-18
 ### Added
