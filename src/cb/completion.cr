@@ -341,11 +341,14 @@ class CB::Completion
       maintenance_window_update
     when "cancel"
       upgrade_cancel
+    when "create"
+      maintenance_create
     else
       [
         "info\tdisplay cluster maintenance information",
         "set\tupdate the cluster default maintenance window",
         "cancel\tcancel a cluster maintenance",
+        "create\tcreate a cluster maintenance",
       ]
     end
   end
@@ -365,6 +368,24 @@ class CB::Completion
     suggest << "--cluster\tcluster id" unless has_full_flag? :cluster
     suggest << "--window-start\tmaintenance window start (UTC)" unless has_full_flag?(:unset) || has_full_flag?(:window_start)
     suggest << "--unset\tUnset mainetnance window" unless has_full_flag?(:unset) || has_full_flag?(:window_start)
+    suggest
+  end
+
+  def maintenance_create : Array(String)
+    cluster = find_arg_value "--cluster"
+
+    if last_arg?("--cluster")
+      return cluster.nil? ? cluster_suggestions : [] of String
+    end
+
+    if last_arg?("--starting-from", "--now")
+      suggest_none
+    end
+
+    suggest = [] of String
+    suggest << "--cluster\tcluster id" unless has_full_flag? :cluster
+    suggest << "--starting-from\tStarting time to schedule a maintenance. (RFC3339 format)" unless has_full_flag?(:now) || has_full_flag?(:starting_from)
+    suggest << "--now\tStart a maintenance now" unless has_full_flag?(:now) || has_full_flag?(:starting_from)
     suggest
   end
 

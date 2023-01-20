@@ -75,6 +75,25 @@ class CB::UpgradeStart < CB::UpgradeAction
   end
 end
 
+# Action to create a cluster maintenance.
+class CB::UpgradeMaintenanceCreate < CB::UpgradeAction
+  def validate
+    super
+    raise Error.new "Maintenance can't change ha, postgres_version or storage." if !ha.nil? || postgres_version || storage || plan
+    true
+  end
+
+  def run
+    validate
+
+    c = client.get_cluster cluster_id
+    confirm_action("create maintenance", "cluster", c.name) unless confirmed
+
+    client.upgrade_cluster self
+    output.puts "  Maintenance created for Cluster #{c.id.colorize.t_id}."
+  end
+end
+
 # Action to cancel cluster upgrade.
 class CB::UpgradeCancel < CB::Upgrade
   def run
