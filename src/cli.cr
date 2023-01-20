@@ -150,6 +150,8 @@ op = OptionParser.new do |parser|
       parser.on("-v VERSION", "--version VERSION", "Postgres major version") { |arg| upgrade.postgres_version = arg }
       parser.on("--plan NAME", "Plan (server vCPU+memory)") { |arg| upgrade.plan = arg }
       parser.on("-s GiB", "--storage GiB", "Storage size") { |arg| upgrade.storage = arg }
+      parser.on("--starting-from START", "Starting time of upgrade. (RFC3339 format)") { |arg| upgrade.starting_from = arg }
+      parser.on("--now", "Start the upgrade now") { |_| upgrade.now = true }
       parser.on("--confirm", "Confirm cluster restart") do
         upgrade.confirmed = true
       end
