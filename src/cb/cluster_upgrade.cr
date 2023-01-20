@@ -11,6 +11,32 @@ abstract class CB::Upgrade < CB::APIAction
       missing << "cluster" unless cluster_id
     end
   end
+
+  def display_operations(c_id, operations, maintenance_only : Bool)
+    details = {
+      "maintenance window" => MaintenanceWindow.new(c_id.maintenance_window_start).explain,
+    }
+
+    operation_kind = "operations"
+    if maintenance_only
+      operation_kind = "maintenance operations"
+      operations = operations.select { |op| op.flavor != "ha_change" }
+    end
+
+    operations.each do |op|
+      details[op.flavor] = op.one_line_state_display
+    end
+
+    if operations.empty?
+      output << "  no #{operation_kind} in progress\n".colorize.bold
+    end
+
+    pad = (details.keys.map(&.size).max || 8) + 2
+    details.each do |k, v|
+      output << k.rjust(pad).colorize.bold << ": "
+      output << v << '\n'
+    end
+  end
 end
 
 # Action to start cluster upgrade.
@@ -55,28 +81,6 @@ class CB::UpgradeStatus < CB::Upgrade
     print_team_slash_cluster c
 
     operations = client.upgrade_cluster_status cluster_id
-    details = {
-      "maintenance window" => MaintenanceWindow.new(c.maintenance_window_start).explain,
-    }
-
-    operation_kind = "operations"
-    if maintenance_only
-      operation_kind = "maintenance operations"
-      operations = operations.select { |op| op.flavor != "ha_change" }
-    end
-
-    operations.each do |op|
-      details[op.flavor] = op.one_line_state_display
-    end
-
-    if operations.empty?
-      output << "  no #{operation_kind} in progress\n".colorize.bold
-    end
-
-    pad = (details.keys.map(&.size).max || 8) + 2
-    details.each do |k, v|
-      output << k.rjust(pad).colorize.bold << ": "
-      output << v << '\n'
-    end
+    display_operations(c, operations, maintenance_only)
   end
 end
