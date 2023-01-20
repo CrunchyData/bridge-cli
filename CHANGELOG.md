@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `cb maintenance` command now supports `cancel`
 - `cb network` command added to manage networks. Supports `list` and `info`.
 - `cb upgrade status` returns maintenance window information
+- `cb upgrade start` command accepts `--starting-from` and `--now` options that
+   specify upgrade failover window.
 
 ### Fixed
 - Fix `--network` not being honored when passed with `cb create --replica`.

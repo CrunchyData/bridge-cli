@@ -119,6 +119,7 @@ module CB
         plan_id:             uc.plan,
         postgres_version_id: uc.postgres_version,
         storage:             uc.storage,
+        starting_from:       uc.starting_from,
       }
       Array(Operation).from_json resp.body, root: "operations"
     end

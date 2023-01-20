@@ -900,6 +900,8 @@ class CB::Completion
     suggest << "--ha\thigh availability" unless has_full_flag? :ha
     suggest << "--plan\tplan" unless has_full_flag? :plan
     suggest << "--storage\tsize in GiB" unless has_full_flag? :storage
+    suggest << "--starting-from\tstarting time of upgrade. (RFC3339 format)" unless has_full_flag?(:starting_from) || has_full_flag?(:now)
+    suggest << "--now\tsize in GiB" unless has_full_flag?(:now) || has_full_flag?(:starting_from)
     suggest << "--version\tpostgres major version" unless has_full_flag? :version
     suggest
   end
@@ -970,6 +972,8 @@ class CB::Completion
     full << :authkey if has_full_flag? "--authkey"
     full << :window_start if has_full_flag? "--window-start"
     full << :unset if has_full_flag? "--unset"
+    full << :starting_from if has_full_flag? "--starting-from"
+    full << :now if has_full_flag? "--now"
     full << :no_header if has_full_flag? "--no-header"
     full
   end

@@ -43,7 +43,23 @@ abstract class CB::UpgradeAction < CB::Upgrade
   bool_setter ha
   i32_setter postgres_version
   i32_setter storage
+  time_setter starting_from
+  bool_setter now
+
   property plan : String?
+
+  def validate
+    super
+
+    raise Error.new "Must use '--starting-from' or '--now' but not both." if starting_from && now
+
+    if now
+      starting_from = Time.utc
+    end
+
+    raise Error.new "'--starting-from' should be in less than a week" if (start = starting_from) && start > (Time.utc + Time::Span.new(days: 7))
+    true
+  end
 end
 
 # Action to start cluster upgrade.

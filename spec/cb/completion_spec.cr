@@ -818,6 +818,8 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--ha"
     expect(result).to have_option "--plan"
     expect(result).to have_option "--storage"
+    expect(result).to have_option "--starting-from"
+    expect(result).to have_option "--now"
     expect(result).to have_option "--version"
 
     result = parse("cb upgrade start --cluster ")
@@ -829,6 +831,8 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--plan"
     expect(result).to have_option "--storage"
     expect(result).to have_option "--version"
+    expect(result).to have_option "--starting-from"
+    expect(result).to have_option "--now"
 
     result = parse("cb upgrade start --ha true ")
     expect(result).to have_option "--cluster"
