@@ -27,6 +27,38 @@ Spectator.describe CB::UpgradeStart do
   end
 end
 
+Spectator.describe CB::UpgradeMaintenanceCreate do
+  subject(action) { described_class.new client: client, output: IO::Memory.new }
+  let(cluster) { Factory.cluster }
+
+  mock_client
+
+  describe "#validate" do
+    it "raises if non-mainennace options are set" do
+      action.cluster_id = cluster.id
+      action.postgres_version = 14
+      expect {
+        action.validate
+      }.to raise_error Program::Error, "Maintenance can't change ha, postgres_version or storage."
+    end
+  end
+
+  describe "#run" do
+    it "makes an api call" do
+      action.cluster_id = cluster.id
+      action.now = true
+      action.confirmed = true
+
+      expect(client).to receive(:get_cluster).and_return(cluster)
+      expect(client).to receive(:upgrade_cluster).and_return([] of CB::Client::Operation)
+
+      action.call
+
+      expect(&.output.to_s).to eq "  Maintenance created for Cluster #{action.cluster_id}.\n"
+    end
+  end
+end
+
 Spectator.describe CB::UpgradeStatus do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
 

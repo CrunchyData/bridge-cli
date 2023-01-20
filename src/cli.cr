@@ -276,6 +276,26 @@ op = OptionParser.new do |parser|
       parser.on("--window-start START", "Hour maintenance window start (UTC)") { |arg| update.window_start = arg }
       parser.on("--unset", "Unset mainetnance window") { |_| update.unset = true }
     end
+
+    parser.on("create", "Create a cluster maintenance") do
+      create = set_action UpgradeMaintenanceCreate
+      parser.banner = "cb maintenance create <--cluster> [--starting-from] [--now]"
+      parser.on("--cluster ID", "Choose cluster") { |arg| create.cluster_id = arg }
+      parser.on("--starting-from START", "Starting time to create a maintenance. (RFC3339 format)") { |arg| create.starting_from = arg }
+      parser.on("--now", "Start a maintenance now") { |_| create.now = true }
+      parser.on("--confirm", "Confirm maintenance creation.") { |_| create.confirmed = true }
+
+      parser.examples = <<-EXAMPLES
+        Create a maintenance that will failover during the cluster maintenance window
+        $ cb maintenance create --cluster <ID>
+
+        Create a maintenance that will failover as soon as possible
+        $ cb maintenance create --cluster <ID> --now
+
+        Create a maintenance that will failover starting from a given time
+        $ cb maintenance create --cluster <ID> --starting-from 2022-01-01T00:00:00Z
+      EXAMPLES
+    end
   end
 
   #
