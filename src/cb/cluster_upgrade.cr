@@ -39,13 +39,15 @@ abstract class CB::Upgrade < CB::APIAction
   end
 end
 
-# Action to start cluster upgrade.
-class CB::UpgradeStart < CB::Upgrade
+abstract class CB::UpgradeAction < CB::Upgrade
   bool_setter ha
   i32_setter postgres_version
   i32_setter storage
   property plan : String?
+end
 
+# Action to start cluster upgrade.
+class CB::UpgradeStart < CB::UpgradeAction
   def run
     validate
 
