@@ -40,7 +40,7 @@ abstract class CB::Upgrade < CB::APIAction
 end
 
 abstract class CB::UpgradeAction < CB::Upgrade
-  bool_setter ha
+  bool_setter? ha
   i32_setter postgres_version
   i32_setter storage
   time_setter starting_from
