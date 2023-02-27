@@ -4,5 +4,6 @@ module CB
     JSON
     List
     Table
+    Tree
   end
 end
