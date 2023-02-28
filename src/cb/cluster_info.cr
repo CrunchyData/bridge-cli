@@ -41,7 +41,7 @@ class CB::ClusterInfo < CB::APIAction
       output << v << "\n"
     end
 
-    firewall_rules = client.get_firewall_rules c.id
+    firewall_rules = client.get_firewall_rules c.network_id
     output << "firewall".rjust(pad).colorize.bold << ": "
     if firewall_rules.empty?
       output << "no rules\n"
