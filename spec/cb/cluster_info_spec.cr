@@ -24,7 +24,7 @@ Spectator.describe CB::ClusterInfo do
 
       expect(client).to receive(:get_cluster).with(action.cluster_id[:cluster]).and_return cluster
       expect(client).to receive(:get_team).with(cluster.team_id).and_return team
-      expect(client).to receive(:get_firewall_rules).with(cluster.id).and_return [] of Client::FirewallRule
+      expect(client).to receive(:get_firewall_rules).with(cluster.network_id).and_return [] of Client::FirewallRule
 
       action.call
 
