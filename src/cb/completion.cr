@@ -137,7 +137,7 @@ class CB::Completion
 
   def cluster_suggestions
     teams = client.get_teams
-    clusters = client.get_clusters(teams)
+    clusters = client.get_clusters(teams, true)
 
     clusters.map do |c|
       team_name = teams.find { |t| t.id == c.team_id }.try(&.name) || "unknown_team"
