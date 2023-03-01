@@ -2,8 +2,13 @@ require "./client"
 
 module CB
   class Client
-    jrecord Cluster, id : String, team_id : String, name : String,
-      replicas : Array(Cluster)?
+    jrecord Cluster,
+      id : String,
+      team_id : String,
+      name : String,
+      replicas : Array(Cluster)? do
+      setter replicas
+    end
 
     # Upgrade operation.
     jrecord Operation, flavor : String, state : String, starting_from : String? do
@@ -17,17 +22,24 @@ module CB
       get_clusters(get_teams)
     end
 
-    def get_clusters(teams : Array(Team))
-      Promise.map(teams) { |t| get_clusters t.id }.get.flatten.sort_by!(&.name)
+    def get_clusters(teams : Array(Team), flatten : Bool = false)
+      result = Promise.map(teams) { |t| get_clusters t.id }.get.flatten
+      result = flatten_clusters(result) if flatten
+      result
+    end
+
+    def flatten_clusters(clusters : Array(CB::Client::Cluster)?, result = [] of CB::Client::Cluster)
+      clusters.try &.each do |cluster|
+        result << cluster
+        flatten_clusters(cluster.replicas, result)
+        cluster.replicas = nil
+      end
+      result
     end
 
     def get_clusters(team_id : String)
       resp = get "clusters?team_id=#{team_id}"
-      team_clusters = Array(Cluster).from_json resp.body, root: "clusters"
-      replicas = Array(Cluster).new
-      team_clusters.map(&.replicas).reject(Nil).each { |rs| replicas += rs }
-
-      team_clusters + replicas
+      Array(Cluster).from_json resp.body, root: "clusters"
     end
 
     jrecord ClusterDetail,
@@ -59,7 +71,7 @@ module CB
     end
 
     private def get_cluster_by_name(id : Identifier)
-      cluster = get_clusters.find { |c| id == c.name }
+      cluster = get_clusters(get_teams, true).find { |c| id == c.name }
       raise Program::Error.new "cluster #{id.to_s.colorize.t_name} does not exist." unless cluster
       get_cluster cluster.id
     end
