@@ -66,7 +66,21 @@ op = OptionParser.new do |parser|
 
   parser.on("list", "List clusters") do
     parser.banner = "cb list"
-    set_action List
+    list = set_action List
+
+    parser.on("--team ID", "Choose team") { |arg| list.team_id = arg }
+    parser.on("--format FORMAT", "Choose output format (default: table)") { |arg| list.format = arg }
+    parser.on("--no-header", "Do not display table header") { list.no_header = true }
+
+    parser.examples = <<-EXAMPLES
+    List all clusters. Output: table (default)
+    $ cb list
+
+    $ cb list --format=table
+
+    List all clusters. Output: tree
+    $ cb list --format=tree
+    EXAMPLES
   end
 
   parser.on("info", "Detailed cluster information") do
