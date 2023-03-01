@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Add Crystal repos
       run: curl -sSL https://crystal-lang.org/install.sh | sudo bash
@@ -26,7 +26,7 @@ jobs:
         make release RELEASE=1 STATIC=1
 
     - name: Upload release bundle artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: cb_linux_amd64
         path: dist
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Add Crystal repos
       run: curl -sSL https://crystal-lang.org/install.sh | sudo bash
@@ -62,7 +62,7 @@ jobs:
         make release RELEASE=1 STATIC=1 TARGET_ARCH=aarch64
 
     - name: Upload release bundle artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: cb_linux_aarch64
         path: dist
@@ -71,7 +71,7 @@ jobs:
     runs-on: macos-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Install crystal
       run: brew install crystal
@@ -89,7 +89,7 @@ jobs:
         make release RELEASE=1 STATIC_LIBS=1
 
     - name: Upload release bundle artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: cb_macos_amd64
         path: dist
@@ -104,21 +104,21 @@ jobs:
 
     - name: Download cb_linux_amd64.zip artifact
       id: download_linux_amd64
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: cb_linux_amd64
         path: dist-linux-amd64
 
     - name: Download cb_linux_aarch64.zip artifact
       id: download_linux_aarch64
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: cb_linux_aarch64
         path: dist-linux-aarch64
 
     - name: Download cb_macos_amd64.zip artifact
       id: download_macos_amd64
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v3
       with:
         name: cb_macos_amd64
         path: dist-macos-amd64

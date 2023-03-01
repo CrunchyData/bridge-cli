@@ -18,7 +18,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Install crystal
       run: brew install crystal
@@ -35,7 +35,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Install LibSSH2
       run: apk add --no-cache libssh2 libssh2-dev libssh2-static
@@ -52,7 +52,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Format
       run: crystal tool format --check
