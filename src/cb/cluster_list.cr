@@ -12,7 +12,12 @@ class CB::List < CB::APIAction
     # If the format is tree, then we don't need to flatten the results.
     flatten = !(format == CB::Format::Tree)
     teams = client.get_teams
-    clusters = client.get_clusters(teams, flatten)
+
+    clusters = if team_id
+                 client.get_clusters(team_id)
+               else
+                 client.get_clusters(teams, flatten)
+               end
 
     data = Hash(String, Array(CB::Client::Cluster)).new do |hash, key|
       hash[key] = [] of CB::Client::Cluster
