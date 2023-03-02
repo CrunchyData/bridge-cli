@@ -37,7 +37,7 @@ module CB
       result
     end
 
-    def get_clusters(team_id : String)
+    def get_clusters(team_id)
       resp = get "clusters?team_id=#{team_id}"
       Array(Cluster).from_json resp.body, root: "clusters"
     end

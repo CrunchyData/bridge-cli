@@ -80,6 +80,9 @@ op = OptionParser.new do |parser|
 
     List all clusters. Output: tree
     $ cb list --format=tree
+
+    List all clusters for a single team.
+    $ cb list --team <ID>
     EXAMPLES
   end
 
