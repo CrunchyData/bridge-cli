@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `cb list` command now accepts `--format`. Supports: `table` and `tree`.
 - `cb list` command now accepts `--team`.
 
+### Fixed
+- `cb psql` no longer overrides a users `.psqlrc` with `\x auto` which was
+  causing unexpected formatting for some users.
+
 ## [3.2.0] - 2023-02-28
 ### Added
 - `cb maintenance` command now supports `cancel` and `create`
