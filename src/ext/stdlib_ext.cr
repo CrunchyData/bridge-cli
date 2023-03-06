@@ -42,6 +42,10 @@ macro jrecord(name, *properties)
   end
 end
 
+struct Time
+  ZERO = Time.utc(1, 1, 1, 0, 0, 0)
+end
+
 class URI
   def self.new(pull : JSON::PullParser)
     parse pull.read_string
