@@ -1,12 +1,12 @@
 require "../spec_helper"
 
 private class CompletionTestClient < CB::Client
-  def get_clusters(teams : Array(Team)? = nil, flatten = false)
-    [Cluster.new("abc", "def", "my cluster", [] of Cluster)]
+  def get_clusters(teams : Array(CB::Client::Team)? = nil)
+    [Factory.cluster]
   end
 
   def get_teams
-    [Team.new("def", "my team", false, "manager")]
+    [Factory.team(name: "my team", role: "manager")]
   end
 
   def get_firewall_rules(id)
@@ -89,10 +89,13 @@ end
 Spectator.describe CB::Completion do
   subject(result) { parse(command) }
 
+  let(expected_cluster_suggestion) { ["pkdpq6yynjgjbps4otxd7il2u4\tmy team/abc"] }
+  let(expected_team_suggestion) { ["l2gnkxjv3beifk6abkraerv7de\tmy team"] }
+
   provided command: "cb " { expect(result).to have /^login/ }
 
   sample %w[info rename destroy logs suspend resume].each do |cmd|
-    provided command: "cb #{cmd} " { expect(result).to eq ["abc\tmy team/my cluster"] }
+    provided command: "cb #{cmd} " { expect(result).to eq expected_cluster_suggestion }
     provided command: "cb #{cmd} abc " { expect(result).to be_empty }
   end
 
@@ -106,7 +109,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--version"
 
     result = parse("cb create --fork ")
-    expect(result).to have_option "abc"
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb create --fork abc ")
     expect(result).to have_option "--at"
@@ -120,7 +123,7 @@ Spectator.describe CB::Completion do
     expect(result).to eq([] of String)
 
     result = parse("cb create --replica ")
-    expect(result).to have_option "abc"
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb create --replica abc ")
     expect(result).to have_option "--platform"
@@ -211,10 +214,10 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "512"
 
     result = parse("cb create --team ")
-    expect(result).to have_option "def"
+    expect(result).to eq expected_team_suggestion
 
     result = parse("cb create -t ")
-    expect(result).to have_option "def"
+    expect(result).to eq expected_team_suggestion
 
     result = parse("cb create --ha ")
     expect(result).to have_option "true"
@@ -264,7 +267,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--remove"
 
     result = parse("cb firewall --cluster ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb firewall --cluster abc --add 1.2.3/4 --remove 1.2.3.4/5 ")
     expect(result).to_not have_option "--cluster"
@@ -307,7 +310,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--cluster"
 
     result = parse("cb logdest list --cluster ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb logdest list --cluster abc ")
     expect(result).to eq [] of String
@@ -322,7 +325,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--cluster"
 
     result = parse("cb logdest destroy --cluster ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb logdest destroy --cluster abc ")
     expect(result).to have_option "--logdest"
@@ -341,7 +344,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--host"
 
     result = parse("cb logdest add --cluster ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb logdest add --cluster abc ")
     expect(result).to_not have_option "--cluster"
@@ -369,7 +372,7 @@ Spectator.describe CB::Completion do
 
   it "completes psql" do
     result = parse("cb psql ")
-    result.should eq ["abc\tmy team/my cluster"]
+    result.should eq expected_cluster_suggestion
 
     result = parse("cb psql abc ")
     result.should have_option "--database"
@@ -387,10 +390,10 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--cluster"
 
     result = parse("cb scope --cluster ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb scope --cluster a")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb scope --cluster abc ")
     expect(result).to have_option "--suite"
@@ -417,7 +420,7 @@ Spectator.describe CB::Completion do
 
   it "completes restart" do
     result = parse("cb restart ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb restart abc ")
     expect(result).to_not have_option "abc"
@@ -440,17 +443,17 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "token"
 
     result = parse("cb backup list ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
     result = parse("cb backup list abc ")
     expect(result).to_not have_option "abc"
 
     result = parse("cb backup capture ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
     result = parse("cb backup capture abc ")
     expect(result).to_not have_option "abc"
 
     result = parse("cb backup token ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
     result = parse("cb backup token abc ")
     expect(result).to_not have_option "abc"
     expect(result).to have_option "--format"
@@ -460,7 +463,7 @@ Spectator.describe CB::Completion do
 
   it "completes detach" do
     result = parse("cb detach ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb detach abc ")
     expect(result).to have_option "--confirm"
@@ -482,7 +485,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--authkey"
 
     result = parse("cb tailscale connect --cluster ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb tailscale connect --authkey ")
     result.should be_empty
@@ -491,7 +494,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--cluster"
 
     result = parse("cb tailscale disconnect --cluster ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
   end
 
   it "completes maintenance" do
@@ -508,13 +511,13 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--cluster"
 
     result = parse("cb maintenance info --cluster ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb maintenance cancel ")
     expect(result).to have_option "--cluster"
 
     result = parse("cb maintenance cancel --cluster ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse "cb maintenance set "
     expect(result).to have_option "--cluster"
@@ -522,7 +525,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--unset"
 
     result = parse("cb maintenance set --cluster ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb maintenance set --window-start ")
     result.should be_empty
@@ -560,7 +563,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--format"
 
     result = parse("cb network list --team ")
-    expect(result).to eq ["def\tmy team"]
+    expect(result).to eq expected_team_suggestion
 
     result = parse("cb network list --format ")
     expect(result).to have_option "table"
@@ -579,14 +582,14 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--cluster"
 
     result = parse("cb role create --cluster ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     # cb role list
     result = parse("cb role list ")
     expect(result).to have_option "--cluster"
 
     result = parse("cb role list --cluster ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb role list --cluster abc ")
     expect(result).to have_option "--format"
@@ -609,7 +612,7 @@ Spectator.describe CB::Completion do
     expect(result).to_not have_option "--rotate-password"
 
     result = parse("cb role update --cluster ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb role update --cluster abc ")
     expect(result).to_not have_option "--cluster"
@@ -623,7 +626,7 @@ Spectator.describe CB::Completion do
     expect(result).to_not have_option "--name"
 
     result = parse("cb role destroy --cluster ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb role destroy --cluster abc ")
     expect(result).to_not have_option "--cluster"
@@ -636,7 +639,7 @@ Spectator.describe CB::Completion do
 
   it "completes uri" do
     result = parse("cb uri ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb uri abc ")
     expect(result).to have_option "--role"
@@ -664,14 +667,14 @@ Spectator.describe CB::Completion do
 
     # cb team info
     result = parse("cb team info ")
-    expect(result).to eq ["def\tmy team"]
+    expect(result).to eq expected_team_suggestion
 
     result = parse("cb team info def ")
     expect(result).to eq [] of String
 
     # cb team update
     result = parse("cb team update ")
-    expect(result).to eq ["def\tmy team"]
+    expect(result).to eq expected_team_suggestion
 
     result = parse("cb team update def ")
     expect(result).to have_option "--billing-email"
@@ -688,7 +691,7 @@ Spectator.describe CB::Completion do
 
     # cb team destroy
     result = parse("cb team destroy ")
-    expect(result).to eq ["def\tmy team"]
+    expect(result).to eq expected_team_suggestion
 
     result = parse("cb team destroy def ")
     expect(result).to eq [] of String
@@ -710,7 +713,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--role"
 
     result = parse("cb team-member add --team ")
-    expect(result).to eq ["def\tmy team"]
+    expect(result).to eq expected_team_suggestion
 
     result = parse("cb team-member add --email ")
     expect(result).to eq [] of String
@@ -725,7 +728,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--email"
 
     result = parse("cb team-member info --team ")
-    expect(result).to eq ["def\tmy team"]
+    expect(result).to eq expected_team_suggestion
 
     result = parse("cb team-member info --account ")
     expect(result).to eq [] of String
@@ -745,7 +748,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--team"
 
     result = parse("cb team-member list --team ")
-    expect(result).to eq ["def\tmy team"]
+    expect(result).to eq expected_team_suggestion
 
     result = parse("cb team-member list --team def ")
     expect(result).to eq [] of String
@@ -758,7 +761,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--role"
 
     result = parse("cb team-member update --team ")
-    expect(result).to eq ["def\tmy team"]
+    expect(result).to eq expected_team_suggestion
 
     result = parse("cb team-member update --account ")
     expect(result).to eq [] of String
@@ -788,7 +791,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--email"
 
     result = parse("cb team-member remove --team ")
-    expect(result).to eq ["def\tmy team"]
+    expect(result).to eq expected_team_suggestion
 
     result = parse("cb team-member remove --account ")
     expect(result).to eq [] of String
@@ -829,7 +832,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--version"
 
     result = parse("cb upgrade start --cluster ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb upgrade start --cluster abc ")
     expect(result).to_not have_option "--cluster"
@@ -852,7 +855,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--cluster"
 
     result = parse("cb upgrade cancel --cluster ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb upgrade cancel --cluster abc ")
     expect(result).to eq [] of String
@@ -862,7 +865,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--cluster"
 
     result = parse("cb upgrade status --cluster ")
-    expect(result).to eq ["abc\tmy team/my cluster"]
+    expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb upgrade status --cluster abc ")
     expect(result).to eq [] of String

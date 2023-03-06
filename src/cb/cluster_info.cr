@@ -13,11 +13,12 @@ class CB::ClusterInfo < CB::APIAction
     validate
 
     c = client.get_cluster(cluster_id[:cluster])
+    cluster_status = client.get_cluster_status cluster_id: c.id
 
     print_team_slash_cluster c
 
     details = {
-      "state"              => c.state,
+      "state"              => cluster_status.state,
       "host"               => c.host,
       "created"            => c.created_at.to_rfc3339,
       "plan"               => "#{c.plan_id} (#{format(c.memory)}GiB ram, #{format(c.cpu)}vCPU)",

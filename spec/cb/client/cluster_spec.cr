@@ -7,12 +7,12 @@ Spectator.describe CB::Client do
 
   describe "#flatten_clusters" do
     it "handles no clusters" do
-      clusters = [] of CB::Client::Cluster
+      clusters = [] of CB::Model::Cluster
       expect(&.flatten_clusters(clusters)).to be_empty
     end
 
     it "handles clusters without replicas" do
-      clusters = [CB::Client::Cluster.new(
+      clusters = [CB::Model::Cluster.new(
         id: "pkdpq6yynjgjbps4otxd7il2u4",
         team_id: "l2gnkxjv3beifk6abkraerv7de",
         name: "abc",
@@ -24,17 +24,17 @@ Spectator.describe CB::Client do
     end
 
     it "handles clusters with replicas" do
-      clusters = [CB::Client::Cluster.new(
+      clusters = [CB::Model::Cluster.new(
         id: "pkdpq6yynjgjbps4otxd7il2u4",
         team_id: "l2gnkxjv3beifk6abkraerv7de",
         name: "abc",
         replicas: [
-          CB::Client::Cluster.new(
+          CB::Model::Cluster.new(
             id: "replica_id",
             team_id: "l2gnkxjv3beifk6abkraerv7de",
             name: "replica of abc",
             replicas: [
-              CB::Client::Cluster.new(
+              CB::Model::Cluster.new(
                 id: "replica_of_replica_id",
                 team_id: "l2gnkxjv3beifk6abkraerv7de",
                 name: "replica of replica",

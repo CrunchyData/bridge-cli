@@ -62,14 +62,12 @@ module Factory
       host:                     "p.pkdpq6yynjgjbps4otxd7il2u4.example.com",
       team_id:                  "l2gnkxjv3beifk6abkraerv7de",
       name:                     "abc",
-      state:                    "na",
       created_at:               Time.utc(2016, 2, 15, 10, 20, 30),
       is_ha:                    false,
       major_version:            12,
       plan_id:                  "memory-4",
       cpu:                      4.0,
       memory:                   111.0,
-      oldest_backup:            nil,
       provider_id:              "aws",
       region_id:                "us-east-2",
       maintenance_window_start: nil,
@@ -77,7 +75,16 @@ module Factory
       storage:                  1234,
     }.merge(params)
 
-    CB::Client::ClusterDetail.new **params
+    CB::Model::Cluster.new **params
+  end
+
+  def cluster_status(**params)
+    params = {
+      oldest_backup_at: nil,
+      state:            CB::Model::ClusterStatus::State::Ready,
+    }.merge(params)
+
+    CB::Model::ClusterStatus.new **params
   end
 
   def network(**params)

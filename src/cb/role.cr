@@ -26,7 +26,7 @@ class CB::RoleList < CB::RoleAction
 
   bool_setter? no_header
 
-  private property cluster : Client::ClusterDetail?
+  private property cluster : CB::Model::Cluster?
 
   private property roles : Array(Hash(String, String)) = [] of Hash(String, String)
 
