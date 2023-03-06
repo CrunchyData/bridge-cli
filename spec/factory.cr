@@ -131,7 +131,7 @@ module Factory
       enforce_sso:   nil,
     }.merge(params)
 
-    CB::Client::Team.new **params
+    CB::Model::Team.new **params
   end
 
   def team_member(**params)

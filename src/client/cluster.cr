@@ -15,13 +15,13 @@ module CB
       get_clusters(get_teams)
     end
 
-    def get_clusters(teams : Array(Team), flatten : Bool = false)
+    def get_clusters(teams : Array(CB::Model::Team), flatten : Bool = false)
       result = Promise.map(teams) { |t| get_clusters t.id }.get.flatten
       result = flatten_clusters(result) if flatten
       result
     end
 
-    def flatten_clusters(clusters : Array(CB::Client::Cluster)?, result = [] of CB::Client::Cluster)
+    def flatten_clusters(clusters : Array(CB::Model::Cluster)?, result = [] of CB::Model::Cluster)
       clusters.try &.each do |cluster|
         result << cluster
         flatten_clusters(cluster.replicas, result)
@@ -30,7 +30,7 @@ module CB
       result
     end
 
-    def get_clusters(team_id : String)
+    def get_clusters(team_id)
       resp = get "clusters?team_id=#{team_id}"
       Array(CB::Model::Cluster).from_json resp.body, root: "clusters"
     end

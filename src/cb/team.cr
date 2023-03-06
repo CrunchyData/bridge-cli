@@ -5,7 +5,7 @@ abstract class CB::TeamAction < CB::APIAction
 
   format_setter format
 
-  private def output_team_details(t : CB::Client::Team)
+  private def output_team_details(t : CB::Model::Team)
     table = Table::TableBuilder.new(border: :none) do
       row ["ID:", t.id.colorize.t_id]
       row ["Name:", t.name.colorize.t_name]
