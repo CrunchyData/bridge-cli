@@ -1,15 +1,8 @@
 require "./client"
+require "../cb/models/*"
 
 module CB
   class Client
-    jrecord Cluster,
-      id : String,
-      team_id : String,
-      name : String,
-      replicas : Array(Cluster)? do
-      setter replicas
-    end
-
     # Upgrade operation.
     jrecord Operation, flavor : String, state : String, starting_from : String? do
       def one_line_state_display
@@ -37,31 +30,9 @@ module CB
       result
     end
 
-    def get_clusters(team_id)
+    def get_clusters(team_id : String)
       resp = get "clusters?team_id=#{team_id}"
-      Array(Cluster).from_json resp.body, root: "clusters"
-    end
-
-    jrecord ClusterDetail,
-      id : String,
-      team_id : String,
-      name : String,
-      state : String?,
-      created_at : Time,
-      cpu : Float64,
-      host : String,
-      is_ha : Bool,
-      plan_id : String,
-      major_version : Int32,
-      memory : Float64,
-      oldest_backup : Time?,
-      provider_id : String,
-      network_id : String,
-      region_id : String,
-      maintenance_window_start : Int32?,
-      storage : Int32 do
-      @[JSON::Field(key: "cluster_id")]
-      getter source_cluster_id : String?
+      Array(CB::Model::Cluster).from_json resp.body, root: "clusters"
     end
 
     # Retrieve the cluster by id or by name.
@@ -80,7 +51,7 @@ module CB
     # that it shouldn't require it to be.
     def get_cluster(id : String?)
       resp = get "clusters/#{id}"
-      ClusterDetail.from_json resp.body
+      CB::Model::Cluster.from_json resp.body
     rescue e : Error
       raise e unless e.resp.status == HTTP::Status::FORBIDDEN
       raise Program::Error.new "cluster #{id.colorize.t_id} does not exist, or you do not have access to it"
@@ -100,13 +71,18 @@ module CB
       #   network_id:          cc.network,
       # }
       resp = post "clusters", params
-      Cluster.from_json resp.body
+      CB::Model::Cluster.from_json resp.body
+    end
+
+    def get_cluster_status(cluster_id)
+      resp = get "clusters/#{cluster_id}/status"
+      CB::Model::ClusterStatus.from_json resp.body
     end
 
     def detach_cluster(id : Identifier)
       cluster_id = id.eid? ? id : get_cluster_by_name(id).id
       resp = put "clusters/#{cluster_id}/actions/detach"
-      ClusterDetail.from_json resp.body
+      CB::Model::Cluster.from_json resp.body
     end
 
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridforks/post
@@ -121,7 +97,7 @@ module CB
         is_ha:       cc.ha,
         network_id:  cc.network,
       }
-      Cluster.from_json resp.body
+      CB::Model::Cluster.from_json resp.body
     end
 
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridupgrade/upgrade-cluster
@@ -149,7 +125,7 @@ module CB
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusterid/update-cluster
     def update_cluster(cluster_id, body)
       resp = patch "clusters/#{cluster_id}", body
-      ClusterDetail.from_json resp.body
+      CB::Model::Cluster.from_json resp.body
     end
 
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridreplicas/create-cluster-replica
@@ -161,7 +137,7 @@ module CB
         region_id:   cc.region,
         network_id:  cc.network,
       }
-      Cluster.from_json resp.body
+      CB::Model::Cluster.from_json resp.body
     end
 
     def destroy_cluster(id : String)
@@ -170,13 +146,13 @@ module CB
 
     def destroy_cluster(id : Identifier)
       resp = delete "clusters/#{id}"
-      ClusterDetail.from_json resp.body
+      CB::Model::Cluster.from_json resp.body
     end
 
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridrestart/restart-cluster
     def restart_cluster(id, service : String)
       resp = put "clusters/#{id}/actions/restart", {service: service}
-      ClusterDetail.from_json resp.body
+      CB::Model::Cluster.from_json resp.body
     end
 
     jrecord Message, message : String = ""
@@ -190,13 +166,13 @@ module CB
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridactionssuspend/suspend-cluster
     def suspend_cluster(id : Identifier)
       resp = put "clusters/#{id}/actions/suspend"
-      ClusterDetail.from_json resp.body
+      CB::Model::Cluster.from_json resp.body
     end
 
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridactionsresume/resume-cluster
     def resume_cluster(id : Identifier)
       resp = put "clusters/#{id}/actions/resume"
-      ClusterDetail.from_json resp.body
+      CB::Model::Cluster.from_json resp.body
     end
   end
 end

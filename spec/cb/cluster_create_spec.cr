@@ -115,11 +115,10 @@ Spectator.describe CB::ClusterCreate do
       action.region = "east"
       action.team = team.id
 
-      expect(client).to receive(:create_cluster).and_return(CB::Client::Cluster.new("abc", "def", "my cluster", [] of CB::Client::Cluster))
-
+      expect(client).to receive(:create_cluster).and_return(cluster)
       action.call
 
-      expect(&.output.to_s).to eq "Created cluster abc \"my cluster\"\n"
+      expect(&.output.to_s).to eq "Created cluster pkdpq6yynjgjbps4otxd7il2u4 \"abc\"\n"
     end
   end
 

@@ -20,8 +20,8 @@ Spectator.describe CB::List do
         .with(Array(CB::Client::Team), Bool)
         .and_return(
           [
-            CB::Client::Cluster.new("abc", team.id, "my cluster", nil),
-            CB::Client::Cluster.new("replica-id", team.id, "my replica", nil),
+            CB::Model::Cluster.new(id: "abc", team_id: team.id, name: "my cluster"),
+            CB::Model::Cluster.new(id: "replica-id", team_id: team.id, name: "my replica"),
           ])
 
       action.call
@@ -42,8 +42,8 @@ Spectator.describe CB::List do
         .with(Array(CB::Client::Team), Bool)
         .and_return(
           [
-            CB::Client::Cluster.new("abc", team.id, "my cluster", [
-              CB::Client::Cluster.new("replica-id", team.id, "my replica", nil),
+            CB::Model::Cluster.new(id: "abc", team_id: team.id, name: "my cluster", replicas: [
+              CB::Model::Cluster.new(id: "replica-id", team_id: team.id, name: "my replica"),
             ]),
           ])
 

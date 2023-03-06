@@ -19,8 +19,8 @@ class CB::List < CB::APIAction
                  client.get_clusters(teams, flatten)
                end
 
-    data = Hash(String, Array(CB::Client::Cluster)).new do |hash, key|
-      hash[key] = [] of CB::Client::Cluster
+    data = Hash(String, Array(CB::Model::Cluster)).new do |hash, key|
+      hash[key] = [] of CB::Model::Cluster
     end
 
     clusters.each do |c|
