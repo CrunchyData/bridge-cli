@@ -30,7 +30,7 @@ class CB::RoleList < CB::RoleAction
 
   private property roles : Array(Hash(String, String)) = [] of Hash(String, String)
 
-  private property team : Client::Team?
+  private property team : CB::Model::Team?
 
   def validate
     check_required_args do |missing|

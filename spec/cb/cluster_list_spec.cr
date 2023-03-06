@@ -17,7 +17,7 @@ Spectator.describe CB::List do
 
       # Cluster results should be flattened.
       expect(client).to receive(:get_clusters)
-        .with(Array(CB::Client::Team), Bool)
+        .with(Array(CB::Model::Team), Bool)
         .and_return(
           [
             CB::Model::Cluster.new(id: "abc", team_id: team.id, name: "my cluster"),
@@ -39,7 +39,7 @@ Spectator.describe CB::List do
       action.format = CB::Format::Tree
 
       expect(client).to receive(:get_clusters)
-        .with(Array(CB::Client::Team), Bool)
+        .with(Array(CB::Model::Team), Bool)
         .and_return(
           [
             CB::Model::Cluster.new(id: "abc", team_id: team.id, name: "my cluster", replicas: [
