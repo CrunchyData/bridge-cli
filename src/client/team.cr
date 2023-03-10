@@ -4,15 +4,20 @@ module CB
   class Client
     # A team is a small organizational unit in Bridge used to group multiple users
     # at varying levels of privilege.
+
     jrecord Team,
       id : String,
       name : String,
       is_personal : Bool,
       role : String?,
-      billing_email : String? = nil,
-      enforce_sso : Bool? = nil do
+      enforce_sso : Bool,
+      billing_email : String? = nil do
       def name
         is_personal ? "personal" : @name
+      end
+
+      def enforce_sso
+        @enforce_sso ? "enabled" : "disabled"
       end
 
       def to_s(io : IO)

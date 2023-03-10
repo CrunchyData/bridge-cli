@@ -124,8 +124,8 @@ module CB
 
     # Note: unlike the other macros, this one does not create a nilable boolean,
     # and instead creates one that defaults to false
-    macro bool_setter(property)
-      property {{property}} : Bool = false
+    macro bool_setter(property, default = false)
+      property {{property}} : Bool  = {{default}}
 
       def {{property}}=(str : String)
         case str.downcase
@@ -158,6 +158,10 @@ module CB
 
     private def raise_arg_error(field, value)
       raise Error.new "Invalid #{field.colorize.bold}: '#{value.to_s.colorize.red}'"
+    end
+
+    private def raise_invalid_format(format)
+      raise Error.new "Invalid format: #{format.to_s.downcase}"
     end
 
     private def check_required_args
