@@ -20,11 +20,11 @@ abstract class CB::Upgrade < CB::APIAction
     operation_kind = "operations"
     if maintenance_only
       operation_kind = "maintenance operations"
-      operations = operations.select { |op| op.flavor != "ha_change" }
+      operations = operations.select { |op| op.flavor != CB::Model::Operation::Flavor::HAChange }
     end
 
     operations.each do |op|
-      details[op.flavor] = op.one_line_state_display
+      details[op.flavor.to_s] = op.one_line_state_display
     end
 
     if operations.empty?

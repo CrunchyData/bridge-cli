@@ -19,7 +19,7 @@ Spectator.describe CB::UpgradeStart do
     action.confirmed = true
 
     expect(client).to receive(:get_cluster).and_return(cluster)
-    expect(client).to receive(:upgrade_cluster).and_return([] of CB::Client::Operation)
+    expect(client).to receive(:upgrade_cluster).and_return([] of CB::Model::Operation)
 
     action.call
 
@@ -50,7 +50,7 @@ Spectator.describe CB::UpgradeMaintenanceCreate do
       action.confirmed = true
 
       expect(client).to receive(:get_cluster).and_return(cluster)
-      expect(client).to receive(:upgrade_cluster).and_return([] of CB::Client::Operation)
+      expect(client).to receive(:upgrade_cluster).and_return([] of CB::Model::Operation)
 
       action.call
 
@@ -79,7 +79,7 @@ Spectator.describe CB::UpgradeStatus do
 
     expect(client).to receive(:get_cluster).and_return(cluster)
     expect(client).to receive(:get_team).and_return(team)
-    expect(client).to receive(:upgrade_cluster_status).and_return([] of CB::Client::Operation)
+    expect(client).to receive(:upgrade_cluster_status).and_return([] of CB::Model::Operation)
 
     action.call
 
@@ -97,14 +97,14 @@ Spectator.describe CB::UpgradeStatus do
 
     expect(client).to receive(:get_cluster).and_return(cluster)
     expect(client).to receive(:get_team).and_return(team)
-    expect(client).to receive(:upgrade_cluster_status).and_return([CB::Client::Operation.new("ha_change", "fake", nil)])
+    expect(client).to receive(:upgrade_cluster_status).and_return([Factory.operation(flavor: CB::Model::Operation::Flavor::HAChange)])
 
     action.call
 
     expected = <<-EXPECTED
     #{team.name}/#{cluster.name}
       maintenance window: no window set. Default to: 00:00-23:59
-               ha_change: fake\n
+               ha_change: in_progress\n
     EXPECTED
 
     expect(&.output.to_s).to eq expected
@@ -115,14 +115,14 @@ Spectator.describe CB::UpgradeStatus do
 
     expect(client).to receive(:get_cluster).and_return(cluster)
     expect(client).to receive(:get_team).and_return(team)
-    expect(client).to receive(:upgrade_cluster_status).and_return([CB::Client::Operation.new("resize", "fake", "2022-01-01T00:00:00Z")])
+    expect(client).to receive(:upgrade_cluster_status).and_return([Factory.operation(starting_from: "2022-01-01T00:00:00Z")])
 
     action.call
 
     expected = <<-EXPECTED
   #{team.name}/#{cluster.name}
     maintenance window: no window set. Default to: 00:00-23:59
-                resize: fake (Starting from: 2022-01-01T00:00:00Z)\n
+                resize: in_progress (Starting from: 2022-01-01T00:00:00Z)\n
   EXPECTED
 
     expect(&.output.to_s).to eq expected
@@ -134,7 +134,7 @@ Spectator.describe CB::UpgradeStatus do
 
     expect(client).to receive(:get_cluster).and_return(cluster)
     expect(client).to receive(:get_team).and_return(team)
-    expect(client).to receive(:upgrade_cluster_status).and_return([CB::Client::Operation.new("ha_change", "fake", nil)])
+    expect(client).to receive(:upgrade_cluster_status).and_return([] of CB::Model::Operation)
 
     action.call
 

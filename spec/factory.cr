@@ -100,6 +100,16 @@ module Factory
     CB::Client::Network.new **params
   end
 
+  def operation(**params)
+    params = {
+      flavor:        CB::Model::Operation::Flavor::Resize,
+      state:         CB::Model::Operation::State::InProgress,
+      starting_from: nil,
+    }.merge(params)
+
+    CB::Model::Operation.new **params
+  end
+
   def user_role(**params)
     params = {
       account_email: "user@example.com",
