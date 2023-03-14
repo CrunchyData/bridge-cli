@@ -3,14 +3,6 @@ require "../cb/models/*"
 
 module CB
   class Client
-    # Upgrade operation.
-    jrecord Operation, flavor : String, state : String, starting_from : String? do
-      def one_line_state_display
-        from = " (Starting from: #{starting_from})" if starting_from
-        "#{state}#{from}"
-      end
-    end
-
     def get_clusters
       get_clusters(get_teams)
     end
@@ -109,13 +101,13 @@ module CB
         storage:             uc.storage,
         starting_from:       uc.starting_from,
       }
-      Array(Operation).from_json resp.body, root: "operations"
+      Array(CB::Model::Operation).from_json resp.body, root: "operations"
     end
 
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridupgrade/get-upgrade-status
     def upgrade_cluster_status(id)
       resp = get "clusters/#{id}/upgrade"
-      Array(Operation).from_json resp.body, root: "operations"
+      Array(CB::Model::Operation).from_json resp.body, root: "operations"
     end
 
     def upgrade_cluster_cancel(id)
