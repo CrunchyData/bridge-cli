@@ -11,12 +11,8 @@ module CB::Model
       MajorVersionUpgrade
       Resize
 
-      def to_s
-        super.to_s.underscore
-      end
-
-      def to_s(io : IO) : Nil
-        io << to_s
+      def to_s(io : IO)
+        io << to_s.underscore.gsub('_', ' ')
       end
     end
 
@@ -30,12 +26,8 @@ module CB::Model
       Scheduled
       WaitingForHAStandby
 
-      def to_s
-        super.to_s.underscore
-      end
-
       def to_s(io : IO) : Nil
-        io << to_s
+        io << to_s.underscore.gsub('_', ' ')
       end
     end
 
@@ -46,11 +38,6 @@ module CB::Model
     def initialize(@flavor : Flavor,
                    @state : State,
                    @starting_from : String? = nil)
-    end
-
-    def one_line_state_display
-      from = " (Starting from: #{starting_from})" if starting_from
-      "#{state}#{from}"
     end
   end
 end

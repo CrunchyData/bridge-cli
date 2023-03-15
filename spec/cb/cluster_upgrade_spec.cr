@@ -85,8 +85,8 @@ Spectator.describe CB::UpgradeStatus do
 
     expected = <<-EXPECTED
     #{team.name}/#{cluster.name}
-      no operations in progress
-      maintenance window: no window set. Default to: 00:00-23:59\n
+      operations:           no operations in progress               
+      maintenance window:   no window set. Default to: 00:00-23:59  \n
     EXPECTED
 
     expect(&.output.to_s).to eq expected
@@ -103,8 +103,8 @@ Spectator.describe CB::UpgradeStatus do
 
     expected = <<-EXPECTED
     #{team.name}/#{cluster.name}
-      maintenance window: no window set. Default to: 00:00-23:59
-               ha_change: in_progress\n
+      ha change:            in progress                             
+      maintenance window:   no window set. Default to: 00:00-23:59  \n
     EXPECTED
 
     expect(&.output.to_s).to eq expected
@@ -120,10 +120,10 @@ Spectator.describe CB::UpgradeStatus do
     action.call
 
     expected = <<-EXPECTED
-  #{team.name}/#{cluster.name}
-    maintenance window: no window set. Default to: 00:00-23:59
-                resize: in_progress (Starting from: 2022-01-01T00:00:00Z)\n
-  EXPECTED
+    #{team.name}/#{cluster.name}
+      resize:               in progress (Starting from: 2022-01-01T00:00:00Z)  
+      maintenance window:   no window set. Default to: 00:00-23:59             \n
+    EXPECTED
 
     expect(&.output.to_s).to eq expected
   end
@@ -140,8 +140,8 @@ Spectator.describe CB::UpgradeStatus do
 
     expected = <<-EXPECTED
     #{team.name}/#{cluster.name}
-      no maintenance operations in progress
-      maintenance window: no window set. Default to: 00:00-23:59\n
+      operations:           no operations in progress               
+      maintenance window:   no window set. Default to: 00:00-23:59  \n
     EXPECTED
 
     expect(&.output.to_s).to eq expected

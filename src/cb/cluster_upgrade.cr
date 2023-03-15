@@ -11,32 +11,6 @@ abstract class CB::Upgrade < CB::APIAction
       missing << "cluster" unless cluster_id
     end
   end
-
-  def display_operations(c_id, operations, maintenance_only : Bool)
-    details = {
-      "maintenance window" => MaintenanceWindow.new(c_id.maintenance_window_start).explain,
-    }
-
-    operation_kind = "operations"
-    if maintenance_only
-      operation_kind = "maintenance operations"
-      operations = operations.select { |op| op.flavor != CB::Model::Operation::Flavor::HAChange }
-    end
-
-    operations.each do |op|
-      details[op.flavor.to_s] = op.one_line_state_display
-    end
-
-    if operations.empty?
-      output << "  no #{operation_kind} in progress\n".colorize.bold
-    end
-
-    pad = (details.keys.map(&.size).max || 8) + 2
-    details.each do |k, v|
-      output << k.rjust(pad).colorize.bold << ": "
-      output << v << '\n'
-    end
-  end
 end
 
 abstract class CB::UpgradeAction < CB::Upgrade
@@ -118,6 +92,28 @@ class CB::UpgradeStatus < CB::Upgrade
     print_team_slash_cluster c
 
     operations = client.upgrade_cluster_status cluster_id
-    display_operations(c, operations, maintenance_only)
+
+    if maintenance_only
+      operations = operations.select { |op| op.flavor != CB::Model::Operation::Flavor::HAChange }
+    end
+
+    output_default(operations, c.maintenance_window_start)
+  end
+
+  def output_default(operations, maintenance_window)
+    table = Table::TableBuilder.new(border: :none) do
+      if !operations.empty?
+        operations.each do |op|
+          from = " (Starting from: #{op.starting_from})" if op.starting_from
+          row ["#{op.flavor.colorize.bold}:", "#{op.state}#{from}"]
+        end
+      else
+        row ["operations:", "no operations in progress".colorize.bold]
+      end
+
+      row ["maintenance window:", MaintenanceWindow.new(maintenance_window).explain]
+    end
+
+    output << table.render << '\n'
   end
 end
