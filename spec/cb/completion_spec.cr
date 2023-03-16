@@ -15,20 +15,23 @@ private class CompletionTestClient < CB::Client
 
   def get_providers
     [
-      Provider.new(
-        "aws", "AWS",
-        plans: [Plan.new("memory-16", "Memory-16")],
-        regions: [Region.new("us-west-2", "US West 2", "Oregon")]
+      Factory.provider(
+        id: "aws",
+        display_name: "AWS",
+        plans: [Factory.plan(id: "memory-16", display_name: "Memory-16")],
+        regions: [Factory.region(id: "us-west-2", display_name: "US West 2", location: "Oregon")],
       ),
-      Provider.new(
-        "gcp", "GCP",
-        plans: [Plan.new("standard-128", "Standard-128")],
-        regions: [Region.new("us-central1", "US Central 1", "Iowa")]
+      Factory.provider(
+        id: "gcp",
+        display_name: "GCP",
+        plans: [Factory.plan(id: "standard-128", display_name: "Standard-128")],
+        regions: [Factory.region(id: "us-central1", display_name: "US Central 1", location: "Iowa")]
       ),
-      Provider.new(
-        "azure", "Azure",
-        plans: [Plan.new("standard-64", "Standard-64")],
-        regions: [Region.new("westus", "West US", "California")]
+      Factory.provider(
+        id: "azure",
+        display_name: "Azure",
+        plans: [Factory.plan(id: "standard-64", display_name: "Standard-64")],
+        regions: [Factory.region(id: "westus", display_name: "West US", location: "California")]
       ),
     ]
   end
