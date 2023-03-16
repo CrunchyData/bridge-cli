@@ -92,13 +92,13 @@ module CB
       output << "Type:".colorize.bold << "            #{token.type}\n"
       output << "Repo Path:".colorize.bold << "       #{token.repo_path}\n"
       output << "Stanza:".colorize.bold << "          #{token.stanza}\n"
-      if cred.is_a?(Client::AWSBackrestCredential)
+      if cred.is_a?(CB::Model::AWSBackrestCredential)
         output << "S3 Bucket:".colorize.bold << "       #{cred.s3_bucket}\n"
         output << "S3 Key:".colorize.bold << "          #{cred.s3_key}\n"
         output << "S3 Key Secret:".colorize.bold << "   #{cred.s3_key_secret}\n"
         output << "S3 Region:".colorize.bold << "       #{cred.s3_region}\n"
         output << "S3 Token:".colorize.bold << "        #{cred.s3_token}\n"
-      elsif cred.is_a?(Client::AzureBackrestCredential)
+      elsif cred.is_a?(CB::Model::AzureBackrestCredential)
         output << "Azure Account:".colorize.bold << "   #{cred.azure_account}\n"
         output << "Azure Container:".colorize.bold << " #{cred.azure_container}\n"
         output << "Azure Key:".colorize.bold << "       #{cred.azure_key}\n"
@@ -112,7 +112,7 @@ module CB
       output << "[#{token.stanza}]\n"
       output << "repo1-type=#{token.type}\n"
       output << "repo1-path=#{token.repo_path}\n"
-      if cred.is_a?(Client::AWSBackrestCredential)
+      if cred.is_a?(CB::Model::AWSBackrestCredential)
         output << <<-AWS
 repo1-s3-bucket=#{cred.s3_bucket}
 repo1-s3-key=#{cred.s3_key}
@@ -121,7 +121,7 @@ repo1-s3-token=#{cred.s3_token}
 repo1-s3-endpoint=s3.dualstack.#{cred.s3_region}.amazonaws.com
 repo1-s3-region=#{cred.s3_region}
 AWS
-      elsif cred.is_a?(Client::AzureBackrestCredential)
+      elsif cred.is_a?(CB::Model::AzureBackrestCredential)
         output << <<-AZURE
 repo1-azure-account=#{cred.azure_account}
 repo1-azure-container=#{cred.azure_container}

@@ -20,7 +20,7 @@ module Factory
       size_bytes:  123.to_u64,
     }.merge(params)
 
-    CB::Client::Backup.new **params
+    CB::Model::Backup.new **params
   end
 
   def backup_token_aws(**params)
@@ -28,7 +28,7 @@ module Factory
       type:      "s3",
       repo_path: "/the-path",
       stanza:    "h3zwxm6bafaq3mqbgou5zj56su",
-      aws:       CB::Client::AWSBackrestCredential.new(
+      aws:       CB::Model::AWSBackrestCredential.new(
         s3_key: "key",
         s3_key_secret: "secret",
         s3_token: "token",
@@ -37,7 +37,7 @@ module Factory
       ),
     }.merge(params)
 
-    CB::Client::BackupToken.new **params
+    CB::Model::BackupToken.new **params
   end
 
   def backup_token_azr(**params)
@@ -45,7 +45,7 @@ module Factory
       type:      "azure",
       repo_path: "/",
       stanza:    "h3zwxm6bafaq3mqbgou5zj56su",
-      azure:     CB::Client::AzureBackrestCredential.new(
+      azure:     CB::Model::AzureBackrestCredential.new(
         azure_account: "test_account",
         azure_key: "test_token",
         azure_key_type: "sas",
@@ -53,7 +53,7 @@ module Factory
       ),
     }.merge(params)
 
-    CB::Client::BackupToken.new **params
+    CB::Model::BackupToken.new **params
   end
 
   def cluster(**params)
