@@ -8,7 +8,7 @@ Spectator.describe CB::ClusterURI do
 
   let(account) { Factory.account }
   let(cluster) { Factory.cluster }
-  let(role) { Factory.user_role }
+  let(role) { Factory.role_user }
 
   describe "#initialize" do
     it "ensures 'default' if role not specified" do

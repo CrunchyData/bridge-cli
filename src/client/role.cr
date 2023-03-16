@@ -2,17 +2,10 @@ require "./client"
 
 module CB
   class Client
-    jrecord Role,
-      account_id : String? = nil,
-      account_email : String? = nil,
-      name : String = "",
-      password : String? = nil,
-      uri : URI? = nil
-
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridroles/create-role
     def create_role(cluster_id)
       resp = post "clusters/#{cluster_id}/roles", "{}"
-      Role.from_json resp.body
+      CB::Model::Role.from_json resp.body
     end
 
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridrolesrolename/get-role
@@ -24,25 +17,25 @@ module CB
 
     def get_role(cluster_id, role_name)
       resp = get "clusters/#{cluster_id}/roles/#{role_name}"
-      Role.from_json resp.body
+      CB::Model::Role.from_json resp.body
     end
 
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridroles/list-roles
     def list_roles(cluster_id)
       resp = get "clusters/#{cluster_id}/roles"
-      Array(Role).from_json resp.body, root: "roles"
+      Array(CB::Model::Role).from_json resp.body, root: "roles"
     end
 
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridrolesrolename/update-role
     def update_role(cluster_id, role_name, ur)
       resp = put "clusters/#{cluster_id}/roles/#{role_name}", ur
-      Role.from_json resp.body
+      CB::Model::Role.from_json resp.body
     end
 
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridrolesrolename/delete-role
     def delete_role(cluster_id, role_name)
       resp = delete "clusters/#{cluster_id}/roles/#{role_name}"
-      Role.from_json resp.body
+      CB::Model::Role.from_json resp.body
     end
   end
 end
