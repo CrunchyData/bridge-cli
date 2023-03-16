@@ -1,5 +1,4 @@
 require "./client"
-require "../cb/models/*"
 
 module CB
   class Client
