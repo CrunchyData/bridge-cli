@@ -95,6 +95,18 @@ module Factory
     CB::Model::FirewallRule.new **params
   end
 
+  def log_destination(**params)
+    params = {
+      id:          "pxbcigcufjdqje6drled4rj6p4",
+      host:        "host",
+      port:        2020,
+      template:    "template",
+      description: "logdest descr",
+    }.merge(params)
+
+    CB::Model::LogDestination.new **params
+  end
+
   def network(**params)
     params = {
       cidr4:       "192.168.0.0/24",
