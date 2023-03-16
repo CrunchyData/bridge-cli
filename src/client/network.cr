@@ -2,14 +2,6 @@ require "./client"
 
 module CB
   class Client
-    jrecord Network,
-      cidr4 : String,
-      id : String,
-      name : String,
-      provider_id : String,
-      region_id : String,
-      team_id : String
-
     # Get a network by id or name.
     #
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/networksnetworkid
@@ -20,7 +12,7 @@ module CB
 
     def get_network(id : String?)
       resp = get "networks/#{id}"
-      Network.from_json resp.body
+      CB::Model::Network.from_json resp.body
     end
 
     # Get all networks for a team.
@@ -34,7 +26,7 @@ module CB
                get "networks"
              end
 
-      Array(Network).from_json resp.body, root: "networks"
+      Array(CB::Model::Network).from_json resp.body, root: "networks"
     end
 
     private def get_network_by_name(id : Identifier)

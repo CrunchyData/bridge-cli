@@ -9,7 +9,7 @@ module CB
     format_setter format
 
     # Result of API calls.
-    property networks : Array(Client::Network) = [] of Client::Network
+    property networks : Array(CB::Model::Network) = [] of CB::Model::Network
 
     # Flag to indicate whether the output should include a header. This only
     # has an effect when the output format is `table`.
