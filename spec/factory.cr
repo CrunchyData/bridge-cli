@@ -159,7 +159,17 @@ module Factory
     CB::Model::Region.new **params
   end
 
-  def user_role(**params)
+  def role_system(**params)
+    params = {
+      name:     "application",
+      password: "secret",
+      uri:      URI.parse "postgres://application:secret@example.com:5432/postgres",
+    }.merge(params)
+
+    CB::Model::Role.new **params
+  end
+
+  def role_user(**params)
     params = {
       account_email: "user@example.com",
       name:          "u_mijrfkkuqvhernzfqcbqf7b6me",
@@ -167,17 +177,7 @@ module Factory
       uri:           URI.parse "postgres://u_mijrfkkuqvhernzfqcbqf7b6me:secret@example.com:5432/postgres",
     }.merge(params)
 
-    CB::Client::Role.new **params
-  end
-
-  def system_role(**params)
-    params = {
-      name:     "application",
-      password: "secret",
-      uri:      URI.parse "postgres://application:secret@example.com:5432/postgres",
-    }.merge(params)
-
-    CB::Client::Role.new **params
+    CB::Model::Role.new **params
   end
 
   def team(**params)

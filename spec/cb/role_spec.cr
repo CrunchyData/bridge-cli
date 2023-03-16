@@ -5,7 +5,7 @@ Spectator.describe RoleCreate do
 
   mock_client
 
-  let(user_role) { Factory.user_role }
+  let(user_role) { Factory.role_user }
 
   it "validates that required arguments are present" do
     expect(&.validate).to raise_error Program::Error, /Missing required argument/
@@ -30,7 +30,7 @@ Spectator.describe RoleList do
 
   mock_client
 
-  let(roles) { [Factory.system_role, Factory.user_role] }
+  let(roles) { [Factory.role_system, Factory.role_user] }
   let(team) { Factory.team }
   let(cluster) { Factory.cluster }
 
@@ -108,7 +108,7 @@ Spectator.describe RoleUpdate do
   mock_client
 
   let(account) { Factory.account }
-  let(role) { Factory.user_role }
+  let(role) { Factory.role_user }
 
   describe "#validate" do
     it "validates that required arguments are present" do
@@ -144,7 +144,7 @@ Spectator.describe RoleDelete do
   mock_client
 
   let(account) { Factory.account }
-  let(role) { Factory.user_role }
+  let(role) { Factory.role_user }
 
   describe "#validate" do
     it "ensures required arguments are present" do

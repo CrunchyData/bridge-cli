@@ -11,7 +11,7 @@ Spectator.describe CB::Psql do
   end
 
   let(cluster) { Factory.cluster }
-  let(role) { Factory.user_role }
+  let(role) { Factory.role_user }
   let(team) { Factory.team }
 
   describe "#initialize" do
