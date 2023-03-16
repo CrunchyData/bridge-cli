@@ -130,6 +130,35 @@ module Factory
     CB::Model::Operation.new **params
   end
 
+  def plan(**params)
+    params = {
+      id:           "jkon7qbrzzccrgwn346w3niloe",
+      display_name: "Example Plan",
+    }.merge(params)
+
+    CB::Model::Plan.new **params
+  end
+
+  def provider(**params)
+    params = {
+      id:           "xujafqpecfcwpa4rmemogvin7m",
+      display_name: "Example Provider",
+      regions:      [] of CB::Model::Region,
+      plans:        [] of CB::Model::Plan,
+    }.merge(params)
+
+    CB::Model::Provider.new **params
+  end
+
+  def region(**params)
+    params = {
+      id:           "jyhs4gzfszhqpnmmlnneyzodfa",
+      display_name: "Central America 1",
+      location:     "Isla Nublar",
+    }.merge(params)
+    CB::Model::Region.new **params
+  end
+
   def user_role(**params)
     params = {
       account_email: "user@example.com",
