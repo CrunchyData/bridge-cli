@@ -10,7 +10,7 @@ private class CompletionTestClient < CB::Client
   end
 
   def get_firewall_rules(id)
-    [FirewallRule.new("f1", "1.2.3.4/32"), FirewallRule.new("f2", "4.5.6.7/24")]
+    [Factory.firewall_rule(id: "f1", rule: "1.2.3.4/32"), Factory.firewall_rule(id: "f2", rule: "4.5.6.7/24")]
   end
 
   def get_providers
