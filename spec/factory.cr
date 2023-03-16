@@ -117,7 +117,7 @@ module Factory
       team_id:     "l2gnkxjv3beifk6abkraerv7de",
     }.merge(params)
 
-    CB::Client::Network.new **params
+    CB::Model::Network.new **params
   end
 
   def operation(**params)
