@@ -36,7 +36,7 @@ abstract class CB::TeamMemberAction < CB::APIAction
     members.find { |tm| tm.email == email }
   end
 
-  private def team_member_details(tm : CB::Client::TeamMember) : String
+  private def team_member_details(tm : CB::Model::TeamMember) : String
     String.build do |str|
       str << "Email:     \t" << tm.email.colorize.t_name << '\n'
       str << "Team ID:   \t" << tm.team_id.colorize.t_id << '\n'
