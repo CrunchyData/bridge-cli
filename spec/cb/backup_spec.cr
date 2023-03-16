@@ -50,7 +50,7 @@ Spectator.describe CB::BackupList do
     it "says when there are no backups" do
       action.cluster_id = cluster.id
 
-      expect(client).to receive(:backup_list).and_return([] of CB::Client::Backup)
+      expect(client).to receive(:backup_list).and_return([] of CB::Model::Backup)
 
       action.call
 
