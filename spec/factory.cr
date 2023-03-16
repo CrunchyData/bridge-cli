@@ -7,7 +7,7 @@ module Factory
       name:  "user",
       email: "user@example.com",
     }.merge(params)
-    CB::Client::Account.new **params
+    CB::Model::Account.new **params
   end
 
   def backup(**params)
