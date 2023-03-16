@@ -57,7 +57,7 @@ class CB::ManageFirewall < CB::APIAction
     current_rules.each { |r| output.puts "#{pad}#{r.rule.colorize.t_name}" }
   end
 
-  def remove_rule(rule : Client::FirewallRule)
+  def remove_rule(rule : CB::Model::FirewallRule)
     @client.delete_firewall_rule @network_id, rule.id
     "done".colorize.t_success
   rescue e : Client::Error

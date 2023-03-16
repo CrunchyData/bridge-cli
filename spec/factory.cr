@@ -87,6 +87,14 @@ module Factory
     CB::Model::ClusterStatus.new **params
   end
 
+  def firewall_rule(**params)
+    params = {
+      id:   "shofthj3fzaipie44lt6a5i3de",
+      rule: "1.2.3.0/24",
+    }.merge(params)
+    CB::Model::FirewallRule.new **params
+  end
+
   def network(**params)
     params = {
       cidr4:       "192.168.0.0/24",

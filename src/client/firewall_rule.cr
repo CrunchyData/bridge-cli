@@ -2,8 +2,6 @@ require "./client"
 
 module CB
   class Client
-    jrecord FirewallRule, id : String, rule : String
-
     # Add a firewall rule to a cluster.
     #
     # TODO (abrightwell): Add docs reference.
@@ -23,7 +21,7 @@ module CB
     # TODO (abrightwell): Add docs reference.
     def get_firewall_rules(network_id)
       resp = get "networks/#{network_id}/firewall-rules"
-      Array(FirewallRule).from_json resp.body, root: "firewall_rules"
+      Array(CB::Model::FirewallRule).from_json resp.body, root: "firewall_rules"
     end
   end
 end
