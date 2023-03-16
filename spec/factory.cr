@@ -202,7 +202,7 @@ module Factory
       email:      "test@example.com",
     }.merge(params)
 
-    CB::Client::TeamMember.new **params
+    CB::Model::TeamMember.new **params
   end
 
   def tempkey(**params)
