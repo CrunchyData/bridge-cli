@@ -34,7 +34,7 @@ Spectator.describe CB::Open do
           Client::SessionCreateParams.new(generate_one_time_token: true)
         )
         .and_return(
-          Client::Session.new(id: session_id, one_time_token: session_one_time_token)
+          CB::Model::Session.new(id: session_id, one_time_token: session_one_time_token)
         )
 
       action.call
