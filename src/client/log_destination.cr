@@ -2,19 +2,12 @@ require "./client"
 
 module CB
   class Client
-    jrecord LogDestination,
-      id : String,
-      host : String,
-      port : Int32,
-      template : String,
-      description : String
-
     # List existing loggers for a cluster.
     #
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridloggers/list-loggers
     def get_log_destinations(cluster_id)
       resp = get "clusters/#{cluster_id}/loggers"
-      Array(LogDestination).from_json resp.body, root: "loggers"
+      Array(CB::Model::LogDestination).from_json resp.body, root: "loggers"
     end
 
     # Add a logger to a cluster.

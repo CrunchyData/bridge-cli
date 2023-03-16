@@ -34,7 +34,10 @@ private class CompletionTestClient < CB::Client
   end
 
   def get_log_destinations(id)
-    [LogDestination.new("logid", "host", 2020, "template", "logdest descr")]
+    [
+      Factory.log_destination(id: "logid", host: "host", port: 2020,
+        template: "template", description: "logdest descr"),
+    ]
   end
 end
 
