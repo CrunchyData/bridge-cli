@@ -512,6 +512,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "set"
     expect(result).to have_option "cancel"
     expect(result).to have_option "create"
+    expect(result).to have_option "update"
 
     result = parse("cb maintenance info ")
     expect(result).to have_option "--cluster"
@@ -543,6 +544,18 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--cluster"
     expect(result).to have_option "--starting-from"
     expect(result).to have_option "--now"
+
+    result = parse "cb maintenance update"
+    expect(result).to have_option "--cluster"
+    expect(result).to have_option "--now"
+    expect(result).to have_option "--starting-from"
+    expect(result).to have_option "--use-cluster-maintenance-window"
+
+    result = parse("cb maintenance update --starting-from ")
+    result.should be_empty
+
+    result = parse("cb maintenance update --cluster xx --use-cluster-maintenance-window ")
+    result.should be_empty
   end
 
   it "completes network" do

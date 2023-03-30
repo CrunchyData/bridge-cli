@@ -285,7 +285,7 @@ op = OptionParser.new do |parser|
   #
 
   parser.on("maintenance", "Manage cluster maintenance") do
-    parser.banner = "cb maintenance <info|set|cancel|create>"
+    parser.banner = "cb maintenance <info|set|cancel|create|update>"
 
     parser.on("info", "Display cluster maintenance information") do
       upgrade = set_action UpgradeStatus
@@ -327,6 +327,27 @@ op = OptionParser.new do |parser|
 
         Create a maintenance that will failover starting from a given time
         $ cb maintenance create --cluster <ID> --starting-from 2022-01-01T00:00:00Z
+      EXAMPLES
+    end
+
+    parser.on("update", "Update a pending cluster maintenance") do
+      update = set_action MaintenanceUpdate
+      parser.banner = "cb maintenance update <--cluster> [--starting-from] [--now]"
+      parser.on("--cluster ID", "Choose cluster") { |arg| update.cluster_id = arg }
+      parser.on("--starting-from START", "Starting time to update a maintenance. (RFC3339 format)") { |arg| update.starting_from = arg }
+      parser.on("--now", "Start a maintenance now") { |_| update.now = true }
+      parser.on("--use-cluster-mairtenance-window", "Use cluster maintenance window") { |arg| update.use_cluster_maintenance_window = true }
+      parser.on("--confirm", "Confirm maintenance creation.") { |_| update.confirmed = true }
+
+      parser.examples = <<-EXAMPLES
+        Update a pending maintenance to failover during the cluster maintenance window.
+        $ cb maintenance update --cluster <ID> --use-cluster-maintenance-window
+
+        Update a pending maintenance to failover as soon as possible.
+        $ cb maintenance update --cluster <ID> --now
+
+        Update a maintenance to failover starting from a given time.
+        $ cb maintenance update --cluster <ID> --starting-from 2022-01-01T00:00:00Z
       EXAMPLES
     end
   end

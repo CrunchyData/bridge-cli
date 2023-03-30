@@ -344,12 +344,15 @@ class CB::Completion
       upgrade_cancel
     when "create"
       maintenance_create
+    when "update"
+      maintenance_update
     else
       [
         "info\tdisplay cluster maintenance information",
         "set\tupdate the cluster default maintenance window",
         "cancel\tcancel a cluster maintenance",
         "create\tcreate a cluster maintenance",
+        "update\tupdate a pending cluster maintenance",
       ]
     end
   end
@@ -387,6 +390,27 @@ class CB::Completion
     suggest << "--cluster\tcluster id" unless has_full_flag? :cluster
     suggest << "--starting-from\tStarting time to schedule a maintenance. (RFC3339 format)" unless has_full_flag?(:now) || has_full_flag?(:starting_from)
     suggest << "--now\tStart a maintenance now" unless has_full_flag?(:now) || has_full_flag?(:starting_from)
+    suggest
+  end
+
+  def maintenance_update : Array(String)
+    cluster = find_arg_value "--cluster"
+
+    if last_arg?("--cluster")
+      return cluster.nil? ? cluster_suggestions : [] of String
+    end
+
+    if last_arg?("--starting-from", "--now", "--use-cluster-maintenance-window")
+      suggest_none
+    end
+
+    maintenance_window_option = has_full_flag?(:now) || has_full_flag?(:starting_from) || has_full_flag?(:use_cluster_maintenance_window)
+    suggest = [] of String
+    suggest << "--cluster\tcluster id" unless has_full_flag? :cluster
+    suggest << "--starting-from\tStarting time to schedule a maintenance. (RFC3339 format)" unless maintenance_window_option
+    suggest << "--now\tStart a maintenance now" unless maintenance_window_option
+    suggest << "--use-cluster-maintenance-window\tUse cluster maintenance window" unless maintenance_window_option
+
     suggest
   end
 
@@ -996,6 +1020,7 @@ class CB::Completion
     full << :unset if has_full_flag? "--unset"
     full << :starting_from if has_full_flag? "--starting-from"
     full << :now if has_full_flag? "--now"
+    full << :use_cluster_maintenance_window if has_full_flag? "use-cluster-maintenance-window"
     full << :no_header if has_full_flag? "--no-header"
     full
   end
