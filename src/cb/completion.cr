@@ -367,7 +367,7 @@ class CB::Completion
     suggest = [] of String
     suggest << "--cluster\tcluster id" unless has_full_flag? :cluster
     suggest << "--window-start\tmaintenance window start (UTC)" unless has_full_flag?(:unset) || has_full_flag?(:window_start)
-    suggest << "--unset\tUnset mainetnance window" unless has_full_flag?(:unset) || has_full_flag?(:window_start)
+    suggest << "--unset\tUnset maintenance window" unless has_full_flag?(:unset) || has_full_flag?(:window_start)
     suggest
   end
 
