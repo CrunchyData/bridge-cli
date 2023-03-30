@@ -103,6 +103,18 @@ module CB
       Array(CB::Model::Operation).from_json resp.body, root: "operations"
     end
 
+    # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridupgrade/update-upgrade-cluster
+    def update_upgrade_cluster(uc)
+      resp = put "clusters/#{uc.cluster_id}/upgrade", {
+        plan_id:                        uc.plan,
+        postgres_version_id:            uc.postgres_version,
+        storage:                        uc.storage,
+        starting_from:                  uc.starting_from,
+        use_cluster_maintenance_window: uc.use_cluster_maintenance_window,
+      }
+      Array(CB::Model::Operation).from_json resp.body, root: "operations"
+    end
+
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridupgrade/get-upgrade-status
     def upgrade_cluster_status(id)
       resp = get "clusters/#{id}/upgrade"
