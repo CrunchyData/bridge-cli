@@ -311,7 +311,7 @@ op = OptionParser.new do |parser|
     end
 
     parser.on("create", "Create a cluster maintenance") do
-      create = set_action UpgradeMaintenanceCreate
+      create = set_action MaintenanceCreate
       parser.banner = "cb maintenance create <--cluster> [--starting-from] [--now]"
       parser.on("--cluster ID", "Choose cluster") { |arg| create.cluster_id = arg }
       parser.on("--starting-from START", "Starting time to create a maintenance. (RFC3339 format)") { |arg| create.starting_from = arg }
