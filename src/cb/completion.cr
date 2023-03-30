@@ -104,6 +104,7 @@ class CB::Completion
       "network\tManage networks",
       "info\tDetailed cluster info",
       "uri\tConnection uri",
+      "upgrade\tManage cluster upgrades",
       "create\tProvision a new cluster",
       "destroy\tDestroy a cluster",
       "rename\tRename a cluster",
