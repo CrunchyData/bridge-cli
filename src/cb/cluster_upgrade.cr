@@ -68,6 +68,30 @@ class CB::MaintenanceCreate < CB::UpgradeAction
   end
 end
 
+# Action to cancel cluster maintenance.
+class CB::MaintenanceCancel < CB::Upgrade
+  def run
+    validate
+
+    c = client.get_cluster cluster_id
+    print_team_slash_cluster c
+
+    operations = client.upgrade_cluster_status cluster_id
+    all_upgrades = operations.select { |op| op.flavor != CB::Model::Operation::Flavor::HAChange }
+    maintenance = all_upgrades.find { |op| op.flavor == CB::Model::Operation::Flavor::Maintenance }
+    unless maintenance
+      output.puts "  there is no pending maintenance."
+      if pending_upgrade = all_upgrades.first?
+        output.puts "  use '#{"cb upgrade cancel".colorize.bold}' to cancel the pending #{pending_upgrade.flavor.colorize.bold}."
+      end
+      return
+    end
+
+    client.upgrade_cluster_cancel cluster_id
+    output << "  #{maintenance.flavor.colorize.bold} operation cancelled\n"
+  end
+end
+
 # Action to cancel cluster upgrade.
 class CB::UpgradeCancel < CB::Upgrade
   def run
@@ -76,8 +100,19 @@ class CB::UpgradeCancel < CB::Upgrade
     c = client.get_cluster cluster_id
     print_team_slash_cluster c
 
+    operations = client.upgrade_cluster_status cluster_id
+    all_upgrades = operations.select { |op| op.flavor != CB::Model::Operation::Flavor::HAChange }
+    operation = all_upgrades.find { |op| op.flavor != CB::Model::Operation::Flavor::Maintenance }
+    unless operation
+      output.puts "  there is no pending operation."
+      if pending_maintenance = all_upgrades.first?
+        output.puts "  use '#{"cb maintenance cancel".colorize.bold}' to cancel the pending #{pending_maintenance.flavor.colorize.bold}."
+      end
+      return
+    end
+
     client.upgrade_cluster_cancel cluster_id
-    output << "  operation cancelled\n".colorize.bold
+    output << "  #{operation.flavor.colorize.bold} operation cancelled\n"
   end
 end
 
