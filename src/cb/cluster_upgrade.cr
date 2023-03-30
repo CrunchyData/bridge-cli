@@ -50,7 +50,7 @@ class CB::UpgradeStart < CB::UpgradeAction
 end
 
 # Action to create a cluster maintenance.
-class CB::UpgradeMaintenanceCreate < CB::UpgradeAction
+class CB::MaintenanceCreate < CB::UpgradeAction
   def validate
     super
     raise Error.new "Maintenance can't change ha, postgres_version or storage." if !ha.nil? || postgres_version || storage || plan

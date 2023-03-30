@@ -27,7 +27,7 @@ Spectator.describe CB::UpgradeStart do
   end
 end
 
-Spectator.describe CB::UpgradeMaintenanceCreate do
+Spectator.describe CB::MaintenanceCreate do
   subject(action) { described_class.new client: client, output: IO::Memory.new }
   let(cluster) { Factory.cluster }
 
