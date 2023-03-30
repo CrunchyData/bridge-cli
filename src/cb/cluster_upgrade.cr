@@ -152,3 +152,60 @@ class CB::UpgradeStatus < CB::Upgrade
     output << table.render << '\n'
   end
 end
+
+abstract class CB::UpdateUpgradeAction < CB::Upgrade
+  bool_setter now
+  i32_setter postgres_version
+  i32_setter storage
+  time_setter starting_from
+  bool_setter? use_cluster_maintenance_window
+
+  property plan : String?
+
+  def validate
+    super
+
+    if {starting_from, now, use_cluster_maintenance_window}.each.count { |x| x } > 1
+      raise Error.new "Must use only one option between '--starting-from', '--now' and '--use-cluster-maintenance-window'."
+    end
+
+    if now
+      starting_from = Time.utc
+    end
+
+    raise Error.new "'--starting-from' should be in less than a week" if (start = starting_from) && start > (Time.utc + Time::Span.new(days: 7))
+    true
+  end
+end
+
+# Action to update a pending cluster maintenance.
+class CB::MaintenanceUpdate < CB::UpdateUpgradeAction
+  def validate
+    super
+    raise Error.new "Maintenance can't change plan, postgres_version or storage." if postgres_version || storage || plan
+    true
+  end
+
+  def run
+    validate
+
+    c = client.get_cluster cluster_id
+    print_team_slash_cluster c
+
+    operations = client.upgrade_cluster_status cluster_id
+    all_upgrades = operations.select { |op| op.flavor != CB::Model::Operation::Flavor::HAChange }
+    maintenance = all_upgrades.find { |op| op.flavor == CB::Model::Operation::Flavor::Maintenance }
+    unless maintenance
+      output.puts "  there is no pending maintenance."
+      if pending_upgrade = all_upgrades.first?
+        output.puts "  use '#{"cb upgrade update".colorize.bold}' to update the pending #{pending_upgrade.flavor.colorize.bold}."
+      end
+      return
+    end
+
+    confirm_action("update", " pending", "maintenance") unless confirmed
+
+    client.update_upgrade_cluster self
+    output.puts "  maintenance updated."
+  end
+end
