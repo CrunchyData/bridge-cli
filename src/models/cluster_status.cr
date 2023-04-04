@@ -10,6 +10,9 @@ module CB::Model
       Unknown
       Ready
       Restarting
+      Resuming
+      Suspended
+      Suspending
 
       def to_s(io : IO)
         io << self.to_s.downcase
