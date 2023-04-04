@@ -9,3 +9,4 @@ completion.log
 /dist/
 /vendor/
 .envrc
+result
