@@ -835,6 +835,7 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "start"
     expect(result).to have_option "status"
     expect(result).to have_option "cancel"
+    expect(result).to have_option "update"
 
     result = parse("cb upgrade sta")
     expect(result).to have_option "start"
@@ -888,5 +889,25 @@ Spectator.describe CB::Completion do
 
     result = parse("cb upgrade status --cluster abc ")
     expect(result).to eq [] of String
+
+    # cb upgrade update
+    result = parse "cb upgrade update"
+    expect(result).to have_option "--cluster"
+    expect(result).to have_option "--plan"
+    expect(result).to have_option "--storage"
+    expect(result).to have_option "--starting-from"
+    expect(result).to have_option "--version"
+    expect(result).to have_option "--now"
+    expect(result).to have_option "--starting-from"
+    expect(result).to have_option "--use-cluster-maintenance-window"
+
+    result = parse("cb upgrade update --cluster ")
+    expect(result).to eq expected_cluster_suggestion
+
+    result = parse("cb upgrade update --starting-from ")
+    result.should be_empty
+
+    result = parse("cb upgrade update --cluster xx --use-cluster-maintenance-window ")
+    result.should be_empty
   end
 end

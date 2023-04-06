@@ -209,3 +209,29 @@ class CB::MaintenanceUpdate < CB::UpdateUpgradeAction
     output.puts "  maintenance updated."
   end
 end
+
+# Action to update a pending cluster upgrade.
+class CB::UpgradeUpdate < CB::UpdateUpgradeAction
+  def run
+    validate
+
+    c = client.get_cluster cluster_id
+    print_team_slash_cluster c
+
+    operations = client.upgrade_cluster_status cluster_id
+    all_upgrades = operations.select { |op| op.flavor != CB::Model::Operation::Flavor::HAChange }
+    operation = all_upgrades.find { |op| op.flavor != CB::Model::Operation::Flavor::Maintenance }
+    unless operation
+      output.puts "  there is no pending upgrade."
+      if pending_maintenance = all_upgrades.first?
+        output.puts "  use '#{"cb maintenance update".colorize.bold}' to update the pending #{pending_maintenance.flavor.colorize.bold}."
+      end
+      return
+    end
+
+    confirm_action("update", " pending", "upgrade") unless confirmed
+
+    client.update_upgrade_cluster self
+    output.puts "  upgrade updated."
+  end
+end

@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `cb list` command now accepts `--format`. Supports: `table` and `tree`.
 - `cb list` command now accepts `--team`.
-- `cb maintenance update` command added to update a pending maintenance.
+- `cb maintenance update` and `cb upgrade update` update a pending maintenance
+  and a pending upgrade respectively.
 
 ### Fixed
 - `cb psql` no longer overrides a users `.psqlrc` with `\x auto` which was
