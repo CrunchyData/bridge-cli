@@ -885,11 +885,14 @@ class CB::Completion
       upgrade_status
     when "start"
       upgrade_start
+    when "update"
+      upgrade_update
     else
       [
         "start\tstart cluster upgrade",
         "cancel\tcancel cluster upgrade",
         "status\tshow status of cluster upgrade",
+        "update\tupdate a pending cluster upgrade",
       ]
     end
   end
@@ -947,8 +950,46 @@ class CB::Completion
     suggest << "--plan\tplan" unless has_full_flag? :plan
     suggest << "--storage\tsize in GiB" unless has_full_flag? :storage
     suggest << "--starting-from\tstarting time of upgrade. (RFC3339 format)" unless has_full_flag?(:starting_from) || has_full_flag?(:now)
-    suggest << "--now\tsize in GiB" unless has_full_flag?(:now) || has_full_flag?(:starting_from)
+    suggest << "--now\tstart the upgrade now" unless has_full_flag?(:now) || has_full_flag?(:starting_from)
     suggest << "--version\tpostgres major version" unless has_full_flag? :version
+    suggest
+  end
+
+  def upgrade_update
+    if last_arg? "--cluster"
+      return cluster_suggestions
+    end
+
+    if last_arg? "--plan"
+      cluster_id = find_arg_value "--cluster"
+      cluster = client.get_cluster cluster_id
+      return plan(cluster.provider_id)
+    end
+
+    if last_arg? "-v", "--version"
+      return [] of String
+    end
+
+    storage_suggest.tap { |s| return s if s }
+
+    if last_arg?("--starting-from", "--now", "--use-cluster-maintenance-window")
+      suggest_none
+    end
+
+    maintenance_window_option = has_full_flag?(:now) || has_full_flag?(:starting_from) || has_full_flag?(:use_cluster_maintenance_window)
+
+    suggest = [] of String
+    suggest << "--help\tshow help" if args.size == 3
+    suggest << "--cluster\tcluster id" unless has_full_flag? :cluster
+    suggest << "--confirm\tconfirm upgrade" unless has_full_flag? :confirm
+    suggest << "--plan\tplan" unless has_full_flag? :plan
+    suggest << "--storage\tsize in GiB" unless has_full_flag? :storage
+    suggest << "--starting-from\tstarting time of upgrade. (RFC3339 format)" unless has_full_flag?(:starting_from) || has_full_flag?(:now)
+    suggest << "--now\tStart a maintenance now" unless maintenance_window_option
+    suggest << "--version\tpostgres major version" unless has_full_flag? :version
+    suggest << "--starting-from\tStarting time to schedule a maintenance. (RFC3339 format)" unless maintenance_window_option
+    suggest << "--use-cluster-maintenance-window\tUse cluster maintenance window" unless maintenance_window_option
+
     suggest
   end
 

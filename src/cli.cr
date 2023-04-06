@@ -204,6 +204,33 @@ op = OptionParser.new do |parser|
       parser.on("--cluster ID", "Choose cluster") { |arg| upgrade.cluster_id = arg }
     end
 
+    parser.on("update", "Update a pending cluster upgrade") do
+      update = set_action UpgradeUpdate
+      parser.banner = "cb maintenance update <--cluster> [--starting-from] [--now]"
+      parser.on("--cluster ID", "Choose cluster") { |arg| update.cluster_id = arg }
+      parser.on("--starting-from START", "Starting time to update a maintenance. (RFC3339 format)") { |arg| update.starting_from = arg }
+      parser.on("--now", "Start a maintenance now") { |_| update.now = true }
+      parser.on("--use-cluster-maintenance-window", "Use cluster maintenance window") { |arg| update.use_cluster_maintenance_window = true }
+      parser.on("--confirm", "Confirm maintenance creation.") { |_| update.confirmed = true }
+      parser.on("-v VERSION", "--version VERSION", "Postgres major version") { |arg| update.postgres_version = arg }
+      parser.on("--plan NAME", "Plan (server vCPU+memory)") { |arg| update.plan = arg }
+      parser.on("-s GiB", "--storage GiB", "Storage size") { |arg| update.storage = arg }
+
+      parser.examples = <<-EXAMPLES
+        Update a pending upgrade to a new storage size.
+        $ cb upgrade update --cluster <ID> --storage 800
+
+        Update a pending upgrade to a new plan.
+        $ cb upgrade update --cluster <ID> --plan memory-128
+
+        Update a pending upgrade to failover as soon as possible.
+        $ cb upgrade update --cluster <ID> --now
+
+        Update a upgrade to failover starting from a given time.
+        $ cb upgrade update --cluster <ID> --starting-from 2022-01-01T00:00:00Z
+      EXAMPLES
+    end
+
     parser
   end
 

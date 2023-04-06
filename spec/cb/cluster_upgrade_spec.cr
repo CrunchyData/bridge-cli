@@ -308,3 +308,53 @@ Spectator.describe CB::MaintenanceUpdate do
     end
   end
 end
+
+Spectator.describe CB::UpgradeUpdate do
+  subject(action) { described_class.new client: client, output: IO::Memory.new }
+
+  mock_client
+
+  let(cluster) { Factory.cluster }
+  let(team) { Factory.team }
+
+  describe "#run" do
+    it "does not update maintenance" do
+      action.cluster_id = cluster.id
+      action.confirmed = true
+
+      expect(client).to receive(:get_cluster).and_return(cluster)
+      expect(client).to receive(:get_team).and_return(team)
+      expect(client).to receive(:upgrade_cluster_status).and_return([Factory.operation(flavor: CB::Model::Operation::Flavor::Maintenance)])
+
+      action.call
+
+      expected = <<-EXPECTED
+      #{team.name}/#{cluster.name}
+        there is no pending upgrade.
+        use 'cb maintenance update' to update the pending maintenance.\n
+      EXPECTED
+
+      expect(&.output.to_s).to eq expected
+    end
+
+    it "updates resize" do
+      action.cluster_id = cluster.id
+      action.confirmed = true
+      action.now = true
+
+      expect(client).to receive(:get_cluster).and_return(cluster)
+      expect(client).to receive(:get_team).and_return(team)
+      expect(client).to receive(:upgrade_cluster_status).and_return([Factory.operation(flavor: CB::Model::Operation::Flavor::Resize)])
+      expect(client).to receive(:update_upgrade_cluster).and_return([Factory.operation(flavor: CB::Model::Operation::Flavor::Resize)])
+
+      action.call
+
+      expected = <<-EXPECTED
+      #{team.name}/#{cluster.name}
+        upgrade updated.\n
+      EXPECTED
+
+      expect(&.output.to_s).to eq expected
+    end
+  end
+end
