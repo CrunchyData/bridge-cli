@@ -36,6 +36,8 @@ module CB
       while (read_bytes = ch.read_stderr(buffer.to_slice)) > 0
         output.write buffer.to_slice[0, read_bytes]
       end
+    rescue e : CB::Client::Error
+      raise e
     rescue e
       raise Program::Error.new(cause: e)
     end
