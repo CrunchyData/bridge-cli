@@ -2,41 +2,37 @@
   description = "CrunchyBridge CLI";
 
   inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    nixpkgs-crystal = {
-      url = "github:will/nixpkgs-crystal";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    nixpkgs-crunchy.url = "github:crunchydata/nixpkgs";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-crystal, flake-utils }:
+  outputs = { self, nixpkgs, nixpkgs-crunchy, flake-utils }:
     let
-      systems = (builtins.attrNames nixpkgs-crystal.outputs.packages);
+      systems = builtins.map (a: a.system) (builtins.catAttrs "crystal" (builtins.attrValues nixpkgs-crunchy.outputs.packages));
     in
     flake-utils.lib.eachSystem systems (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        crystal = nixpkgs-crystal.packages.${system}.crystal; #_release;
+        crystal-pkgs = nixpkgs-crunchy.packages.${system};
+
+        crystal = crystal-pkgs.crystal;
+        crystalWrapped = crystal-pkgs.extraWrapped.override {
+          buildInputs = [ pkgs.libssh2 ];
+        };
 
         c2n = pkgs.crystal2nix.override { inherit crystal; };
-        shardValue = key: builtins.head (builtins.match (".*"+key+": ([-a-zA-Z0-9\.]+).*") (builtins.readFile ./shard.yml));
       in
       {
-
-        packages.default = crystal.buildCrystalPackage {
-          pname = shardValue "name";
-          version = shardValue "version";
-          gitSha = self.shortRev or "dirty";
+        packages.default = crystalWrapped.mkPkg {
+          inherit self;
+          shards = crystal-pkgs.shards;
           src = ./.;
-          format = "shards";
-          lockFile = ./shard.lock;
-          shardsFile = ./shards.nix;
           doCheck = false;
-          buildInputs = with pkgs; [ libssh2 ];
         };
 
         devShells.default = pkgs.mkShell {
-          buildInputs = [ crystal pkgs.libssh2 c2n ];
+          buildInputs = [ crystalWrapped c2n ];
         };
 
       }
