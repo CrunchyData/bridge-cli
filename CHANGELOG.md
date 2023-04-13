@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `cb info` now returns new cluster states: `resuming`, `suspended`, `suspending`.
 - `cb upgrade cancel` now only cancels upgrades.
 - `cb maintenance cancel` now only cancels only maintenances.
+- `cb logs` fails without error message.
 
 ## [3.2.0] - 2023-02-28
 ### Added
