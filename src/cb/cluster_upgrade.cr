@@ -28,10 +28,10 @@ abstract class CB::UpgradeAction < CB::Upgrade
     raise Error.new "Must use '--starting-from' or '--now' but not both." if starting_from && now
 
     if now
-      starting_from = Time.utc
+      @starting_from = Time.utc
     end
 
-    raise Error.new "'--starting-from' should be in less than a week" if (start = starting_from) && start > (Time.utc + Time::Span.new(days: 7))
+    raise Error.new "'--starting-from' should be in less than 72 hours" if (start = @starting_from) && start > (Time.utc + Time::Span.new(hours: 72))
     true
   end
 end
@@ -170,10 +170,10 @@ abstract class CB::UpdateUpgradeAction < CB::Upgrade
     end
 
     if now
-      starting_from = Time.utc
+      @starting_from = Time.utc
     end
 
-    raise Error.new "'--starting-from' should be in less than a week" if (start = starting_from) && start > (Time.utc + Time::Span.new(days: 7))
+    raise Error.new "'--starting-from' should be in less than 72 hours" if (start = @starting_from) && start > (Time.utc + Time::Span.new(hours: 72))
     true
   end
 end

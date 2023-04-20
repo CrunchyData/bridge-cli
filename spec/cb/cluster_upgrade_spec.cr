@@ -6,12 +6,22 @@ Spectator.describe CB::UpgradeStart do
   mock_client
 
   let(cluster) { Factory.cluster }
+  describe "#validate" do
+    it "checks required arguments are present" do
+      expect_missing_arg_error
 
-  it "validates that required arguments are present" do
-    expect_missing_arg_error
+      action.cluster_id = cluster.id
+      action.validate.should eq true
+    end
 
-    action.cluster_id = cluster.id
-    action.validate.should eq true
+    it "errors if starting_from is in more than 72 hours" do
+      action.cluster_id = cluster.id
+      action.starting_from = Time.utc + Time::Span.new(hours: 72, seconds: 1)
+
+      expect {
+        action.validate
+      }.to raise_error Program::Error, "'--starting-from' should be in less than 72 hours"
+    end
   end
 
   it "#run prints cluster upgrade started" do
@@ -316,6 +326,17 @@ Spectator.describe CB::UpgradeUpdate do
 
   let(cluster) { Factory.cluster }
   let(team) { Factory.team }
+
+  describe "#validate" do
+    it "errors if starting_from is in more than 72 hours" do
+      action.cluster_id = cluster.id
+      action.starting_from = Time.utc + Time::Span.new(hours: 72, seconds: 1)
+
+      expect {
+        action.validate
+      }.to raise_error Program::Error, "'--starting-from' should be in less than 72 hours"
+    end
+  end
 
   describe "#run" do
     it "does not update maintenance" do
