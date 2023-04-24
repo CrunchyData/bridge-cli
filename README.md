@@ -58,6 +58,12 @@ your editor run this for you on save.
 
 You can run `crystal spec` to run all of the specs, or `make test` to also run linting checks.
 
+
+### nix
+
+If you install nix, the included flake devShell will automatically have all
+dependencies, and you can simply run `check` to run all specs and linting.
+
 ## Contributing
 
 1. Fork it (<https://github.com/CrunchyData/bridge-cli/fork>)

@@ -1,64 +1,25 @@
 name: CI
 
 on:
-  pull_request:
-    paths-ignore:
-    - 'docs/**'
-    - '*.md'
-    - '*.yml'
   push:
-    paths-ignore:
-    - 'docs/**'
-    - '*.md'
-    - '*.yml'
-
+    branches:
+      - main
+  pull_request: {}
+  workflow_dispatch: {}
 jobs:
-  macos-tests:
-    runs-on: macOS-latest
-
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    - name: Install crystal
-      run: brew install crystal
-
-    - name: Install dependencies
-      run: shards install
-
-    - name: Run tests
-      run: crystal spec --error-on-warnings
-
-  ubuntu-tests:
-    runs-on: ubuntu-latest
-    container: crystallang/crystal:latest-alpine
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    - name: Install LibSSH2
-      run: apk add --no-cache libssh2 libssh2-dev libssh2-static
-
-    - name: Install dependencies
-      run: shards install
-
-    - name: Run tests
-      run: crystal spec --error-on-warnings
-
-  lint:
-    runs-on: ubuntu-latest
-    container: crystallang/crystal:latest-alpine
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
-    - name: Format
-      run: crystal tool format --check
-
-    - name: Install dependencies
-      run: shards install
-
-    - name: Run tests
-      run: bin/ameba
+      - name: Install Nix
+        uses: cachix/install-nix-action@v20
+      - uses: cachix/cachix-action@v12
+        with:
+          name: crunchy-public
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - uses: actions/checkout@v3
+      - name: nix flake check
+        run:  nix flake check --print-build-logs --keep-going
