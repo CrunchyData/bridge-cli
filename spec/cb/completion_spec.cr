@@ -100,7 +100,7 @@ Spectator.describe CB::Completion do
 
   provided command: "cb " { expect(result).to have /^login/ }
 
-  sample %w[info rename destroy logs suspend resume].each do |cmd|
+  sample %w[info rename logs suspend resume].each do |cmd|
     provided command: "cb #{cmd} " { expect(result).to eq expected_cluster_suggestion }
     provided command: "cb #{cmd} abc " { expect(result).to be_empty }
   end
@@ -259,6 +259,17 @@ Spectator.describe CB::Completion do
     result.should_not be_empty
     expect(result).to_not have_option "--version"
     expect(result).to_not have_option "-v"
+  end
+
+  it "destroy" do
+    result = parse("cb destroy ")
+    expect(result).to eq expected_cluster_suggestion
+
+    result = parse("cb destroy abc ")
+    expect(result).to have_option "--confirm"
+
+    result = parse("cb destroy abc --confirm ")
+    result.should be_empty
   end
 
   it "firewall" do

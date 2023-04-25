@@ -44,10 +44,12 @@ class CB::Completion
       top_level
     else
       case args.first
-      when "info", "destroy", "rename", "logs", "suspend", "resume"
+      when "info", "rename", "logs", "suspend", "resume"
         single_cluster_suggestion
       when "create"
         create
+      when "destroy"
+        destroy_cluster
       when "detach"
         detach
       when "firewall"
@@ -241,6 +243,14 @@ class CB::Completion
     if last_arg?(flag)
       cluster_suggestions
     end
+  end
+
+  def destroy_cluster
+    return cluster_suggestions if @args.size == 2
+
+    suggest = [] of String
+    suggest << "--confirm\tconfirm cluster #{@args.first}" unless has_full_flag? :confirm
+    suggest
   end
 
   def list_clusters
