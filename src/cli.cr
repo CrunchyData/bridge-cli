@@ -137,8 +137,8 @@ op = OptionParser.new do |parser|
     create = set_action ClusterCreate
     parser.banner = <<-EOB
       cb create <--platform|-p> <--region|-r> <--plan> <--team|-t> [--size|-s] [--name|-n] [--version|-v] [--ha] [--network]
-             cb create --fork ID [--at] [--platform|-p] [--region|-r] [--plan] [--size|-s] [--name|-n] [--ha] [--network]
-             cb create --replica ID [--platform|-p] [--region|-r] [--plan] [--name|-n] [--network]
+          cb create --fork ID [--at] [--platform|-p] [--region|-r] [--plan] [--size|-s] [--name|-n] [--ha] [--network]
+          cb create --replica ID [--platform|-p] [--region|-r] [--plan] [--name|-n] [--network]
     EOB
 
     parser.on("--ha <true|false>", "High Availability (default: false)") { |arg| create.ha = arg }
@@ -154,6 +154,21 @@ op = OptionParser.new do |parser|
     parser.on("--replica ID", "Choose source cluster for read-replica") { |arg| create.replica = arg }
     parser.on("--fork ID", "Choose source cluster for fork") { |arg| create.fork = arg }
     parser.on("--at TIME", "Recovery point-in-time in RFC3339 (default: now)") { |arg| create.at = arg }
+
+    parser.examples = <<-EXAMPLES
+      Create a new cluster.
+      $ cb create --name <NAME> --platform <NAME> --region <NAME> --plan <NAME>
+      
+      Create a fork.
+      $ cb create --fork <ID>
+      
+      Create a read-replica.
+      $ cb create --replica <ID>
+
+      Create a cross platform fork/replica.
+      $ cb create --fork <ID> --platform <NAME> --region <NAME> --plan <NAME>
+      $ cb create --replica <ID> --platform <NAME> --region <NAME> --plan <NAME>
+    EXAMPLES
   end
 
   # Cluster Upgrade
@@ -235,8 +250,10 @@ op = OptionParser.new do |parser|
   end
 
   parser.on("destroy", "Destroy a cluster") do
-    parser.banner = "cb destroy <cluster id>"
+    parser.banner = "cb destroy <cluster id> [--confirm]"
     destroy = set_action ClusterDestroy
+
+    parser.on("--confirm", "Confirm cluster restart") { destroy.confirmed = true }
 
     positional_args destroy.cluster_id
   end

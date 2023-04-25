@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and a pending upgrade respectively.
 
 ### Fixed
+- `cb destroy` completion to include `--confirm`.
 - `cb psql` no longer overrides a users `.psqlrc` with `\x auto` which was
   causing unexpected formatting for some users.
 - `cb info` now returns new cluster states: `resuming`, `suspended`, `suspending`.
