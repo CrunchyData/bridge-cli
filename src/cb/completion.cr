@@ -54,6 +54,8 @@ class CB::Completion
         firewall
       when "logdest"
         logdest
+      when "list"
+        list_clusters
       when "maintenance"
         maintenance
       when "network"
@@ -239,6 +241,16 @@ class CB::Completion
     if last_arg?(flag)
       cluster_suggestions
     end
+  end
+
+  def list_clusters
+    if last_arg?("--team")
+      return team_suggestions
+    end
+
+    suggest = [] of String
+    suggest << "--team\tteam id" unless has_full_flag? :team
+    suggest
   end
 
   def firewall
