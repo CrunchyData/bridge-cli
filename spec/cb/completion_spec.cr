@@ -303,6 +303,17 @@ Spectator.describe CB::Completion do
     expect(result).to eq [] of String
   end
 
+  it "list" do
+    result = parse("cb list ")
+    expect(result).to have_option "--team"
+
+    result = parse("cb list --team ")
+    expect(result).to eq expected_team_suggestion
+
+    result = parse("cb list --team abc ")
+    expect(result).to eq [] of String
+  end
+
   it "logdest" do
     result = parse("cb logdest ")
     expect(result).to have_option "list"
