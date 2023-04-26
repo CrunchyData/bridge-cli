@@ -160,7 +160,7 @@ module CB
       raise Error.new "Invalid #{field.colorize.bold}: '#{value.to_s.colorize.red}'"
     end
 
-    private def check_required_args
+    private def check_required_args(&)
       missing = [] of String
       yield missing
       unless missing.empty?

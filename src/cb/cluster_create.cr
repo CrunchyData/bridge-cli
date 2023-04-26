@@ -15,7 +15,7 @@ class CB::ClusterCreate < CB::APIAction
   property at : Time?
 
   def pre_validate
-    if (id = fork || replica)
+    if id = fork || replica
       source = client.get_cluster id
       @name ||= "#{fork ? "Fork" : "Replica"} of #{source.name}"
     else

@@ -28,7 +28,7 @@ Colorize.on_tty_only!
 
 class IO
   # no-op for non-file descriptor IOs, e.g. specs
-  def noecho
+  def noecho(&)
     yield
   end
 end
