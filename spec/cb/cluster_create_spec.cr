@@ -25,6 +25,38 @@ Spectator.describe CB::ClusterCreate do
     end
   end
 
+  describe "#pre_validate" do
+    before_each {
+      expect(client).to receive(:get_cluster).and_return(cluster)
+    }
+
+    it "fills in defaults for replica" do
+      expect(&.name).to be_nil
+
+      action.replica = cluster.id
+
+      expect(&.pre_validate).to_not raise_error
+      expect(&.name).to eq "Replica of abc"
+    end
+
+    it "fills in defaults for fork" do
+      expect(&.name).to be_nil
+
+      action.fork = cluster.id
+
+      expect(&.pre_validate).to_not raise_error
+      expect(&.name).to eq "Fork of abc"
+    end
+
+    it "overwrites defaults" do
+      action.fork = cluster.id
+      action.name = "given name"
+
+      expect(&.pre_validate).to_not raise_error
+      expect(&.name).to eq "given name"
+    end
+  end
+
   describe "#at=" do
     sample ["", "hi", "2021-03-06T00:00:00"] do |at|
       it "does not allow invalid values" do
@@ -119,98 +151,6 @@ Spectator.describe CB::ClusterCreate do
       action.call
 
       expect(&.output.to_s).to eq "Created cluster pkdpq6yynjgjbps4otxd7il2u4 \"abc\"\n"
-    end
-  end
-
-  describe "#call - replica" do
-    before_each {
-      expect(client).to receive(:get_cluster).and_return(cluster)
-    }
-
-    it "fills in defaults from the source cluster" do
-      expect(&.name).to be_nil
-      expect(&.platform).to be_nil
-      expect(&.region).to be_nil
-      expect(&.storage).to be_nil
-      expect(&.plan).to be_nil
-      expect(&.network).to be_nil
-
-      action.fork = cluster.id
-      expect(&.pre_validate).to_not raise_error
-
-      expect(&.name).to eq "Fork of abc"
-      expect(&.platform).to eq "aws"
-      expect(&.region).to eq "us-east-2"
-      expect(&.storage).to eq 1234
-      expect(&.plan).to eq "memory-4"
-      expect(&.network).to eq cluster.network_id
-
-      expect(&.validate).to be_true
-    end
-
-    it "does not overwrite values given with defaults from source cluster" do
-      action.fork = cluster.id
-      action.name = "given name"
-      action.platform = "gcp"
-      action.region = "centralus"
-      action.plan = "cpu-100"
-      action.storage = 4321
-      action.network = "cywdcbebozfczpsnl2ha643m3e"
-
-      expect(&.pre_validate).to_not raise_error
-
-      expect(&.name).to eq "given name"
-      expect(&.platform).to eq "gcp"
-      expect(&.region).to eq "centralus"
-      expect(&.plan).to eq "cpu-100"
-      expect(&.storage).to eq 4321
-      expect(&.network).to eq "cywdcbebozfczpsnl2ha643m3e"
-
-      expect(&.validate).to be_true
-    end
-  end
-
-  describe "#call - fork" do
-    before_each {
-      expect(client).to receive(:get_cluster).and_return(cluster)
-    }
-
-    it "fills in defaults from the source cluster" do
-      expect(&.name).to be_nil
-      expect(&.platform).to be_nil
-      expect(&.region).to be_nil
-      expect(&.storage).to be_nil
-      expect(&.plan).to be_nil
-
-      action.fork = cluster.id
-      expect(&.pre_validate).to_not raise_error
-
-      expect(&.name).to eq "Fork of abc"
-      expect(&.platform).to eq "aws"
-      expect(&.region).to eq "us-east-2"
-      expect(&.storage).to eq 1234
-      expect(&.plan).to eq "memory-4"
-
-      expect(&.validate).to be_true
-    end
-
-    it "does not overwrite values given with defaults from source cluster" do
-      action.fork = cluster.id
-      action.name = "given name"
-      action.platform = "gcp"
-      action.region = "centralus"
-      action.plan = "cpu-100"
-      action.storage = 4321
-
-      expect(&.pre_validate).to_not raise_error
-
-      expect(&.name).to eq "given name"
-      expect(&.platform).to eq "gcp"
-      expect(&.region).to eq "centralus"
-      expect(&.plan).to eq "cpu-100"
-      expect(&.storage).to eq 4321
-
-      expect(&.validate).to be_true
     end
   end
 end

@@ -158,10 +158,10 @@ op = OptionParser.new do |parser|
     parser.examples = <<-EXAMPLES
       Create a new cluster.
       $ cb create --name <NAME> --platform <NAME> --region <NAME> --plan <NAME>
-      
+
       Create a fork.
       $ cb create --fork <ID>
-      
+
       Create a read-replica.
       $ cb create --replica <ID>
 
