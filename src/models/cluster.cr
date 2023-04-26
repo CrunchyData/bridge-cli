@@ -22,7 +22,7 @@ module CB::Model
 
     property name : String
 
-    property network_id : String
+    property network_id : String?
 
     property plan_id : String
 
@@ -49,7 +49,7 @@ module CB::Model
                    @maintenance_window_start = nil,
                    @major_version = 0,
                    @memory = 0,
-                   @network_id = "",
+                   @network_id = nil,
                    @plan_id = "",
                    @provider_id = "",
                    @region_id = "",
