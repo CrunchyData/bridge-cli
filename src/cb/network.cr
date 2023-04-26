@@ -15,7 +15,7 @@ module CB
     # has an effect when the output format is `table`.
     property no_header : Bool = false
 
-    def run
+    def run(&)
       validate
 
       yield

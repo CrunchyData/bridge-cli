@@ -1,3 +1,10 @@
+Layout/TrailingWhitespace:
+  Description: Disallows trailing whitespace.
+  Excluded:
+  # exclude spec files as some expected output might contain trailing
+  # whitespaces.
+  - spec/*/***
+
 Metrics/CyclomaticComplexity:
   Description: Disallows methods with a cyclomatic complexity higher than `MaxComplexity`
   MaxComplexity: 10
@@ -5,11 +12,11 @@ Metrics/CyclomaticComplexity:
   - src/cb/completion.cr
   Enabled: true
   Severity: Convention
-
-Layout/TrailingWhitespace:
-  Description: Disallows trailing whitespace.
-  Excluded:
-  # exclude spec files as some expected output might contain trailing
-  # whitespaces.
-  - spec/*/***
   Enabled: true
+
+# TODO (abrightwell): Disabled as it was unnecessarily noisy and none of the
+# fields being flagged truly needed to be converted at this time. However, it's
+# probably a good idea to come back through and check them again in the near
+# future. Especially if it might improve functionality. 
+Style/QueryBoolMethods:
+  Enabled: false
