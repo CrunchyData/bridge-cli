@@ -16,8 +16,9 @@
         pkgs = nixpkgs.legacyPackages.${system};
         crystal-pkgs = nixpkgs-crunchy.packages.${system};
 
+        ameba = crystal-pkgs.ameba;
         crystal = crystal-pkgs.crystal;
-        crystalWrapped = crystal-pkgs.extraWrapped.override {
+        crystalWrapped = crystal-pkgs.crystalWrapped.override {
           buildInputs = [ pkgs.libssh2 ];
         };
 
@@ -32,7 +33,7 @@
         };
 
         devShells.default = pkgs.mkShell {
-          buildInputs = [ crystalWrapped c2n ];
+          buildInputs = [ crystalWrapped c2n ameba ];
         };
 
       }
