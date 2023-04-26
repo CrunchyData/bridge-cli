@@ -154,54 +154,71 @@ class CB::Completion
     client.get_teams.map { |t| "#{t.id}\t#{t.name}" }
   end
 
-  def create
-    if args.includes? "--help"
-      return [] of String
-    end
+  def create_fork_suggest
+    return cluster_suggestions if last_arg? "--fork"
+    return suggest_none if last_arg? "--at"
 
-    if args.includes? "--network"
-      return [] of String
-    end
-
-    if last_arg? "-n", "--name"
-      return [] of String
-    end
-
-    if last_arg? "--at"
-      return [] of String
-    end
-
-    if last_arg? "-v", "--version"
-      return [] of String
-    end
-
-    cluster_suggest("--fork").tap { |s| return s if s }
-    cluster_suggest("--replica").tap { |s| return s if s }
     platform_region_plan_suggest.tap { |s| return s if s }
     storage_suggest.tap { |s| return s if s }
 
-    if last_arg? "--team", "-t"
-      return teams
-    end
-
-    if last_arg? "--ha"
-      return ["false", "true"]
-    end
-
-    # return missing args
     suggest = [] of String
-    suggest << "--fork\tcluster to fork" unless has_full_flag?(:fork) || has_full_flag?(:replica)
-    suggest << "--replica\tcluster create read-reaplica from" unless has_full_flag?(:fork) || has_full_flag?(:replica)
-    suggest << "--at\tPITR time in RFC3339" if has_full_flag?(:fork) && !has_full_flag?(:at)
+    suggest << "--at\tPITR time in RFC3339" unless has_full_flag?(:at)
+    suggest << "--ha\thigh availability" unless has_full_flag?(:ha)
     suggest << "--help\tshow help" if args.size == 2
-    suggest << "--platform\tcloud provider" unless has_full_flag? :platform
-    suggest << "--team\tcrunchy bridge team" unless has_full_flag?(:team) || has_full_flag?(:fork) || has_full_flag?(:replica)
-    suggest << "--storage\tstorage size in GiB" unless has_full_flag?(:storage) || has_full_flag?(:replica)
-    suggest << "--ha\thigh availability" unless has_full_flag?(:ha) || has_full_flag?(:replica)
     suggest << "--name\tcluster name" unless has_full_flag? :name
     suggest << "--network\tnetwork id" unless has_full_flag? :network
+    suggest << "--platform\tcloud provider" unless has_full_flag? :platform
+    suggest << "--storage\tstorage size in GiB" unless has_full_flag?(:storage) || has_full_flag?(:replica)
     suggest << "--version\tmajor version" unless has_full_flag?(:version) || has_full_flag?(:fork) || has_full_flag?(:replica)
     suggest
+  end
+
+  def create_replica_suggest
+    if last_arg? "--replica"
+      return cluster_suggestions
+    end
+
+    platform_region_plan_suggest.tap { |s| return s if s }
+
+    suggest = [] of String
+    suggest << "--help\tshow help" if args.size == 2
+    suggest << "--name\tcluster name" unless has_full_flag? :name
+    suggest << "--network\tnetwork id" unless has_full_flag? :network
+    suggest << "--platform\tcloud provider" unless has_full_flag? :platform
+    suggest
+  end
+
+  def create_standalone_suggest
+    return teams if last_arg? "-t", "--team"
+
+    platform_region_plan_suggest.tap { |s| return s if s }
+    storage_suggest.tap { |s| return s if s }
+
+    suggest = [] of String
+    suggest << "--fork\tcluster to fork" unless has_full_flag?(:fork) || has_full_flag?(:replica)
+    suggest << "--ha\thigh availability" unless has_full_flag?(:ha) || has_full_flag?(:replica)
+    suggest << "--help\tshow help" if args.size == 2
+    suggest << "--name\tcluster name" unless has_full_flag? :name
+    suggest << "--network\tnetwork id" unless has_full_flag? :network
+    suggest << "--platform\tcloud provider" unless has_full_flag? :platform
+    suggest << "--replica\tcluster create read-reaplica from" unless has_full_flag?(:fork) || has_full_flag?(:replica)
+    suggest << "--storage\tstorage size in GiB" unless has_full_flag?(:storage) || has_full_flag?(:replica)
+    suggest << "--team\tcrunchy bridge team" unless has_full_flag?(:team)
+    suggest << "--version\tmajor version" unless has_full_flag?(:version)
+    suggest
+  end
+
+  def create
+    return suggest_none if args.includes? "--help"
+
+    return suggest_bool if last_arg? "--ha"
+    return suggest_none if last_arg? "-n", "--name"
+    return suggest_none if last_arg? "--network"
+    return suggest_none if last_arg? "-v", "--version"
+
+    create_fork_suggest.tap { |s| return s if s } if args.includes? "--fork"
+    create_replica_suggest.tap { |s| return s if s } if args.includes? "--replica"
+    create_standalone_suggest.tap { |s| return s if s }
   end
 
   private def platform_region_plan_suggest

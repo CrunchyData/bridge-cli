@@ -48,19 +48,45 @@ module CB
       raise Program::Error.new "cluster #{id.colorize.t_id} does not exist, or you do not have access to it"
     end
 
+    @[JSON::Serializable::Options(emit_nulls: false)]
+    abstract struct CommonCreateParams
+      include JSON::Serializable
+      property name : String
+      property network_id : String?
+      property plan_id : String?
+      property provider_id : String?
+      property region_id : String?
+
+      def initialize(
+        @name,
+        @network_id = nil,
+        @plan_id = nil,
+        @provider_id = nil,
+        @region_id = nil
+      )
+      end
+    end
+
+    struct ClusterCreateParams < CommonCreateParams
+      property environment : String?
+      property is_ha : Bool?
+      property postgres_version_id : Int32?
+      property storage : Int32?
+      property team_id : String
+
+      def initialize(
+        @name, @plan_id, @provider_id, @region_id, @team_id,
+        @environment = nil,
+        @is_ha = nil,
+        @postgres_version_id = nil,
+        @storage = nil,
+        @network_id = nil
+      )
+      end
+    end
+
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clusters/post
-    def create_cluster(params)
-      # body = {
-      #   is_ha:               cc.ha,
-      #   name:                cc.name,
-      #   plan_id:             cc.plan,
-      #   provider_id:         cc.platform,
-      #   postgres_version_id: cc.postgres_version,
-      #   region_id:           cc.region,
-      #   storage:             cc.storage,
-      #   team_id:             cc.team,
-      #   network_id:          cc.network,
-      # }
+    def create_cluster(params : ClusterCreateParams)
       resp = post "clusters", params
       CB::Model::Cluster.from_json resp.body
     end
@@ -76,18 +102,29 @@ module CB
       CB::Model::Cluster.from_json resp.body
     end
 
+    struct ForkCreateParams < CommonCreateParams
+      @[JSON::Field(ignore: true)]
+      property cluster_id : String
+      property is_ha : Bool?
+      property storage : Int32?
+      property target_time : Time?
+
+      def initialize(
+        @cluster_id, @name,
+        @is_ha = nil,
+        @network_id = nil,
+        @plan_id = nil,
+        @provider_id = nil,
+        @region_id = nil,
+        @storage = nil,
+        @target_time = nil
+      )
+      end
+    end
+
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridforks/post
-    def fork_cluster(cc)
-      resp = post "clusters/#{cc.fork}/forks", {
-        name:        cc.name,
-        plan_id:     cc.plan,
-        storage:     cc.storage,
-        provider_id: cc.platform,
-        target_time: cc.at.try(&.to_rfc3339),
-        region_id:   cc.region,
-        is_ha:       cc.ha,
-        network_id:  cc.network,
-      }
+    def create_fork(params : ForkCreateParams)
+      resp = post "clusters/#{params.cluster_id}/forks", params
       CB::Model::Cluster.from_json resp.body
     end
 
@@ -131,15 +168,24 @@ module CB
       CB::Model::Cluster.from_json resp.body
     end
 
+    struct ReplicaCreateParams < CommonCreateParams
+      @[JSON::Field(ignore: true)]
+      property cluster_id : String
+
+      def initialize(
+        @cluster_id,
+        @name,
+        @network_id = nil,
+        @plan_id = nil,
+        @provider_id = nil,
+        @region_id = nil
+      )
+      end
+    end
+
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridreplicas/create-cluster-replica
-    def replicate_cluster(cc)
-      resp = post "clusters/#{cc.replica}/replicas", {
-        name:        cc.name,
-        plan_id:     cc.plan,
-        provider_id: cc.platform,
-        region_id:   cc.region,
-        network_id:  cc.network,
-      }
+    def create_replica(params : ReplicaCreateParams)
+      resp = post "clusters/#{params.cluster_id}/replicas", params
       CB::Model::Cluster.from_json resp.body
     end
 

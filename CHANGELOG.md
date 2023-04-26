@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- `cb create --fork` and `cb create --replica` now supports cross platform
+  creation.
 - `cb list` command now accepts `--format`. Supports: `table` and `tree`.
 - `cb list` command now accepts `--team`.
 - `cb maintenance update` and `cb upgrade update` update a pending maintenance
@@ -13,12 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - `cb destroy` completion to include `--confirm`.
+- `cb info` now returns new cluster states: `resuming`, `suspended`, `suspending`.
+- `cb logs` fails without error message.
+- `cb maintenance cancel` now only cancels maintenances.
 - `cb psql` no longer overrides a users `.psqlrc` with `\x auto` which was
   causing unexpected formatting for some users.
-- `cb info` now returns new cluster states: `resuming`, `suspended`, `suspending`.
 - `cb upgrade cancel` now only cancels upgrades.
-- `cb maintenance cancel` now only cancels only maintenances.
-- `cb logs` fails without error message.
 - `cb upgrade start --starting-from` now checks that it is in less than 72 hours.
 
 
