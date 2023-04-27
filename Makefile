@@ -24,8 +24,9 @@ ifeq ($(shell [[ "$(TARGET_OS)" == "darwin" && "$(STATIC_LIBS)" != "" ]] && echo
   BDWGC_LIB_PATH    ?= $(shell pkg-config --libs-only-L bdw-gc | cut -c 3-)
   LIBEVENT_LIB_PATH ?= $(shell pkg-config --libs-only-L libevent | cut -c 3-)
   LIBPCRE_LIB_PATH  ?= $(shell pkg-config --libs-only-L libpcre | cut -c 3-)
-  OPENSSL_LIB_PATH  ?= $(shell pkg-config --libs-only-L openssl | cut -c 3-)/lib
-  LIBSSH2_LIB_PATH  ?= $(shell pkg-config --libs-only-L libssh2 | cut -c 3-)/lib
+  OPENSSL_LIB_PATH  ?= $(shell brew --prefix openssl@1.1)/lib
+  LIBSSH2_LIB_PATH  ?= $(shell brew --prefix libssh2)/lib
+  export PKG_CONFIG_PATH=$(OPENSSL_LIB_PATH)/pkgconfig
 
   vendor/libcrypto.a: $(OPENSSL_LIB_PATH)/libcrypto.a
 	  mkdir -p $(STATIC_LIBS_DIR)
