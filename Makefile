@@ -40,7 +40,7 @@ ifeq ($(shell [[ "$(TARGET_OS)" == "darwin" && "$(STATIC_LIBS)" != "" ]] && echo
 		mkdir -p $(STATIC_LIBS_DIR)
 		cp -f $(BDWGC_LIB_PATH)/libgc.a $(STATIC_LIBS_DIR)
 
-  vendor/libpcre.a: $(LIBPCRE_LIB_PATH)/libpcre.a
+  vendor/libpcre.a: $(LIBPCRE_LIB_PATH)/libpcre2-8.a
 		mkdir -p $(STATIC_LIBS_DIR)
 		cp -f $(LIBPCRE_LIB_PATH)/libpcre.a $(STATIC_LIBS_DIR)
 
