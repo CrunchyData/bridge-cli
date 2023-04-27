@@ -42,7 +42,7 @@ ifeq ($(shell [[ "$(TARGET_OS)" == "darwin" && "$(STATIC_LIBS)" != "" ]] && echo
 
   vendor/libpcre.a: $(LIBPCRE_LIB_PATH)/libpcre2-8.a
 		mkdir -p $(STATIC_LIBS_DIR)
-		cp -f $(LIBPCRE_LIB_PATH)/libpcre.a $(STATIC_LIBS_DIR)
+		cp -f $(LIBPCRE_LIB_PATH)/libpcre2-8.a $(STATIC_LIBS_DIR)
 
   vendor/libssl.a: $(OPENSSL_LIB_PATH)/libssl.a
 		mkdir -p $(OPENSSL_LIB_PATH)
