@@ -81,6 +81,10 @@ jobs:
         brew tap mitchellh/gon
         brew install mitchellh/gon/gon
 
+    - name: Install pcre2
+      run: |
+        brew install pcre2
+
     - name: Install dependencies
       run: shards install
 
