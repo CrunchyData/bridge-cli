@@ -203,7 +203,7 @@ class CB::MaintenanceUpdate < CB::UpdateUpgradeAction
       return
     end
 
-    confirm_action("update", " pending", "maintenance") unless confirmed
+    confirm_action("update pending maintenance", "cluster", c.name) unless confirmed
 
     client.update_upgrade_cluster self
     output.puts "  maintenance updated."
@@ -229,7 +229,7 @@ class CB::UpgradeUpdate < CB::UpdateUpgradeAction
       return
     end
 
-    confirm_action("update", " pending", "upgrade") unless confirmed
+    confirm_action("update pending upgrade", "cluster", c.name) unless confirmed
 
     client.update_upgrade_cluster self
     output.puts "  upgrade updated."
