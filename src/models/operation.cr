@@ -17,12 +17,14 @@ module CB::Model
     end
 
     enum State
+      Canceling
       Creating
       DisablingHA
       EnablingHA
       FailingOver
       InProgress
       Ready
+      ReplayingWAL
       Scheduled
       WaitingForHAStandby
 
