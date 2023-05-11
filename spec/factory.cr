@@ -134,7 +134,7 @@ module Factory
     CB::Model::Network.new **params
   end
 
-  def operation(**params)
+  def operation(**params) : CB::Model::Operation
     params = {
       flavor:        CB::Model::Operation::Flavor::Resize,
       state:         CB::Model::Operation::State::InProgress,

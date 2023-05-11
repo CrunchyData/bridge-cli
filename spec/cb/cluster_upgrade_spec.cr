@@ -22,18 +22,143 @@ Spectator.describe CB::UpgradeStart do
         action.validate
       }.to raise_error Program::Error, "'--starting-from' should be in less than 72 hours"
     end
+
+    it "errors if both ha and any other upgrade is set at the same time" do
+      action.cluster_id = cluster.id
+      action.ha = false
+      action.storage = 150
+
+      expect {
+        action.validate
+      }.to raise_error Program::Error, "--ha is not valid with any other modifications such as '--storage' or '--version'"
+    end
+  end
+  describe "#run" do
+    it "prints cluster upgrade started" do
+      action.cluster_id = cluster.id
+      action.confirmed = true
+
+      expect(client).to receive(:get_cluster).and_return(cluster)
+      expect(client).to receive(:upgrade_cluster).and_return([] of CB::Model::Operation)
+
+      action.call
+
+      expect(&.output.to_s).to eq "  Cluster #{action.cluster_id} upgrade started.\n"
+    end
+  end
+end
+
+Spectator.describe CB::UpgradeStart do
+  subject(action) { described_class.new client: client, output: IO::Memory.new }
+
+  mock_client do
+    def enable_ha(id : Identifier)
+      Factory.operation(
+        flavor: CB::Model::Operation::Flavor::HAChange,
+        state: CB::Model::Operation::State::EnablingHA
+      )
+    end
   end
 
-  it "#run prints cluster upgrade started" do
+  let(cluster) { Factory.cluster }
+
+  it "uses action/enable-ha to enable" do
     action.cluster_id = cluster.id
     action.confirmed = true
+    action.ha = true
 
     expect(client).to receive(:get_cluster).and_return(cluster)
-    expect(client).to receive(:upgrade_cluster).and_return([] of CB::Model::Operation)
 
     action.call
 
-    expect(&.output.to_s).to eq "  Cluster #{action.cluster_id} upgrade started.\n"
+    expect(&.output.to_s).to eq "  Enabling high availability on cluster #{action.cluster_id}.\n"
+  end
+end
+
+Spectator.describe CB::UpgradeStart do
+  subject(action) { described_class.new client: client, output: IO::Memory.new }
+
+  mock_client do
+    def enable_ha(id : Identifier)
+      nil
+    end
+
+    def disable_ha(id : Identifier)
+      nil
+    end
+  end
+
+  let(cluster) { Factory.cluster }
+
+  before_each {
+    action.cluster_id = cluster.id
+    action.confirmed = true
+    expect(client).to receive(:get_cluster).and_return(cluster)
+  }
+
+  it "reports if it's already enabled" do
+    action.ha = true
+    action.call
+
+    expect(&.output.to_s).to eq "  High availability already enabled on cluster #{action.cluster_id}.\n"
+  end
+
+  it "reports if it's already disabled" do
+    action.ha = false
+    action.call
+
+    expect(&.output.to_s).to eq "  High availability already disabled on cluster #{action.cluster_id}.\n"
+  end
+end
+
+Spectator.describe CB::UpgradeStart do
+  subject(action) { described_class.new client: client, output: IO::Memory.new }
+
+  mock_client do
+    def disable_ha(id : Identifier)
+      Factory.operation(
+        flavor: CB::Model::Operation::Flavor::HAChange,
+        state: CB::Model::Operation::State::DisablingHA
+      )
+    end
+  end
+
+  let(cluster) { Factory.cluster }
+
+  it "uses action/disable-ha to disable" do
+    action.cluster_id = cluster.id
+    action.confirmed = true
+    action.ha = false
+
+    expect(client).to receive(:get_cluster).and_return(cluster)
+
+    action.call
+
+    expect(&.output.to_s).to eq "  Disabling high availability on cluster #{action.cluster_id}.\n"
+  end
+end
+
+Spectator.describe CB::UpgradeStart do
+  subject(action) { described_class.new client: client, output: IO::Memory.new }
+
+  mock_client do
+    def enable_ha(id : Identifier)
+      Factory.operation
+    end
+  end
+
+  let(cluster) { Factory.cluster }
+
+  it "display not recognized operation" do
+    action.cluster_id = cluster.id
+    action.confirmed = true
+    action.ha = true
+
+    expect(client).to receive(:get_cluster).and_return(cluster)
+
+    action.call
+
+    expect(&.output.to_s).to eq "  Operation not recognized: CB::Model::Operation(@flavor=CB::Model::Operation::Flavor::Resize, @state=CB::Model::Operation::State::InProgress, @starting_from=nil)\n"
   end
 end
 
