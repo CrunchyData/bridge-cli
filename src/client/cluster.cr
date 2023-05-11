@@ -198,6 +198,22 @@ module CB
       CB::Model::Cluster.from_json resp.body
     end
 
+    # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridactionsdisable-ha/disable-high-availability
+    def disable_ha(id : Identifier) : CB::Model::Operation?
+      resp = put "clusters/#{id}/actions/disable-ha"
+      json = JSON.parse(resp.body)
+      return CB::Model::Operation.from_json resp.body if (flavor = json["flavor"]?) && !flavor.as_s.empty?
+      nil
+    end
+
+    # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridactionsenable-ha/enable-high-availability
+    def enable_ha(id : Identifier) : CB::Model::Operation?
+      resp = put "clusters/#{id}/actions/enable-ha"
+      json = JSON.parse(resp.body)
+      return CB::Model::Operation.from_json resp.body if (flavor = json["flavor"]?) && !flavor.as_s.empty?
+      nil
+    end
+
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridrestart/restart-cluster
     def restart_cluster(id, service : String)
       resp = put "clusters/#{id}/actions/restart", {service: service}

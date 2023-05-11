@@ -32,6 +32,8 @@ abstract class CB::UpgradeAction < CB::Upgrade
     end
 
     raise Error.new "'--starting-from' should be in less than 72 hours" if (start = @starting_from) && start > (Time.utc + Time::Span.new(hours: 72))
+
+    raise Error.new "--ha is not valid with any other modifications such as '--storage' or '--version'" if !ha.nil? && (postgres_version || storage || starting_from)
     true
   end
 end
@@ -43,9 +45,31 @@ class CB::UpgradeStart < CB::UpgradeAction
 
     c = client.get_cluster cluster_id
     confirm_action("upgrade", "cluster", c.name) unless confirmed
+    if !ha.nil?
+      wanted = ""
+      operation = nil
+      if ha
+        wanted = "enabled"
+        operation = client.enable_ha(Identifier.new c.id)
+      else
+        wanted = "disabled"
+        operation = client.disable_ha(Identifier.new c.id)
+      end
 
-    client.upgrade_cluster self
-    output.puts "  Cluster #{c.id.colorize.t_id} upgrade started."
+      case operation.try &.state
+      when nil
+        output.puts "  High availability already #{wanted} on cluster #{c.id.colorize.t_id}."
+      when CB::Model::Operation::State::DisablingHA
+        output.puts "  Disabling high availability on cluster #{c.id.colorize.t_id}."
+      when CB::Model::Operation::State::EnablingHA, CB::Model::Operation::State::WaitingForHAStandby
+        output.puts "  Enabling high availability on cluster #{c.id.colorize.t_id}."
+      else
+        output.puts "  Operation not recognized: #{operation.inspect}"
+      end
+    else
+      client.upgrade_cluster self
+      output.puts "  Cluster #{c.id.colorize.t_id} upgrade started."
+    end
   end
 end
 

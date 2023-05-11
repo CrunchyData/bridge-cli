@@ -1079,7 +1079,14 @@ class CB::Completion
     suggest << "--help\tshow help" if args.size == 3
     suggest << "--cluster\tcluster id" unless has_full_flag? :cluster
     suggest << "--confirm\tconfirm upgrade" unless has_full_flag? :confirm
-    suggest << "--ha\thigh availability" unless has_full_flag? :ha
+
+    return suggest if has_full_flag? :ha
+
+    upgrade_flags = %i[plan storage starting_from now version]
+    if upgrade_flags.none? { |flag| has_full_flag? flag }
+      suggest << "--ha\thigh availability"
+    end
+
     suggest << "--plan\tplan" unless has_full_flag? :plan
     suggest << "--storage\tsize in GiB" unless has_full_flag? :storage
     suggest << "--starting-from\tstarting time of upgrade. (RFC3339 format)" unless has_full_flag?(:starting_from) || has_full_flag?(:now)

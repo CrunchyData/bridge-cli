@@ -965,6 +965,11 @@ Spectator.describe CB::Completion do
     result = parse("cb upgrade start --ha true ")
     expect(result).to have_option "--cluster"
     expect(result).to_not have_option "--ha"
+    expect(result).to_not have_option "--storage"
+
+    result = parse("cb upgrade start --cluster abc --version 15 ")
+    expect(result).to_not have_option "--ha"
+    expect(result).to have_option "--plan"
 
     # cb upgrade cancel
     result = parse("cb upgrade c")
