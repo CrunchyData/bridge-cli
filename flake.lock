@@ -17,6 +17,23 @@
         "type": "github"
       }
     },
+    "crystal-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1683622346,
+        "narHash": "sha256-YAORdipzpC9CrFgZUFlFfjzlJQ6ZeA2ekVu8IfPOxR8=",
+        "owner": "crystal-lang",
+        "repo": "crystal",
+        "rev": "7aa5cdd86544005a37090f848d1304df1c181fa4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "crystal-lang",
+        "ref": "release/1.8",
+        "repo": "crystal",
+        "type": "github"
+      }
+    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -70,11 +87,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1682109806,
-        "narHash": "sha256-d9g7RKNShMLboTWwukM+RObDWWpHKaqTYXB48clBWXI=",
+        "lastModified": 1684120848,
+        "narHash": "sha256-gIwJ5ac1FwZEkCRwjY+gLwgD4G1Bw3Xtr2jr2XihMPo=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "2362848adf8def2866fabbffc50462e929d7fffb",
+        "rev": "0cb867999eec4085e1c9ca61c09b72261fa63bb4",
         "type": "github"
       },
       "original": {
@@ -87,15 +104,16 @@
     "nixpkgs-crunchy": {
       "inputs": {
         "ameba-src": "ameba-src",
+        "crystal-src": "crystal-src",
         "flake-utils": "flake-utils_2",
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1682499061,
-        "narHash": "sha256-QREk35hQaEFxCJUFx2t4C/WPOYZAvIcnwqLiy4zI10c=",
+        "lastModified": 1683720464,
+        "narHash": "sha256-ixnSeIrvUAXPZEdod1ZB1VA4KFoSpq8qudJLJhIS2pU=",
         "owner": "crunchydata",
         "repo": "nixpkgs",
-        "rev": "cafe26edb06e59ceb835038631d741354ec5c064",
+        "rev": "cafeaeffaf84d2a0d119b163af684f9f38891e69",
         "type": "github"
       },
       "original": {
