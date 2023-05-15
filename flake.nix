@@ -25,6 +25,11 @@
         src = filterSrc (shardFiles ++ [ "Readme" "Changelog" ]);
         specSrc = filterSrc shardFiles;
         lintSrc = filterSrc [ ".ameba.yml" ];
+
+        darwinBuildInputs = [
+          pkgs.darwin.apple_sdk.frameworks.Foundation
+          pkgs.darwin.apple_sdk.frameworks.Security
+        ];
       in
       rec {
         packages.default = crystal.mkPkg {
@@ -36,7 +41,9 @@
 
         devShells.default = pkgs.mkShell {
           buildInputs = with crunchy; [ crystal2nix ameba ]
-            ++ [ crystal check ];
+          ++ [ crystal check ]
+          ++ [ pkgs.pcre2 pkgs.pcre pkgs.libyaml ]
+          ++ pkgs.lib.optionals pkgs.stdenv.isDarwin darwinBuildInputs;
         };
 
         checks = {
