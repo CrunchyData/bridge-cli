@@ -74,9 +74,22 @@ module CB
       path.to_s
     end
 
+    private def escape(str) : String
+      String.build do |build|
+        str.each_char do |char|
+          case char
+          when '\''
+            build << "\\'"
+          else
+            build << char
+          end
+        end
+      end
+    end
+
     private def build_psqlrc(c, team_name) : String
       psqlpromptname = String.build do |s|
-        s << "%[%033[32m%]#{team_name}%[%033m%]" << "/" if team_name
+        s << "%[%033[32m%]#{escape(team_name.to_s)}%[%033m%]" << "/" if team_name
         s << "%[%033[36m%]#{c.name}%[%033m%]"
       end
 

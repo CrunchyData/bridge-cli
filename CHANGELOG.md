@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Credentials validation for `cb login` input.
 
+### Fixed
+- `cb psql` escape single-quotes in prompt for team name.
+
 ## [3.3.2] - 2023-05-10
 ### Fixed
 - Operation::State `replaying_wal` parse issue.
