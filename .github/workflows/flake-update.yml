@@ -1,0 +1,66 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+  workflow_dispatch: {}
+  # workflow_dispatch:
+  # schedule:
+  #   - cron: "0 17 * * 1" # 10am pdt / 9am pst, weekly on Monday
+
+jobs:
+  flake_update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: main
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v20
+      - uses: cachix/cachix-action@v12
+        with:
+          name: crunchy-public
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - name: Update flake
+        run: nix flake update
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.BRIDGE_BOT_TOKEN }}
+          title: "Update package dependencies + tidy"
+          body: |
+            This is a change initiated automatically on a weekly basis by a
+            GitHub Action that updates the projects nix flake to their latest
+            versions. This lets us stay up to date incrementally so that updates
+            are less effort to get merged compared to large monolithic updates,
+            and gets us security updates more expediently.
+
+            If the build passes, you are probably A-OK to merge and deploy this.
+            If not, try to dig into what's not working and see if you can fix
+            it.
+
+            Note that although minor/patch level changes are handled
+            automatically, notably major version changes like you'd find in
+            stripe-go are not and those upgrades need to be performed manually.
+            That should theoretically not be a problem if fixes are backported
+            to all previous majors, but in practice they are often not, so it's
+            worthwhile to occasionally look for new majors and integrate them.
+          branch: "flake-update"
+          commit-message: |
+            Update flake.
+
+            Weekly update to the project's flake dependencies initiated by an
+            automatic GitHub Action running on cron. Keeps updates less of a
+            monolithic task and lets security-related patches trickle in more
+            quickly.
+          author: "Bot <bot@crunchydata.com>"
+          committer: "Bot <bot@crunchydata.com>"
+          delete-branch: true
+          reviewers: |
+            abrightwell
