@@ -109,11 +109,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1683720464,
-        "narHash": "sha256-ixnSeIrvUAXPZEdod1ZB1VA4KFoSpq8qudJLJhIS2pU=",
+        "lastModified": 1684754550,
+        "narHash": "sha256-YE5S6OsHFyMW+ygq4u8/CHgiDj5yyRTI8kL0T4Ncdvc=",
         "owner": "crunchydata",
         "repo": "nixpkgs",
-        "rev": "cafeaeffaf84d2a0d119b163af684f9f38891e69",
+        "rev": "cafeac874ac0547f855f40737be35b63110a7704",
         "type": "github"
       },
       "original": {
