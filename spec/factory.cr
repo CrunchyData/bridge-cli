@@ -180,6 +180,19 @@ module Factory
     CB::Model::Role.new **params
   end
 
+  def session_intent(**params)
+    params = {
+      id:         "rruyc6hukvcorh2jnspm232s4m",
+      agent_name: "cb",
+      code:       "cbsic_code",
+      expires_at: Time::ZERO,
+      secret:     nil,
+      session:    nil,
+    }.merge(params)
+
+    CB::Model::SessionIntent.new **params
+  end
+
   def team(**params)
     params = {
       id:            "l2gnkxjv3beifk6abkraerv7de",
