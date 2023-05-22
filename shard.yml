@@ -2,6 +2,8 @@ name: cb
 version: 3.4.0-dev
 
 dependencies:
+  #  keyring:
+  #  github: crunchydata/crystal-keyring
   pg:
     github: will/crystal-pg
   raven:
@@ -14,10 +16,9 @@ dependencies:
     github: epoch/tallboy
 
 development_dependencies:
-  ameba:
-    github: crystal-ameba/ameba
   spectator:
     gitlab: arctic-fox/spectator
+    version: 0.11.6
 
 
 targets:
