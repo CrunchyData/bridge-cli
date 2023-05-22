@@ -6,12 +6,14 @@ dependencies:
   #  github: crunchydata/crystal-keyring
   pg:
     github: will/crystal-pg
-  raven:
-    github: sija/raven.cr
-  ssh2:
-    github: spider-gazelle/ssh2.cr
   promise:
     github: spider-gazelle/promise
+  raven:
+    github: sija/raven.cr
+  retriable:
+    github: sija/retriable.cr
+  ssh2:
+    github: spider-gazelle/ssh2.cr
   tallboy:
     github: epoch/tallboy
 
