@@ -24,6 +24,10 @@ shards:
     git: https://github.com/sija/raven.cr.git
     version: 1.9.2
 
+  retriable:
+    git: https://github.com/sija/retriable.cr.git
+    version: 0.2.4
+
   spectator:
     git: https://gitlab.com/arctic-fox/spectator.git
     version: 0.11.6

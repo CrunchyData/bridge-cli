@@ -1,9 +1,4 @@
 {
-  ameba = {
-    url = "https://github.com/crystal-ameba/ameba.git";
-    rev = "v1.3.1";
-    sha256 = "0qs4x3w0kb5s685ghgj6cnsqbxrjp7iga1racb7d70lr0w2sr7a9";
-  };
   any_hash = {
     url = "https://github.com/sija/any_hash.cr.git";
     rev = "v0.2.5";
@@ -34,10 +29,15 @@
     rev = "v1.9.2";
     sha256 = "1ywh5h98m78cpkjpq9kz0g62flmq2i2lyldha5zc8hdwk6z9q1bi";
   };
+  retriable = {
+    url = "https://github.com/sija/retriable.cr.git";
+    rev = "v0.2.4";
+    sha256 = "1lhdzi6kaabbbx1b2awkmhm6bmj52kxjl6xkn2k7h0sknf78iffk";
+  };
   spectator = {
     url = "https://gitlab.com/arctic-fox/spectator.git";
-    rev = "v0.11.3";
-    sha256 = "08mz5mvy64bfb0a6gnb93r0qqipfkz4pgdfxjcb1n1hj9ljnqjpk";
+    rev = "v0.11.6";
+    sha256 = "03lcn6m4ikbi695dcszvl7snmkr0cgxz77if4ggn3w5mx0ldpyda";
   };
   ssh2 = {
     url = "https://github.com/spider-gazelle/ssh2.cr.git";
