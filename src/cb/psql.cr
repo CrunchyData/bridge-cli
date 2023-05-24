@@ -1,4 +1,5 @@
 require "./action"
+require "./dirs"
 
 module CB
   class Psql < APIAction
@@ -62,7 +63,7 @@ module CB
     end
 
     private def ensure_cert(team_id) : String
-      cert_dir = CB::Creds::CONFIG / "certs"
+      cert_dir = CB::Dirs::CERTS_DIR
       path = cert_dir / "#{team_id}.pem"
       unless File.exists? path
         Dir.mkdir_p cert_dir

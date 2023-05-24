@@ -4,7 +4,8 @@ module CB::Dirs
   # $XDG_CONFIG_HOME defines the base directory relative to which user-specific
   # configuration files should be stored. If $XDG_CONFIG_HOME is either not set
   # or empty, a default equal to $HOME/.config should be used.
-  CONFIG = cb_path "XDG_CONFIG_HOME", ".config"
+  CONFIG    = cb_path "XDG_CONFIG_HOME", ".config"
+  CERTS_DIR = Path[CONFIG, "certs"]
 
   # $XDG_CACHE_HOME defines the base directory relative to which user-specific
   # non-essential data files should be stored. If $XDG_CACHE_HOME is either not
