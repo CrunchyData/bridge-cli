@@ -180,6 +180,15 @@ module Factory
     CB::Model::Role.new **params
   end
 
+  def session(**params)
+    params = {
+      id:     "lgsfa35anjcbzju43wxe4ohbgi",
+      secret: "cbst_session_secret",
+    }.merge(params)
+
+    CB::Model::Session.new **params
+  end
+
   def session_intent(**params)
     params = {
       id:         "rruyc6hukvcorh2jnspm232s4m",
