@@ -1,42 +1,43 @@
-require "./cacheable"
-
 # TODO (abrightwell): We had to explicitly qualify this class name as an
 # `Action` due to conflicts with the below `Token` struct.  Would be great to
 # potentially namespace actions under `CB::Action` or something. Something
 # perhaps worth considering.
-class CB::TokenAction < CB::Action
-  property token : Token
-  bool_setter? with_header
+module CB
+  class Token < APIAction
+    bool_setter with_header
+    format_setter? format
 
-  def initialize(@token, @input, @output)
-  end
+    def validate
+      raise Error.new "Cannot use -H with --format." if with_header && format
+    end
 
-  def run
-    output << "Authorization: Bearer " if with_header
-    output << token.token
-  end
-end
+    def run
+      validate
 
-struct CB::Token
-  Cacheable.include key: host
-  getter host : String
-  getter token : String
-  getter expires : Int64
-  getter user_id : String
-  getter name : String
+      @format = CB::Format::Header if with_header
 
-  def initialize(@host, @token, @expires, @user_id, @name)
-  end
+      access_token = @client.get_access_token
 
-  def self.for_host(host) : Token?
-    fetch? host
-  end
+      case @format
+      when CB::Format::Header
+        output_header(access_token)
+      when CB::Format::JSON
+        output_json(access_token)
+      else
+        output << access_token.access_token << '\n'
+      end
+    end
 
-  def self.delete(host)
-    File.delete(file_path(host)) if File.exists?(file_path(host))
-  end
+    def output_json(access_token : CB::Model::AccessToken)
+      output << {
+        "access_token": access_token.access_token,
+        "expires_at":   access_token.expires_at,
+        "token_type":   access_token.token_type,
+      }.to_pretty_json << '\n'
+    end
 
-  def expires_at : Time
-    Time.unix expires
+    def output_header(access_token : CB::Model::AccessToken)
+      output << "Authorization: Bearer #{access_token.access_token}"
+    end
   end
 end

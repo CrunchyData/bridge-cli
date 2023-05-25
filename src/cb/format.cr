@@ -1,6 +1,7 @@
 module CB
   enum Format
     Default
+    Header
     JSON
     List
     Table

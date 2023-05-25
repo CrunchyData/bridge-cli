@@ -6,55 +6,45 @@ require "../ext/stdlib_ext"
 
 module CB
   class Client
-    property host : String
     property headers : HTTP::Headers
-    getter token : Token
+    property host : String
 
-    def initialize(@token : Token)
-      @host = token.host
+    def initialize(@host : String = CB::HOST, bearer_token : String? = nil)
       @headers = HTTP::Headers{
-        "Accept"        => "application/json",
-        "Authorization" => "Bearer #{token.token}",
-        "User-Agent"    => CB::VERSION_STR,
+        "Accept"     => "application/json",
+        "User-Agent" => CB::VERSION_STR,
       }
+
+      @headers["Authorization"] = "Bearer #{bearer_token}" if bearer_token
 
       ENV.select { |k, _| k.starts_with? "X_CRUNCHY_" }.each { |k, v|
         @headers.add k.split('_').map(&.titleize).join('-'), v
       }
     end
 
-    def self.get_token(creds : Creds) : Token
-      unless creds.secret.starts_with?("cbkey_")
-        STDERR << "error".colorize.t_warn << ": You're using an outdated API key. Please procure a new one with `cb login` to continue.\n"
+    def get_access_token : CB::Model::AccessToken
+      secret = Credentials.get(CB::HOST)
+
+      unless secret && secret.starts_with?("cbkey_")
+        STDERR << "error".colorize.t_warn << ": You're using an invalid API key. " \
+                                             "You can procure a new one via the dashboard to continue: " \
+                                             "https://crunchybridge.com/account/api-keys\n"
         exit 1
       end
 
       req = {
         "grant_type"    => "client_credential",
-        "client_secret" => creds.secret,
+        "client_secret" => secret,
       }
-      resp = HTTP::Client.post("https://#{creds.host}/access-tokens", form: req, tls: tls)
+
+      resp = HTTP::Client.post("https://#{host}/access-tokens", form: req, tls: tls)
       raise Error.new("post", "token", resp) unless resp.status.success?
 
-      parsed = JSON.parse(resp.body)
-      token = parsed["access_token"].as_s
-      expires = begin
-        expires_in = parsed["expires_in"].as_i
-        Time.local.to_unix + expires_in - 5.minutes.seconds
-      rescue
-        # on 2021-09-09 the API started returning a number that caused int overflow
-        (Time.local + 10.minutes).to_unix
-      end
-
-      tmp_token = Token.new(creds.host, token, expires, "", "")
-
-      account = new(tmp_token).get_account
-
-      Token.new(creds.host, token, expires, account.id, account.name).store
+      CB::Model::AccessToken.from_json(resp.body)
     end
 
     def http : HTTP::Client
-      HTTP::Client.new(host, tls: self.class.tls)
+      HTTP::Client.new(@host, tls: self.tls)
     end
 
     def get(path)
@@ -82,7 +72,7 @@ module CB
     end
 
     def exec(method, path, body : String? = nil)
-      resp = http.exec method, "http://#{host}/#{path}", headers: headers, body: body
+      resp = http.exec method, "http://#{@host}/#{path}", headers: headers, body: body
       Log.info &.emit("API Call", status: resp.status.code, path: path, method: method)
       if resp.body && ENV["HTTP_DEBUG"]?
         body = mabye_json_parse resp.body
@@ -94,7 +84,7 @@ module CB
       raise Error.new(method, path, resp)
     end
 
-    def self.tls
+    private def tls
       OpenSSL::SSL::Context::Client.new.tap do |client|
         cert_file = SSL_CERT_FILE
         client.ca_certificates = cert_file if cert_file
