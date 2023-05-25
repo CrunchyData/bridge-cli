@@ -76,6 +76,8 @@ class CB::Completion
         teams
       when "tailscale"
         tailscale
+      when "token"
+        token
       when "upgrade"
         upgrade
       when "uri"
@@ -371,6 +373,16 @@ class CB::Completion
     end
 
     suggest_none
+  end
+
+  def token : Array(String)
+    suggest_none if last_arg?("-H")
+    return ["header", "json"] if last_arg?("--format")
+
+    suggest = [] of String
+    suggest << "-H\toutput header format" unless has_full_flag? :header
+    suggest << "--format\tchoose output format" unless has_full_flag? :format
+    suggest
   end
 
   def maintenance
@@ -1080,6 +1092,7 @@ class CB::Completion
     full << :port if has_full_flag? "--port"
     full << :desc if has_full_flag? "--desc"
     full << :template if has_full_flag? "--template"
+    full << :header if has_full_flag? "-H"
     full << :host if has_full_flag? "--host"
     full << :fork if has_full_flag? "--fork"
     full << :replica if has_full_flag? "--replica"

@@ -525,6 +525,21 @@ Spectator.describe CB::Completion do
     expect(result).to eq expected_cluster_suggestion
   end
 
+  it "completes token" do
+    result = parse("cb ")
+    expect(result).to have_option "token"
+
+    result = parse("cb token ")
+    expect(result).to have_option "--format"
+    expect(result).to have_option "-H"
+
+    result = parse("cb token --format ")
+    expect(result).to eq ["header", "json"]
+
+    result = parse("cb token -H ")
+    expect(result).to eq [] of String
+  end
+
   it "completes maintenance" do
     result = parse("cb ")
     expect(result).to have_option "maintenance"

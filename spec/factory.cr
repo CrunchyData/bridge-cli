@@ -1,6 +1,20 @@
 module Factory
   extend self
 
+  def access_token(**params)
+    params = {
+      id:           "ap25elveknc5rinrcohder4lwe",
+      access_token: "cbats_secret",
+      account_id:   "mijrfkkuqvhernzfqcbqf7b6me",
+      api_key_id:   "ick5hebsvbconguw4fkguebmzm",
+      created_at:   Time.utc(2023, 5, 25, 0, 0, 0),
+      expires_at:   Time.utc(2023, 5, 25, 1, 0, 0),
+      expires_in:   3600,
+      token_type:   "bearer",
+    }.merge(params)
+    CB::Model::AccessToken.new **params
+  end
+
   def account(**params)
     params = {
       id:    "mijrfkkuqvhernzfqcbqf7b6me",
