@@ -3,8 +3,7 @@ require "./action"
 module CB
   class Logout < Action
     def run
-      Creds.delete(CB::HOST)
-      Token.delete(CB::HOST)
+      Credentials.destroy(host: CB::HOST)
     end
   end
 end

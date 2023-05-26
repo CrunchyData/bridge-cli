@@ -2,6 +2,9 @@ name: cb
 version: 3.4.0-dev
 
 dependencies:
+  # TODO (abrightwell): Work this back in after initial browser login flow
+  # is determined to be good.
+  #
   #  keyring:
   #  github: crunchydata/crystal-keyring
   pg:

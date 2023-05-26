@@ -1,5 +1,5 @@
 require "json"
-require "./dirs"
+require "../cb/dirs"
 
 module CB::Cacheable
   macro include(key)

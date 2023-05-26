@@ -21,6 +21,7 @@ module CB
       %(#{SHARDS_VERSION}#{"-unrelease" unless BUILD_RELEASE})
     {% end %}
   end
+
   VERSION_STR = "cb v#{CB::VERSION} (#{CB::BUILD_SHA})"
 end
 
@@ -28,4 +29,6 @@ require "./ext/stdlib_ext"
 require "./openssl_cert"
 require "./cb/*"
 require "./client/*"
+require "./lib/*"
 require "./models/*"
+require "./ui/*"
