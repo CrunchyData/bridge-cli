@@ -7,25 +7,14 @@ module CB
     # Make the open command stub-able for testing purposes.
     property open : Proc(Array(String), Process::Env, NoReturn?)
 
-    # At compile time is bundled with the name of an executable that can be made
-    # to open a web browser to a URL on a target system.
-    def self.open_command
-      {% if flag?(:darwin) %}
-        "open"
-      {% elsif flag?(:linux) %}
-        "xdg-open"
-      {% else %}
-        raise Error.new "Sorry, don't know how to open a web browser on your operating system"
-      {% end %}
-    end
-
     def initialize(@client, @input = STDIN, @output = STDOUT)
-      @open = ->(args : Array(String), env : Process::Env) { Process.exec(self.class.open_command, args, env: env) }
+      @open = ->(args : Array(String), env : Process::Env) { CB::Lib::Open.exec(args, env: env) }
     end
 
     def run
-      session = client.create_session Client::SessionCreateParams.new(generate_one_time_token: true)
+      raise Error.new "Cannot open browser session with #{"CB_API_KEY".colorize.red.bold} set." if ENV["CB_API_KEY"]?
 
+      session = client.create_session Client::SessionCreateParams.new(generate_one_time_token: true)
       # A one-time token is sent via query string since we don't have any choice
       # while using an executable like `open`, which means that there is some
       # potential danger of it leaking to logs. To protect against this, tokens
@@ -35,11 +24,7 @@ module CB
       # minute after first creation, so they must always be used immediately.
       login_url = "https://#{client.host}/sessions/#{session.id}/actions/login?one_time_token=#{session.one_time_token}"
 
-      begin
-        self.open.call([login_url], {} of String => String)
-      rescue e : File::NotFoundError
-        raise Error.new "Command '#{self.class.open_command}' could not be found"
-      end
+      self.open.call([login_url], {} of String => String)
     end
   end
 end
