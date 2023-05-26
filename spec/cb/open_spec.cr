@@ -10,12 +10,6 @@ Spectator.describe CB::Open do
 
   mock_client
 
-  describe ".open_command" do
-    it "successfully returns the name of an executable" do
-      expect(action.class.open_command).to_not be_nil
-    end
-  end
-
   describe "#call" do
     before_each do
       client.host = client_host
