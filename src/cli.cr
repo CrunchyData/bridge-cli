@@ -699,13 +699,18 @@ end
 
 def capture_error(e)
   return if e.class == Raven::Error
-  begin
-    # make sure error gets annotated with user id, but don’t fail to capture if
-    # some error in this process
-    t = PROG.token
-    Raven.user_context id: t.user_id
-  rescue
-  end
+  # TODO (abrightwell): Update this before next release. Need to pull the
+  # user_id from the credentials maybe? Should we maybe store that along with
+  # the credential metadata in `Dirs::CONFIG`? Edge case to consider is if the
+  # API key is used as this doesn't inherently have the user id embedded or
+  # readily available.
+  #
+  # begin
+  # make sure error gets annotated with user id, but don’t fail to capture
+  # if some error in this process
+  #
+  # t = PROG.token
+  # Raven.user_context id: t.user_id rescue end
 
   cap = Raven.capture e
   if cap.class == Raven::Event
@@ -732,10 +737,10 @@ rescue e : CB::Program::Error
   exit 1
 rescue e : CB::Client::Error
   if e.unauthorized?
-    if PROG.ensure_token_still_good
-      STDERR << "error".colorize.t_warn << ": Token had expired, but has been refreshed. Please try again.\n"
-      exit 1
-    end
+    # if PROG.ensure_token_still_good
+    #   STDERR << "error".colorize.t_warn << ": Token had expired, but has been refreshed. Please try again.\n"
+    #   exit 1
+    # end
   end
   STDERR.puts e
   exit 2

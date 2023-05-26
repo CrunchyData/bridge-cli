@@ -1,37 +1,86 @@
+require "retriable"
 require "./action"
 
-class CB::Login < CB::Action
-  def run
-    host = CB::HOST
-
-    raise CB::Program::Error.new "No valid credentials found. Please login." unless output.tty?
-    hint = "from https://www.crunchybridge.com/account" if host == "api.crunchybridge.com"
-    output.puts "add credentials for #{host.colorize.t_name} #{hint}"
-
-    output.print "  application secret: "
-    secret = input.noecho { input.gets }
-
-    if secret.nil? || secret.empty?
-      STDERR.puts "#{"error".colorize.red.bold}: application secret must be present"
-      exit 1
-    end
-    output.print "\n"
-
-    secret = secret.strip
-
-    unless secret.starts_with? "cbkey_"
-      msg = "\n#{"error".colorize.red.bold}: The key provided is not a valid API key.\n" \
-            "  Verify that you are using an API key that is prefixed with 'cbkey_'.\n" \
-            "  You can manage your API keys here: https://crunchybridge.com/account/api-keys\n"
-
-      STDERR.puts msg
-      exit 1
+module CB
+  class Login < Action
+    private class NoSession < Exception
+      def initialize(message = "No session")
+        super(message)
+      end
     end
 
-    output << "Storing credentials... "
-    creds = Creds.new(host, secret).store
-    status = creds ? "OK".colorize.green.bold : "Failed".colorize.red.bold
-    output << "#{status}\n"
-    creds
+    property open_browser : Proc(String, Bool) = ->(url : String) : Bool {
+      CB::Lib::Open.run([url])
+    }
+
+    property store_credentials : Proc(String, String, Bool) = ->(account : String, secret : String) : Bool {
+      Credentials.store host: CB::HOST, account: account, secret: secret
+    }
+
+    property client : CB::Client = CB::Client.new CB::HOST
+
+    def open_browser? : Bool
+      output << "Press any key to open a browser to login or "
+      output << "q".colorize.yellow
+      output << " to exit: "
+
+      response = if input == STDIN
+                   STDIN.raw &.read_char
+                 else
+                   input.read_char
+                 end
+      output << '\n'
+
+      return response.downcase != 'q' if response
+      false
+    end
+
+    def run
+      # Prevent login if API key ENV is set.
+      raise Error.new "Cannot login with #{"CB_API_KEY".colorize.red.bold} set." if ENV["CB_API_KEY"]?
+
+      # Prompt to open a browser or allow the user to abort the login.
+      raise Error.new "Aborting login." unless open_browser?
+
+      # Request a session intent.
+      si_params = Client::SessionIntentCreateParams.new(agent_name: "cb #{CB::VERSION}")
+      session_intent = @client.create_session_intent si_params
+
+      # Open a browser with the new session intent.
+      login_url = "https://www.crunchybridge.com/account/verify-cli/#{session_intent.id}?code=#{session_intent.code}"
+      @open_browser.call(login_url)
+
+      # Begin polling for session intent activation.
+      spinner = Spinner.new("Waiting for login...", output)
+      spinner.start
+
+      si_get_params = Client::SessionIntentGetParams.new(
+        session_intent_id: session_intent.id,
+        secret: "#{session_intent.secret}",
+      )
+
+      begin
+        Retriable.retry(on: NoSession, base_interval: 1.seconds, multiplier: 1.0, rand_factor: 0.0) do
+          session_intent = @client.get_session_intent(si_get_params)
+          raise Error.new "login timed out" if Time.utc > session_intent.expires_at
+          raise NoSession.new unless session_intent.session
+        end
+
+        spinner.stop
+
+        secret = session_intent.session.try &.secret
+        account = @client.get_account(secret)
+      rescue e : CB::Client::Error
+        output << '\n'
+        raise Error.new e.resp.status.description
+      end
+
+      stored = @store_credentials.call(account.email.to_s, secret.to_s)
+
+      raise Error.new "Could not store login credentials." unless stored
+      output << "Logged in as #{account.email.to_s.colorize.green}\n"
+
+      secret.to_s
+    end
   end
 end

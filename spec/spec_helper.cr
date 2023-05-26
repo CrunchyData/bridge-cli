@@ -7,7 +7,7 @@ require "spectator/should"
 include CB
 
 Colorize.enabled = false
-TEST_TOKEN = CB::Token.new("localhost", "token", Time.local.to_unix + 1.hour.seconds, "userid", "user name")
+TEST_TOKEN = "cbkey_secret"
 
 macro expect_cb_error(message)
   expect({{ yield }}).to raise_error(CB::Program::Error, {{message}})
