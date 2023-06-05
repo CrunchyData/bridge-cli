@@ -15,15 +15,16 @@ module CB
   struct Credentials
     include JSON::Serializable
 
-    getter host : String
+    private CREDENTIALS_FILE = Path[Dirs::CONFIG, CB::HOST]
+
     getter account : String
     property secret : String?
 
-    def initialize(@account, @host = CB::HOST, @secret = nil)
+    def initialize(@account, @secret = nil)
     end
 
-    def self.store(host : String, account : String, secret : String) : Bool
-      creds = Credentials.new(host: host, account: account, secret: secret)
+    def self.store(account : String, secret : String) : Bool
+      creds = Credentials.new(account: account, secret: secret)
 
       # TODO (abrightwell): Work this back in after initial browser login flow
       #
@@ -41,7 +42,7 @@ module CB
       # end
 
       Dir.mkdir_p Dirs::CONFIG
-      File.open(Dirs::CONFIG/host, "w", perm: 0o600) do |f|
+      File.open(CREDENTIALS_FILE, "w", perm: 0o600) do |f|
         f << creds.to_json
         true
       end
@@ -49,10 +50,10 @@ module CB
       false
     end
 
-    def self.get(host : String = CB::HOST) : String?
+    def self.get : String?
       return ENV["CB_API_KEY"] if ENV["CB_API_KEY"]?
 
-      creds = File.open(Dirs::CONFIG/host, "r") { |f| Credentials.from_json(f) }
+      creds = File.open(CREDENTIALS_FILE, "r") { |f| Credentials.from_json(f) }
       creds.try &.secret.to_s
     rescue
       # TODO (abrightwell): Work this back in after initial browser login flow
@@ -66,7 +67,7 @@ module CB
       #   return nil
     end
 
-    def self.destroy(host : String) : Bool
+    def self.destroy : Bool
       # TODO (abrightwell): Work this back in after initial browser login flow
       # is determined to be good.
       #
@@ -76,7 +77,7 @@ module CB
       #   deleted = Keyring.delete(host, creds.account)
       # rescue
       # end
-      File.delete?(Dirs::CONFIG/host)
+      File.delete?(CREDENTIALS_FILE)
       true
     rescue
       true
