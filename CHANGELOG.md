@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `cb config-param` command to manage supported cluster configuration
   parameters. Supports `get`, `list-supported`, `reset` and `set`.
 
+### Changed
+- `cb login` now uses a browser login flow. If direct use of an `API_KEY` is
+  necessary then it must be set via the `CB_API_KEY` environment variable. 
+
 ### Fixed
 - `cb create --fork` and `cb create --replica` input validation when using
   `--network`.
