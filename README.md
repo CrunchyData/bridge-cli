@@ -15,9 +15,21 @@ A CLI for Crunchy Bridge with very good tab completion.
 
 ## Getting started
 
-First get your `application ID` and `application secret` from https://www.crunchybridge.com/account
+First login to your Crunchy Bridge account by running `cb login`.
 
-Then run `cb login` to register the CLI with your Crunchy Bridge account.
+```
+$ cb login
+Press any key to open a browser to login or q to exit:
+Waiting for login... done
+Logged in as user@example.com
+```
+
+If you'd prefer to use an API key then you can create one for your
+[account](https://crunchybridge.com/account/api-keys) and set the `CB_API_KEY`
+environment variable.
+
+**Note:** If the `CB_API_KEY` environment variable is set, then `cb login` will
+not work until it is unset.
 
 ## Usage
 
