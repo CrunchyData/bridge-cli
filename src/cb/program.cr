@@ -19,7 +19,7 @@ class CB::Program
 
   def creds : String?
     return @creds if @creds
-    @creds = Credentials.get(CB::HOST) || CB::Login.new.run
+    @creds = Credentials.get || CB::Login.new.run
   end
 
   def client

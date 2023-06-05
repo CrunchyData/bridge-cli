@@ -14,7 +14,7 @@ module CB
     }
 
     property store_credentials : Proc(String, String, Bool) = ->(account : String, secret : String) : Bool {
-      Credentials.store host: CB::HOST, account: account, secret: secret
+      Credentials.store account: account, secret: secret
     }
 
     property client : CB::Client = CB::Client.new CB::HOST

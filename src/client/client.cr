@@ -23,7 +23,7 @@ module CB
     end
 
     def get_access_token : CB::Model::AccessToken
-      secret = Credentials.get(CB::HOST)
+      secret = Credentials.get
 
       unless secret && secret.starts_with?("cbkey_")
         STDERR << "error".colorize.t_warn << ": You're using an invalid API key. " \
