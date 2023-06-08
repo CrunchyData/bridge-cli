@@ -203,6 +203,10 @@ module CB
     property client : Client
 
     def initialize(@client, @input = STDIN, @output = STDOUT)
+      # Set the parent request id header. This is so that all requests related
+      # to a specific action can be grouped together for logging and debugging
+      # purposes.
+      @client.headers["X-Parent-Request-Id"] = UUID.random.to_s
     end
 
     abstract def run
