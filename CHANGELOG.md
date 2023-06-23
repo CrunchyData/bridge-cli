@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - `cb psql` escape single-quotes in prompt for team name.
+- `cb maintenance` now accepts option `--use-cluster-maintenance-window`.
 
 ## [3.3.2] - 2023-05-10
 ### Fixed

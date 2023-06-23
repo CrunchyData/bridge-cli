@@ -380,7 +380,7 @@ op = OptionParser.new do |parser|
       parser.on("--cluster ID", "Choose cluster") { |arg| update.cluster_id = arg }
       parser.on("--starting-from START", "Starting time to update a maintenance. (RFC3339 format)") { |arg| update.starting_from = arg }
       parser.on("--now", "Start a maintenance now") { |_| update.now = true }
-      parser.on("--use-cluster-mairtenance-window", "Use cluster maintenance window") { |arg| update.use_cluster_maintenance_window = true }
+      parser.on("--use-cluster-maintenance-window", "Use cluster maintenance window") { |arg| update.use_cluster_maintenance_window = true }
       parser.on("--confirm", "Confirm maintenance creation.") { |_| update.confirmed = true }
 
       parser.examples = <<-EXAMPLES
