@@ -10,8 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   parameters. Supports `get`, `list-supported`, `reset` and `set`.
 
 ### Fixed
+- `cb create --fork` and `cb create --replica` input validation when using
+  `--network`.
 - `cb network` command completion suggestions.
-
 
 ## [3.3.3] - 2023-05-18
 ### Added
