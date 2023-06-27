@@ -15,6 +15,9 @@ class CB::ClusterCreate < CB::APIAction
   property at : Time?
 
   def pre_validate
+    raise Error.new "Cannot use both '--fork' and '--replica' at the same time." if fork && replica
+    raise Error.new "Cannot use '--network' with '--platform' or '--region'." if network && (platform || region)
+
     if id = fork || replica
       source = client.get_cluster id
       @name ||= "#{fork ? "Fork" : "Replica"} of #{source.name}"
@@ -29,10 +32,9 @@ class CB::ClusterCreate < CB::APIAction
 
     check_required_args do |missing|
       missing << "name" unless name
-      missing << "platform" unless platform
-      missing << "plan" unless plan
-      missing << "region" unless region
-      missing << "storage" unless storage
+      missing << "platform" unless replica || platform || network
+      missing << "plan" unless replica || plan || platform
+      missing << "region" unless replica || region || network
       missing << "team" unless team || fork || replica
     end
   end
