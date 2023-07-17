@@ -36,7 +36,7 @@ class CB::ClusterInfo < CB::APIAction
 
     details["network"] = c.network_id ? c.network_id.to_s : "Not available"
 
-    pad = (details.keys.map(&.size).max || 8) + 2
+    pad = (details.keys.max_of?(&.size) || 8) + 2
     details.each do |k, v|
       output << k.rjust(pad).colorize.bold << ": "
       output << v << "\n"

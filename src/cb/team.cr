@@ -34,7 +34,7 @@ end
 class CB::TeamList < CB::TeamAction
   def run
     teams = client.get_teams
-    name_max = teams.map(&.name.size).max? || 0
+    name_max = teams.max_of?(&.name.size) || 0
 
     teams.each do |team|
       output << team.id.colorize.t_id << "\t"
