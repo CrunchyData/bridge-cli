@@ -36,8 +36,8 @@ module CB
         return
       end
 
-      name_max = {backups.map(&.name.size).max, 6}.max
-      lsn_start_max = {backups.map(&.lsn_start.size).max, 9}.max
+      name_max = {backups.max_of(&.name.size), 6}.max
+      lsn_start_max = {backups.max_of(&.lsn_start.size), 9}.max
 
       if output.tty?
         output << "backup".ljust(name_max) << "\tsize    \tstarted at          \tfinished at          \t" << "lsn start".ljust(lsn_start_max) << "\tlsn stop\n"

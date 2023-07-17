@@ -89,7 +89,7 @@ class CB::TeamMemberList < CB::TeamMemberAction
     validate
 
     team_members = client.list_team_members(team_id)
-    email_max = team_members.map(&.email.size).max? || 0
+    email_max = team_members.max_of?(&.email.size) || 0
 
     # Only personal teams can be without members. So, it should be safe to
     # assume that if the request returns an empty list that it is 'personal'
