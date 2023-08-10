@@ -555,7 +555,7 @@ class CB::Completion
       network_list
     else
       [
-        "info\ndetailed network information",
+        "info\tdetailed network information",
         "list\tlist available networks",
       ]
     end
