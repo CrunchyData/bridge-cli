@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `cb config-param` command to manage supported cluster configuration
   parameters. Supports `get`, `list-supported`, `reset` and `set`.
 
+### Fixed
+- `cb network` command completion suggestions.
+
+
 ## [3.3.3] - 2023-05-18
 ### Added
 - Credentials validation for `cb login` input.
