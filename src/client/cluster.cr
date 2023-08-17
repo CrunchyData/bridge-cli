@@ -22,7 +22,7 @@ module CB
     end
 
     def get_clusters(team_id)
-      resp = get "clusters?team_id=#{team_id}"
+      resp = get "clusters?order_field=name&team_id=#{team_id}"
       Array(CB::Model::Cluster).from_json resp.body, root: "clusters"
     end
 
