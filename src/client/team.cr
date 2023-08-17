@@ -14,7 +14,7 @@ module CB
     #
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/teams/list-teams
     def get_teams
-      resp = get "teams"
+      resp = get "teams?order_field=name"
       Array(CB::Model::Team).from_json resp.body, root: "teams"
     end
 
