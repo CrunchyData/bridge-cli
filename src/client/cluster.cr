@@ -2,6 +2,34 @@ require "./client"
 
 module CB
   class Client
+    # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridactionstailscale-connect
+    def cluster_action_tailscale_connect(id : Identifier)
+      cluster_id = if id.eid?
+                     id.to_s
+                   else
+                     get_cluster_by_name(id).id
+                   end
+
+      resp = put "clusters/#{cluster_id}/actions/tailscale-connect"
+      JSON.parse(resp.body)["message"]
+    rescue e : Error
+      raise Program::Error.new message: e.message, cause: e
+    end
+
+    # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridactionstailscale-disconnect
+    def cluster_action_tailscale_disconnect(id : Identifier)
+      cluster_id = if id.eid?
+                     id.to_s
+                   else
+                     get_cluster_by_name(id).id
+                   end
+
+      resp = put "clusters/#{cluster_id}/actions/tailscale-disconnect"
+      JSON.parse(resp.body)["message"]
+    rescue e : Error
+      raise Program::Error.new message: e.message, cause: e
+    end
+
     def get_clusters
       get_clusters(get_teams)
     end
@@ -212,15 +240,15 @@ module CB
       Tempkey.from_json resp.body
     end
 
-    # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridactionssuspend/suspend-cluster
-    def suspend_cluster(id : Identifier)
-      resp = put "clusters/#{id}/actions/suspend"
-      CB::Model::Cluster.from_json resp.body
-    end
-
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridactionsresume/resume-cluster
     def resume_cluster(id : Identifier)
       resp = put "clusters/#{id}/actions/resume"
+      CB::Model::Cluster.from_json resp.body
+    end
+
+    # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridactionssuspend/suspend-cluster
+    def suspend_cluster(id : Identifier)
+      resp = put "clusters/#{id}/actions/suspend"
       CB::Model::Cluster.from_json resp.body
     end
   end

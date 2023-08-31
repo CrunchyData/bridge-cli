@@ -559,6 +559,66 @@ op = OptionParser.new do |parser|
   end
 
   #
+  # Tailscale OAuth Client Managment
+  #
+
+  parser.on("tailscale-oauth-client", "Manage Tailscale OAuth clients") do
+    parser.banner = "cb tailscale-oauth-client <create|destroy|list>"
+
+    parser.on("create", "Create Tailscale OAuth client") do
+      parser.banner = "cb tailscale-oauth-client create <--team ID>"
+
+      create = set_action TailscaleOAuthClientCreate
+
+      parser.on("--team ID", "Crunchy Bridge team ID") { |arg| create.team_id = arg }
+      parser.on("--client-id ID", "Tailscale client ID") { |arg| create.client_id = arg }
+      parser.on("--client-secret SECRET", "Tailscale client secret") { |arg| create.client_secret = arg }
+      parser.on("--name NAME", "Client name") { |arg| create.name = arg }
+      parser.on("--tags TAGS", "Comma separated list of Tailscale ACL tags") { |arg| create.tags = arg.split(/[,\s]/, remove_empty: true) }
+
+      parser.examples = <<-EXAMPLES
+        # Create new Tailscale OAuth client.
+        $ cb tailscale-oauth-client create --team <ID> --client-id <ID> --client-secret <SECRET> --name <NAME> --tags <TAGS>
+      EXAMPLES
+    end
+
+    parser.on("destroy", "Destroy Tailscale OAuth client") do
+      parser.banner = "cb tailscale-oauth-client destroy <--team ID> <--client-id ID>"
+
+      destroy = set_action TailscaleOAuthClientDestroy
+
+      parser.on("--team ID", "") { |arg| destroy.team_id = arg }
+      parser.on("--client ID", "") { |arg| destroy.client_id = arg }
+
+      parser.examples = <<-EXAMPLES
+        # Destroy Tailscale OAuth client.
+        $ cb tailscale-oauth-client destroy --team <ID> --client-id <ID>
+      EXAMPLES
+    end
+
+    parser.on("list", "List available Tailscale OAuth clients") do
+      parser.banner = "cb tailscale-oauth-client list <--team ID>"
+
+      list = set_action TailscaleOAuthClientList
+      parser.on("--format FORMAT", "Choose output format (default: table)") { |arg| list.format = arg }
+      parser.on("--team ID", "Choose team") { |arg| list.team_id = arg }
+
+      parser.examples = <<-EXAMPLES
+        # List Tailscale OAuth clients. Output: table
+        $ cb tailscale-oauth-client list --team <ID>
+        $ cb tailscale-oauth-client list --team <ID> --format table
+
+        # List Tailscale OAuth clients. Output: table without header
+        $ cb tailscale-oauth-client list --team <ID> --no-header 
+        $ cb tailscale-oauth-client list --team <ID> --format table --no-header
+
+        # List Tailscale OAuth clients. Output: json
+        $ cb tailscale-oauth-client list --team <ID> --format json
+      EXAMPLES
+    end
+  end
+
+  #
   # Cluster Role Management
   #
 

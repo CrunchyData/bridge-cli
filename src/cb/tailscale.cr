@@ -1,7 +1,7 @@
 require "./action"
 
 abstract class CB::TailscaleAction < CB::APIAction
-  eid_setter cluster_id
+  cluster_identifier_setter cluster_id
 
   def validate
     check_required_args { |missing| missing << "cluster" unless cluster_id }
@@ -19,9 +19,7 @@ class CB::TailscaleConnect < CB::TailscaleAction
 
   def run
     validate
-
-    response = client.put "clusters/#{cluster_id}/actions/tailscale-connect", {auth_key: auth_key}
-    output.puts JSON.parse(response.body)["message"]
+    output.puts client.cluster_action_tailscale_connect(@cluster_id[:cluster])
   end
 end
 
@@ -29,8 +27,6 @@ end
 class CB::TailscaleDisconnect < CB::TailscaleAction
   def run
     validate
-
-    response = client.put "clusters/#{cluster_id}/actions/tailscale-disconnect"
-    output.puts JSON.parse(response.body)["message"]
+    output.puts client.cluster_action_tailscale_disconnect(@cluster_id[:cluster])
   end
 end
