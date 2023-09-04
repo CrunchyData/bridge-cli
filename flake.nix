@@ -18,7 +18,8 @@
         pkgs = nixpkgs.legacyPackages.${system};
         crunchy = nixpkgs-crunchy.packages.${system};
 
-        crystal = crunchy.crystalWrapped.override { buildInputs = [ pkgs.libssh2 ]; };
+        crystal = crunchy.crystal.override { extraBuildInputs = [ pkgs.libssh2 ]; };
+        crystalStatic = crunchy.crystalStatic.override { extraBuildInputs = [ pkgs.pkgsStatic.libssh2 ]; };
 
         check = pkgs.writeScriptBin "check" "nix build .#check --keep-going --print-build-logs";
         shardFiles = [ "shard.lock" "shards.nix" "shard.yml" ];
@@ -37,13 +38,18 @@
           doCheck = false;
         };
 
+        packages.static = crystalStatic.mkPkg {
+          inherit src self;
+          doCheck = false;
+        };
+
         packages.check = pkgs.linkFarmFromDrvs "cb-all-checks" (builtins.attrValues checks);
 
         devShells.default = pkgs.mkShell {
           buildInputs = with crunchy; [ crystal2nix ameba ]
-          ++ [ crystal check ]
-          ++ [ pkgs.pcre2 pkgs.pcre pkgs.libyaml ]
-          ++ pkgs.lib.optionals pkgs.stdenv.isDarwin darwinBuildInputs;
+            ++ [ crystal check ]
+            ++ [ pkgs.pcre2 pkgs.pcre pkgs.libyaml ]
+            ++ pkgs.lib.optionals pkgs.stdenv.isDarwin darwinBuildInputs;
         };
 
         checks = {
