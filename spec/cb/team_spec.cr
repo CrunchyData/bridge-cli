@@ -16,14 +16,14 @@ Spectator.describe TeamInfo do
       action.call
 
       expected = <<-EXPECTED
-        ID:              l2gnkxjv3beifk6abkraerv7de  
-        Name:            Test Team                   
-        Role:            Admin                       
-        Billing Email:   test@example.com            
-        Enforce SSO:     disabled                    \n
+        ID:              l2gnkxjv3beifk6abkraerv7de
+        Name:            Test Team
+        Role:            Admin
+        Billing Email:   test@example.com
+        Enforce SSO:     disabled
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
   end
 end

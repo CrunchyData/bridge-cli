@@ -1,7 +1,6 @@
 require "../src/cb"
-require "./support/*"
-# require "spec"
 require "spectator"
+require "./support/*"
 require "spectator/should"
 
 include CB

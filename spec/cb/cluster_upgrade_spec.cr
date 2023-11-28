@@ -43,7 +43,7 @@ Spectator.describe CB::UpgradeStart do
 
       action.call
 
-      expect(&.output.to_s).to eq "  Cluster #{action.cluster_id} upgrade started.\n"
+      expect(&.output).to look_like "  Cluster #{action.cluster_id} upgrade started."
     end
   end
 end
@@ -71,7 +71,7 @@ Spectator.describe CB::UpgradeStart do
 
     action.call
 
-    expect(&.output.to_s).to eq "  Enabling high availability on cluster #{action.cluster_id}.\n"
+    expect(&.output).to look_like "  Enabling high availability on cluster #{action.cluster_id}."
   end
 end
 
@@ -100,14 +100,14 @@ Spectator.describe CB::UpgradeStart do
     action.ha = true
     action.call
 
-    expect(&.output.to_s).to eq "  High availability already enabled on cluster #{action.cluster_id}.\n"
+    expect(&.output).to look_like "  High availability already enabled on cluster #{action.cluster_id}."
   end
 
   it "reports if it's already disabled" do
     action.ha = false
     action.call
 
-    expect(&.output.to_s).to eq "  High availability already disabled on cluster #{action.cluster_id}.\n"
+    expect(&.output).to look_like "  High availability already disabled on cluster #{action.cluster_id}."
   end
 end
 
@@ -134,7 +134,7 @@ Spectator.describe CB::UpgradeStart do
 
     action.call
 
-    expect(&.output.to_s).to eq "  Disabling high availability on cluster #{action.cluster_id}.\n"
+    expect(&.output).to look_like "  Disabling high availability on cluster #{action.cluster_id}."
   end
 end
 
@@ -158,7 +158,7 @@ Spectator.describe CB::UpgradeStart do
 
     action.call
 
-    expect(&.output.to_s).to eq "  Operation not recognized: CB::Model::Operation(@flavor=CB::Model::Operation::Flavor::Resize, @state=CB::Model::Operation::State::InProgress, @starting_from=nil)\n"
+    expect(&.output).to look_like "  Operation not recognized: CB::Model::Operation(@flavor=CB::Model::Operation::Flavor::Resize, @state=CB::Model::Operation::State::InProgress, @starting_from=nil)"
   end
 end
 
@@ -189,7 +189,7 @@ Spectator.describe CB::MaintenanceCreate do
 
       action.call
 
-      expect(&.output.to_s).to eq "  Maintenance created for Cluster #{action.cluster_id}.\n"
+      expect(&.output).to look_like "  Maintenance created for Cluster #{action.cluster_id}."
     end
   end
 end
@@ -220,11 +220,11 @@ Spectator.describe CB::UpgradeStatus do
 
     expected = <<-EXPECTED
     #{team.name}/#{cluster.name}
-      operations:           no operations in progress               
-      maintenance window:   no window set. Default to: 00:00-23:59  \n
+      operations:           no operations in progress
+      maintenance window:   no window set. Default to: 00:00-23:59
     EXPECTED
 
-    expect(&.output.to_s).to eq expected
+    expect(&.output).to look_like expected
   end
 
   it "#run display ha operation by default" do
@@ -238,11 +238,11 @@ Spectator.describe CB::UpgradeStatus do
 
     expected = <<-EXPECTED
     #{team.name}/#{cluster.name}
-      ha change:            in progress                             
-      maintenance window:   no window set. Default to: 00:00-23:59  \n
+      ha change:            in progress
+      maintenance window:   no window set. Default to: 00:00-23:59
     EXPECTED
 
-    expect(&.output.to_s).to eq expected
+    expect(&.output).to look_like expected
   end
 
   it "#run display failover windown starting if there is one" do
@@ -256,11 +256,11 @@ Spectator.describe CB::UpgradeStatus do
 
     expected = <<-EXPECTED
     #{team.name}/#{cluster.name}
-      resize:               in progress (Starting from: 2022-01-01T00:00:00Z)  
-      maintenance window:   no window set. Default to: 00:00-23:59             \n
+      resize:               in progress (Starting from: 2022-01-01T00:00:00Z)
+      maintenance window:   no window set. Default to: 00:00-23:59
     EXPECTED
 
-    expect(&.output.to_s).to eq expected
+    expect(&.output).to look_like expected
   end
 
   it "#run filter ha operation if told so" do
@@ -275,11 +275,11 @@ Spectator.describe CB::UpgradeStatus do
 
     expected = <<-EXPECTED
     #{team.name}/#{cluster.name}
-      operations:           no operations in progress               
-      maintenance window:   no window set. Default to: 00:00-23:59  \n
+      operations:           no operations in progress
+      maintenance window:   no window set. Default to: 00:00-23:59
     EXPECTED
 
-    expect(&.output.to_s).to eq expected
+    expect(&.output).to look_like expected
   end
 end
 
@@ -309,10 +309,10 @@ Spectator.describe CB::UpgradeCancel do
       expected = <<-EXPECTED
       #{team.name}/#{cluster.name}
         there is no pending operation.
-        use 'cb maintenance cancel' to cancel the pending maintenance.\n
+        use 'cb maintenance cancel' to cancel the pending maintenance.
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
 
     it "cancel other operations" do
@@ -327,10 +327,10 @@ Spectator.describe CB::UpgradeCancel do
 
       expected = <<-EXPECTED
       #{team.name}/#{cluster.name}
-        resize operation cancelled\n
+        resize operation cancelled
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
   end
 end
@@ -362,10 +362,10 @@ Spectator.describe CB::MaintenanceCancel do
       expected = <<-EXPECTED
       #{team.name}/#{cluster.name}
         there is no pending maintenance.
-        use 'cb upgrade cancel' to cancel the pending resize.\n
+        use 'cb upgrade cancel' to cancel the pending resize.
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
 
     it "cancels maintenance" do
@@ -380,10 +380,10 @@ Spectator.describe CB::MaintenanceCancel do
 
       expected = <<-EXPECTED
       #{team.name}/#{cluster.name}
-        maintenance operation cancelled\n
+        maintenance operation cancelled
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
   end
 end
@@ -416,10 +416,10 @@ Spectator.describe CB::MaintenanceUpdate do
       expected = <<-EXPECTED
       #{team.name}/#{cluster.name}
         there is no pending maintenance.
-        use 'cb upgrade update' to update the pending resize.\n
+        use 'cb upgrade update' to update the pending resize.
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
 
     it "updates maintenance" do
@@ -436,10 +436,10 @@ Spectator.describe CB::MaintenanceUpdate do
 
       expected = <<-EXPECTED
       #{team.name}/#{cluster.name}
-        maintenance updated.\n
+        maintenance updated.
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
   end
 end
@@ -477,10 +477,10 @@ Spectator.describe CB::UpgradeUpdate do
       expected = <<-EXPECTED
       #{team.name}/#{cluster.name}
         there is no pending upgrade.
-        use 'cb maintenance update' to update the pending maintenance.\n
+        use 'cb maintenance update' to update the pending maintenance.
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
 
     it "updates resize" do
@@ -497,10 +497,10 @@ Spectator.describe CB::UpgradeUpdate do
 
       expected = <<-EXPECTED
       #{team.name}/#{cluster.name}
-        upgrade updated.\n
+        upgrade updated.
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
   end
 end

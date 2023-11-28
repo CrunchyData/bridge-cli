@@ -49,11 +49,11 @@ Spectator.describe NetworkList do
       action.call
 
       expected = <<-EXPECTED
-        ID                           Team                         Name              CIDR4            Provider   Region     
-        oap3kavluvgm7cwtzgaaixzfoi   l2gnkxjv3beifk6abkraerv7de   Default Network   192.168.0.0/24   aws        us-east-1  \n
+        ID                           Team                         Name              CIDR4            Provider   Region
+        oap3kavluvgm7cwtzgaaixzfoi   l2gnkxjv3beifk6abkraerv7de   Default Network   192.168.0.0/24   aws        us-east-1
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
 
     it "outputs table without header" do
@@ -61,10 +61,10 @@ Spectator.describe NetworkList do
       action.call
 
       expected = <<-EXPECTED
-        oap3kavluvgm7cwtzgaaixzfoi   l2gnkxjv3beifk6abkraerv7de   Default Network   192.168.0.0/24   aws   us-east-1  \n
+        oap3kavluvgm7cwtzgaaixzfoi   l2gnkxjv3beifk6abkraerv7de   Default Network   192.168.0.0/24   aws   us-east-1
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
 
     it "outputs json" do
@@ -83,10 +83,10 @@ Spectator.describe NetworkList do
             "team_id": "l2gnkxjv3beifk6abkraerv7de"
           }
         ]
-      }\n
+      }
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
   end
 end

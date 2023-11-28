@@ -31,11 +31,11 @@ Spectator.describe ConfigurationParameterGet do
       action.call
 
       expected = <<-EXPECTED
-        Component   Name              Value  
-        postgres    max_connections   100    \n
+        Component   Name              Value
+        postgres    max_connections   100
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
 
     it "lists no parameters when none are set" do
@@ -44,10 +44,10 @@ Spectator.describe ConfigurationParameterGet do
       action.call
 
       expected = <<-EXPECTED
-        Component   Name   Value  \n
+        Component   Name   Value
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
 
     it "outputs default format" do
@@ -56,12 +56,12 @@ Spectator.describe ConfigurationParameterGet do
       action.call
 
       expected = <<-EXPECTED
-        Component   Name              Value  
-        postgres    max_connections   100    
-        postgres    max_connections   100    \n
+        Component   Name              Value
+        postgres    max_connections   100
+        postgres    max_connections   100
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
 
     it "outputs json format" do
@@ -82,10 +82,10 @@ Spectator.describe ConfigurationParameterGet do
             "value": "100"
           }
         ]
-      }\n
+      }
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
   end
 end
@@ -115,12 +115,12 @@ Spectator.describe ConfigurationParameterListSupported do
       action.call
 
       expected = <<-EXPECTED
-        Component   Name                Requires Restart  
-        postgres    max_connections     no                
-        pgbouncer   default_pool_size   no                \n
+        Component   Name                Requires Restart
+        postgres    max_connections     no
+        pgbouncer   default_pool_size   no
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
 
     it "outputs specific component" do
@@ -128,11 +128,11 @@ Spectator.describe ConfigurationParameterListSupported do
       action.call
 
       expected = <<-EXPECTED
-        Component   Name              Requires Restart  
-        postgres    max_connections   no                \n
+        Component   Name              Requires Restart
+        postgres    max_connections   no
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
   end
 end
@@ -157,11 +157,11 @@ Spectator.describe ConfigurationParameterSet do
       action.call
 
       expected = <<-EXPECTED
-        Component   Name              Value  
-        postgres    max_connections   100    \n
+        Component   Name              Value
+        postgres    max_connections   100
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
 
     it "outputs json format" do
@@ -182,10 +182,10 @@ Spectator.describe ConfigurationParameterSet do
               "value": "100"
             }
           ]
-        }\n
+        }
         EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
   end
 end
@@ -211,22 +211,22 @@ Spectator.describe ConfigurationParameterReset do
       action.call
 
       expected = <<-EXPECTED
-        Component   Name              Value  
-        postgres    max_connections   100    \n
+        Component   Name              Value
+        postgres    max_connections   100
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
 
     it "outputs default" do
       action.call
 
       expected = <<-EXPECTED
-        Component   Name              Value  
-        postgres    max_connections   100    \n
+        Component   Name              Value
+        postgres    max_connections   100
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
 
     it "outputs json format" do
@@ -245,10 +245,10 @@ Spectator.describe ConfigurationParameterReset do
               "value": "100"
             }
           ]
-        }\n
+        }
         EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
   end
 end
