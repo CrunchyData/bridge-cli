@@ -16,20 +16,6 @@ Naming/AccessorMethodName:
   Enabled: true
   Severity: Convention
 
-# Problems found: 23
-# Run `ameba --only Layout/TrailingWhitespace` for details
-Layout/TrailingWhitespace:
-  Description: Disallows trailing whitespace
-  Excluded:
-  - spec/cb/network_spec.cr
-  - spec/cb/cluster_upgrade_spec.cr
-  - spec/cb/role_spec.cr
-  - spec/cb/cluster_list_spec.cr
-  - spec/cb/team_spec.cr
-  - spec/cb/config_param_spec.cr
-  Enabled: true
-  Severity: Convention
-
 # Problems found: 11
 # Run `ameba --only Naming/QueryBoolMethods` for details
 Naming/QueryBoolMethods:

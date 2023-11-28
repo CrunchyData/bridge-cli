@@ -27,12 +27,12 @@ Spectator.describe CB::List do
       action.call
 
       expected = <<-EXPECTED
-        ID           Name         Team       
-        abc          my cluster   Test Team  
-        replica-id   my replica   Test Team  \n
+        ID           Name         Team
+        abc          my cluster   Test Team
+        replica-id   my replica   Test Team
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
 
     it "outputs tree format" do
@@ -52,10 +52,10 @@ Spectator.describe CB::List do
       expected = <<-EXPECTED
       Test Team
       └── my cluster (abc)
-          └── my replica (replica-id)\n
+          └── my replica (replica-id)
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
   end
 end

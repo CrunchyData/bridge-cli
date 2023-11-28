@@ -21,7 +21,7 @@ Spectator.describe RoleCreate do
 
     action.call
 
-    expect(&.output.to_s).to eq "Role #{user_role.name} created on cluster #{action.cluster_id}.\n"
+    expect(&.output).to look_like "Role #{user_role.name} created on cluster #{action.cluster_id}."
   end
 end
 
@@ -56,12 +56,12 @@ Spectator.describe RoleList do
       action.call
 
       expected = <<-EXPECTED
-        Role                           Account           
-        application                    system            
-        u_mijrfkkuqvhernzfqcbqf7b6me   user@example.com  \n
+        Role                           Account
+        application                    system
+        u_mijrfkkuqvhernzfqcbqf7b6me   user@example.com
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
 
     it "outputs table without header" do
@@ -69,11 +69,11 @@ Spectator.describe RoleList do
       action.call
 
       expected = <<-EXPECTED
-        application                    system            
-        u_mijrfkkuqvhernzfqcbqf7b6me   user@example.com  \n
+        application                    system
+        u_mijrfkkuqvhernzfqcbqf7b6me   user@example.com
       EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
 
     it "outputs json" do
@@ -94,10 +94,10 @@ Spectator.describe RoleList do
              "account": "user@example.com"
            }
          ]
-       }\n
+       }
        EXPECTED
 
-      expect(&.output.to_s).to eq expected
+      expect(&.output).to look_like expected
     end
   end
 end
@@ -133,7 +133,7 @@ Spectator.describe RoleUpdate do
       expect(client).to receive(:get_account).and_return account
       expect(client).to receive(:update_role).and_return role
       action.call
-      expect(&.output.to_s).to eq "Role #{action.role} updated on cluster #{action.cluster_id}.\n"
+      expect(&.output).to look_like "Role #{action.role} updated on cluster #{action.cluster_id}."
     end
   end
 end
@@ -171,7 +171,7 @@ Spectator.describe RoleDelete do
 
       action.call
 
-      expect(&.output.to_s).to eq "Role #{action.role} deleted from cluster #{action.cluster_id}.\n"
+      expect(&.output).to look_like "Role #{action.role} deleted from cluster #{action.cluster_id}."
     end
   end
 end
