@@ -4,8 +4,8 @@ module CB
       raise Program::Error.new "invalid identifier: '#{@value}'" unless eid? || api_name?
     end
 
-    def ==(str : String)
-      @value == str
+    def ==(other : String)
+      @value == other
     end
 
     def eid?

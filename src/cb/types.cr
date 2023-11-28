@@ -6,8 +6,8 @@ module CB
 
     private INVALID_ROLE_MESSAGE = "invalid role: '%s'. Must be one of: #{VALID_CLUSTER_ROLES.join ", "}"
 
-    def ==(name : String)
-      @name == name
+    def ==(other : String)
+      @name == other
     end
 
     def initialize(@name : String = "default")

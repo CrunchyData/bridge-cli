@@ -1,5 +1,5 @@
 require "../src/cb"
-require "./factory"
+require "./support/*"
 # require "spec"
 require "spectator"
 require "spectator/should"
