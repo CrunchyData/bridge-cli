@@ -341,7 +341,7 @@ op = OptionParser.new do |parser|
     parser.banner = "cb destroy <cluster id> [--confirm]"
     destroy = set_action ClusterDestroy
 
-    parser.on("--confirm", "Confirm cluster restart") { destroy.confirmed = true }
+    parser.on("--confirm", "Confirm cluster destroy") { destroy.confirmed = true }
 
     positional_args destroy.cluster_id
   end
