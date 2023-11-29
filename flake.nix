@@ -31,19 +31,24 @@
           pkgs.darwin.apple_sdk.frameworks.Foundation
           pkgs.darwin.apple_sdk.frameworks.Security
         ];
+
+        mkPkgArgs = { inherit self src; doCheck = false; };
+
+        # NOTE: currently (2023-11-29) `nix flake check` fails on x86 macs due to
+        #    error: don't yet have a `targetPackages.darwin.LibsystemCross for x86_64-apple-darwin`
+        # so only have a static package on the other platforms for now.
+        # some maybe relevant issues:
+        # https://github.com/NixOS/nixpkgs/pull/256590
+        # https://github.com/NixOS/nixpkgs/issues/180771
+        # https://github.com/NixOS/nixpkgs/issues/270375
+        static = if system == "x86_64-darwin" then null else "static";
       in
       rec {
-        packages.default = crystal.mkPkg {
-          inherit self src;
-          doCheck = false;
+        packages = {
+          default = crystal.mkPkg mkPkgArgs;
+          ${static} = crystalStatic.mkPkg mkPkgArgs;
+          check = pkgs.linkFarmFromDrvs "cb-all-checks" (builtins.attrValues checks);
         };
-
-        packages.static = crystalStatic.mkPkg {
-          inherit src self;
-          doCheck = false;
-        };
-
-        packages.check = pkgs.linkFarmFromDrvs "cb-all-checks" (builtins.attrValues checks);
 
         devShells.default = pkgs.mkShell {
           buildInputs = with crunchy; [ crystal2nix ameba ]
