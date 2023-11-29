@@ -8,7 +8,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Install Nix
-      uses: DeterminateSystems/nix-installer-action@main
+      uses: cachix/install-nix-action@v24
+      with:
+        extra_nix_config: extra-platforms = aarch64-linux
     - name: set up cachix
       uses: cachix/cachix-action@v12
       with:
