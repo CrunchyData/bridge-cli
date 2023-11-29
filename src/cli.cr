@@ -136,8 +136,8 @@ op = OptionParser.new do |parser|
   parser.on("create", "Create a new cluster") do
     create = set_action ClusterCreate
     parser.banner = <<-EOB
-      cb create <--platform|-p> <--region|-r> <--plan> <--team|-t> [--size|-s] [--name|-n] [--version|-v] [--ha] [--network]
-          cb create --fork ID [--at] [--platform|-p] [--region|-r] [--plan] [--size|-s] [--name|-n] [--ha] [--network]
+      cb create <--platform|-p> <--region|-r> <--plan> <--team|-t> [--storage|-s] [--name|-n] [--version|-v] [--ha] [--network]
+          cb create --fork ID [--at] [--platform|-p] [--region|-r] [--plan] [--storage|-s] [--name|-n] [--ha] [--network]
           cb create --replica ID [--platform|-p] [--region|-r] [--plan] [--name|-n] [--network]
     EOB
 
