@@ -8,6 +8,17 @@ module CB::Lib
                              raise CB::Program::Error.new "Sorry, don't know how to open a web browser on your operating system"
                            {% end %}
 
+    def self.can_open_browser?
+      {% if flag?(:darwin) %}
+        true
+      {% elsif flag?(:linux) %}
+        Process.run("command", ["-v", "xdg-settings", "get", "default-web-browser"]).success?
+        # Process.run("command -v #{OPEN_COMMAND}").success?
+      {% else %}
+        false
+      {% end %}
+    end
+
     def self.run(args : Array(String), env : Process::Env = {} of String => String) : Bool
       status = Process.run(OPEN_COMMAND, args: args, env: env)
       status.success?
