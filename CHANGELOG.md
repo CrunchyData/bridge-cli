@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- `cb login` now presents a login url for use with headless environments or
+  where a default browser is not available
 
 ### Fixed
 - High availability changes with `cb upgrade start` must be made without any other changes to the cluster.
@@ -17,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - `cb login` now uses a browser login flow. If direct use of an `API_KEY` is
-  necessary then it must be set via the `CB_API_KEY` environment variable. 
+  necessary then it must be set via the `CB_API_KEY` environment variable.
 
 ### Fixed
 - `cb create --fork` and `cb create --replica` input validation when using
