@@ -152,5 +152,30 @@ Spectator.describe CB::ClusterCreate do
 
       expect(&.output.to_s).to eq "Created cluster pkdpq6yynjgjbps4otxd7il2u4 \"abc\"\n"
     end
+
+    it "raises error when no region given with gcp network" do
+      network = Factory.network(provider_id: "gcp")
+
+      action.network = network.id
+      action.plan = "hobby-2"
+      action.region = nil
+      action.team = team.id
+
+      expect(client).to receive(:get_network).and_return network
+      expect(&.call).to raise_error(CB::Program::Error, "Must also specify '--region' for a 'gcp' based network.")
+    end
+
+    it "raises error when region or provider given with non-gcp network" do
+      network = Factory.network
+
+      action.network = network.id
+      action.plan = "hobby-2"
+      action.platform = "aws"
+      action.region = "us-east-1"
+      action.team = team.id
+
+      expect(client).to receive(:get_network).and_return network
+      expect(&.call).to raise_error(CB::Program::Error, "Cannot use '--network' with '--platform' or '--region'")
+    end
   end
 end
