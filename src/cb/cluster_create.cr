@@ -16,7 +16,6 @@ class CB::ClusterCreate < CB::APIAction
 
   def pre_validate
     raise Error.new "Cannot use both '--fork' and '--replica' at the same time." if fork && replica
-    raise Error.new "Cannot use '--network' with '--platform' or '--region'." if network && (platform || region)
 
     if id = fork || replica
       source = client.get_cluster id
@@ -49,6 +48,12 @@ class CB::ClusterCreate < CB::APIAction
       provider_id: @platform,
       region_id:   @region,
     }
+
+    if @network
+      network = @client.get_network @network
+      raise Error.new "Must also specify '--region' for a 'gcp' based network." if network.provider_id == "gcp" && !region
+      raise Error.new "Cannot use '--network' with '--platform' or '--region'" if network.provider_id != "gcp" && (platform || region)
+    end
 
     cluster = if fork
                 @client.create_fork CB::Client::ForkCreateParams.new(**params.merge(

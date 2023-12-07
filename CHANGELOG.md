@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - High availability changes with `cb upgrade start` must be made without any other changes to the cluster.
+- Validation on `cb create` using `--network` for `gcp` based networks.
 
 ## [3.4.0] - 2023-08-14
 ### Added
