@@ -111,6 +111,8 @@ op = OptionParser.new do |parser|
     parser.banner = "cb uri <cluster id> [--role]"
     uri = set_action ClusterURI
 
+    parser.on("--database DATABASE", "Database name (default: postgres)") { |arg| uri.database = arg }
+    parser.on("--port PORT", "Port number (default: 5432)") { |arg| uri.port = arg }
     parser.on("--role NAME", "Role name (default: default)") { |arg| uri.role = CB::Role.new arg }
     positional_args uri.cluster_id
   end

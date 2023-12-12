@@ -760,10 +760,18 @@ Spectator.describe CB::Completion do
     expect(result).to eq expected_cluster_suggestion
 
     result = parse("cb uri abc ")
+    expect(result).to have_option "--database"
+    expect(result).to have_option "--port"
     expect(result).to have_option "--role"
 
     result = parse("cb uri abc --role ")
     expect(result).to eq CB::Role::VALID_CLUSTER_ROLES.to_a
+
+    result = parse("cb uri abc --port ")
+    expect(result).to eq [] of String
+
+    result = parse("cb uri abc --database ")
+    expect(result).to eq [] of String
   end
 
   it "completes team" do

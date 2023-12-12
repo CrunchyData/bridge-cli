@@ -1136,11 +1136,16 @@ class CB::Completion
   def uri
     return cluster_suggestions if @args.size == 2
 
+    suggest_none if last_arg? "--database"
+    suggest_none if last_arg? "--port"
+
     if last_arg? "--role"
       return Role::VALID_CLUSTER_ROLES.to_a
     end
 
     suggest = [] of String
+    suggest << "--database\tdatabase name" unless has_full_flag? :database
+    suggest << "--port\tport number" unless has_full_flag? :port
     suggest << "--role\trole name" unless has_full_flag? :role
     suggest
   end
