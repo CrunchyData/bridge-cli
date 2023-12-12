@@ -42,5 +42,23 @@ Spectator.describe CB::ClusterURI do
 
       expect(&.output.to_s).to eq expected
     end
+
+    it "output with different database and port" do
+      action.cluster_id = cluster.id
+      action.database = "test"
+      action.port = 5431
+      action.role = "user"
+
+      expect(client).to receive(:get_account).and_return(account)
+      expect(client).to receive(:get_role).and_return(role)
+
+      action.call
+
+      expected = <<-EXPECTED
+      postgres://u_mijrfkkuqvhernzfqcbqf7b6me:secret@example.com:5431/test
+      EXPECTED
+
+      expect(&.output.to_s).to eq expected
+    end
   end
 end
