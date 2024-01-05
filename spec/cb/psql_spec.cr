@@ -15,9 +15,9 @@ Spectator.describe CB::Psql do
   let(team) { Factory.team }
 
   describe "#initialize" do
-    it "ensures 'default' if role not specified" do
+    it "ensures 'user' if role not specified" do
       action.cluster_id = cluster.id
-      expect(&.role.to_s).to eq "default"
+      expect(&.role.to_s).to eq "user"
     end
   end
 
@@ -51,7 +51,7 @@ Spectator.describe CB::Psql do
       action.cluster_id = cluster.id
 
       expect(client).to receive(:get_cluster).and_return(cluster)
-      expect(client).to receive(:get_role).and_return(role)
+      expect(client).to receive(:create_role).and_return(role)
       expect(client).to receive(:get_team).and_return(team)
 
       action.call
