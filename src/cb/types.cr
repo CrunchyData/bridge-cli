@@ -2,7 +2,7 @@ module CB
   struct Role
     getter name : String
 
-    VALID_CLUSTER_ROLES = Set{"application", "default", "postgres", "user"}
+    VALID_CLUSTER_ROLES = Set{"application", "postgres", "user"}
 
     private INVALID_ROLE_MESSAGE = "invalid role: '%s'. Must be one of: #{VALID_CLUSTER_ROLES.join ", "}"
 
@@ -10,7 +10,7 @@ module CB
       @name == other
     end
 
-    def initialize(@name : String = "default")
+    def initialize(@name : String = "user")
       raise Program::Error.new INVALID_ROLE_MESSAGE % @name unless valid?
     end
 

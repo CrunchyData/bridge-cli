@@ -29,11 +29,12 @@ module CB
 
       c = client.get_cluster cluster_id[:cluster]
 
-      if @role == "user"
-        @role = Role.new "u_#{client.get_account.id}"
-      end
+      uri = if @role == "user"
+              client.create_role(cluster_id[:cluster]).uri
+            else
+              client.get_role(cluster_id[:cluster], @role.to_s).uri
+            end
 
-      uri = client.get_role(cluster_id[:cluster], @role.to_s).uri
       raise Error.new "null uri" if uri.nil?
 
       database.tap { |db| uri.path = db if db }

@@ -6,14 +6,13 @@ Spectator.describe CB::ClusterURI do
 
   mock_client
 
-  let(account) { Factory.account }
   let(cluster) { Factory.cluster }
   let(role) { Factory.role_user }
 
   describe "#initialize" do
-    it "ensures 'default' if role not specified" do
+    it "ensures 'user' if role not specified" do
       action.cluster_id = cluster.id
-      expect(&.role.to_s).to eq "default"
+      expect(&.role.to_s).to eq "user"
     end
   end
 
@@ -31,8 +30,7 @@ Spectator.describe CB::ClusterURI do
       action.cluster_id = cluster.id
       action.role = "user"
 
-      expect(client).to receive(:get_account).and_return(account)
-      expect(client).to receive(:get_role).and_return(role)
+      expect(client).to receive(:create_role).and_return(role)
 
       action.call
 
@@ -49,8 +47,7 @@ Spectator.describe CB::ClusterURI do
       action.port = 5431
       action.role = "user"
 
-      expect(client).to receive(:get_account).and_return(account)
-      expect(client).to receive(:get_role).and_return(role)
+      expect(client).to receive(:create_role).and_return(role)
 
       action.call
 

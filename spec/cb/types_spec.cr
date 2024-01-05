@@ -4,8 +4,8 @@ include CB
 Spectator.describe CB::Role do
   describe "#initialize" do
     subject { described_class }
-    it "creates default" do
-      expect(&.new.name).to eq "default"
+    it "creates default as 'user'" do
+      expect(&.new.name).to eq "user"
     end
 
     sample CB::Role::VALID_CLUSTER_ROLES do |name|
