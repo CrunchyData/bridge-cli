@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [3.4.2] - 2023-01-05
+## [3.4.2] - 2024-01-05
 ### Changed
 - `cb uri` and `cb psql` now default to `user` role when `--role` is not
   specified. The value `default` for `--role` has been removed and is no longer
