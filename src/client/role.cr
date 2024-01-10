@@ -3,6 +3,12 @@ require "./client"
 module CB
   class Client
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridroles/create-role
+    def create_role(cluster_id : Identifier)
+      return create_role(cluster_id.to_s) if cluster_id.eid?
+      c = get_cluster_by_name(cluster_id)
+      create_role(c.id)
+    end
+
     def create_role(cluster_id)
       resp = post "clusters/#{cluster_id}/roles", "{}"
       CB::Model::Role.from_json resp.body
