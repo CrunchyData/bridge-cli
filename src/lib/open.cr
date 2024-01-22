@@ -12,8 +12,11 @@ module CB::Lib
       {% if flag?(:darwin) %}
         true
       {% elsif flag?(:linux) %}
-        Process.run("command", ["-v", "xdg-settings", "get", "default-web-browser"]).success?
-        # Process.run("command -v #{OPEN_COMMAND}").success?
+        begin
+          Process.run("xdg-settings", ["get", "default-web-browser"]).success?
+        rescue IO::Error
+          false
+        end
       {% else %}
         false
       {% end %}
