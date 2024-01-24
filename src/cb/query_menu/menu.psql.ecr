@@ -1,0 +1,32 @@
+<%- option : Int32 = 1 %>
+<%- @queries.each do |category, queries| -%>
+\echo <%= "#{category.colorize.bold}" %>
+<%- queries.each do |query| -%>
+    \echo '  <%= "#{option} \u2013 #{query.label}" %>'
+    <%- option += 1 -%>
+<%- end -%>
+<%- end -%>
+\echo
+\prompt 'Type choice and press <%= "<Enter>".colorize.bold %> (<%= "q".colorize.bold %> to quit): ' choice
+\echo
+
+<%- option = 1 %>
+SELECT CASE
+<%- @queries.each_value do |queries| -%>
+<%- queries.each do |query| %>
+WHEN :'choice'::text = '<%= option %>' THEN
+'\i `echo <%= query.path %>`'
+'\echo'
+'\i <%= @path %>'
+<%- option += 1 -%>
+<%- end -%>
+<%- end -%>
+WHEN :'choice'::text = 'q'
+THEN '\echo Quitting!'
+ELSE
+'\echo <%= "Error:".colorize.red.bold %> Unknown option! Try again.'
+'\echo'
+'\i <%= @path %>'
+END AS action \gset
+
+:action

@@ -1,5 +1,6 @@
 require "./action"
 require "./dirs"
+require "./query_menu/*"
 
 module CB
   class Psql < APIAction
@@ -100,6 +101,8 @@ module CB
       File.open(psqlrc.path, "a") do |f|
         f.puts "\\set ON_ERROR_ROLLBACK interactive"
         f.puts "\\set PROMPT1 '#{psqlpromptname}/%[%033[33;1m%]%x%x%x%[%033[0m%]%[%033[1m%]%/%[%033[0m%]%R%# '"
+        f.puts QueryMenu::Menu.new.render(cluster: c)
+        f.puts "\\echo 'Use #{":menu".colorize.bold} to list available queries.'"
       end
 
       psqlrc.path.to_s
