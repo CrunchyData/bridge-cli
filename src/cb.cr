@@ -12,6 +12,8 @@ module CB
 
   HOST = ENV["CB_HOST"]? || "api.crunchybridge.com"
 
+  DASHBOARD = ENV["CB_DASHBOARD_HOST"]? || HOST.gsub(/\Aapi\./, "")
+
   # Release constants.
   BUILD_RELEASE  = {{ flag?(:release) }}
   SHARDS_VERSION = {{ `shards version "#{__DIR__}"`.chomp.stringify }}

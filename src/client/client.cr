@@ -28,7 +28,7 @@ module CB
       unless secret && secret.starts_with?("cbkey_")
         STDERR << "error".colorize.t_warn << ": You're using an invalid API key. " \
                                              "You can procure a new one via the dashboard to continue: " \
-                                             "https://crunchybridge.com/account/api-keys\n"
+                                             "https://#{DASHBOARD_HOST}/account/api-keys\n"
         exit 1
       end
 
