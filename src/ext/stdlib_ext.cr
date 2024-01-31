@@ -35,7 +35,7 @@ end
 
 macro jrecord(name, *properties)
   @[JSON::Serializable::Options(emit_nulls: true)]
-  record({{name}}, {{*properties}}) do
+  record({{name}}, {{properties.splat}}) do
     include JSON::Serializable
 
     {{yield}}
