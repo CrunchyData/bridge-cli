@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    nixpkgs-crunchy.url = "github:crunchydata/nixpkgs";
+    nixpkgs-crunchy = { url = "github:crunchydata/nixpkgs"; inputs.nixpkgs.follows = "nixpkgs"; };
     nix-filter.url = "github:numtide/nix-filter";
   };
 

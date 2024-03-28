@@ -3,6 +3,10 @@
 # The point is for the user to remove these configuration records
 # one by one as the reported problems are removed from the code base.
 
+# Seems broken in current (v1.6.1) build of ameba, so disabling
+Lint/UselessAssign:
+  Enabled: false
+
 # Problems found: 6
 # Run `ameba --only Naming/AccessorMethodName` for details
 Naming/AccessorMethodName:
