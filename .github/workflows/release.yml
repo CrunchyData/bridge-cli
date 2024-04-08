@@ -26,7 +26,7 @@ jobs:
         make release RELEASE=1 STATIC=1
 
     - name: Upload release bundle artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: cb_linux_amd64
         path: dist
@@ -47,13 +47,13 @@ jobs:
       run: shards install
 
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
+      uses: docker/setup-qemu-action@v3
       with:
         image: tonistiigi/binfmt:latest
         platforms: arm64
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      uses: docker/setup-buildx-action@v3
       with:
         version: latest
 
@@ -62,12 +62,39 @@ jobs:
         make release RELEASE=1 STATIC=1 TARGET_ARCH=aarch64
 
     - name: Upload release bundle artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: cb_linux_aarch64
         path: dist
 
   build_macos_amd64:
+    runs-on: macos-13
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install crystal
+      run: brew install crystal
+
+    - name: Install gon via homebrew for code signing and app notarization
+      run: |
+        brew tap mitchellh/gon
+        brew install mitchellh/gon/gon
+
+    - name: Install dependencies
+      run: shards install
+
+    - name: Build
+      run: |
+        make release RELEASE=1 STATIC_LIBS=1
+
+    - name: Upload release bundle artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: cb_macos_amd64
+        path: dist
+
+  build_macos_arm64:
     runs-on: macos-latest
     steps:
     - name: Checkout
@@ -89,36 +116,36 @@ jobs:
         make release RELEASE=1 STATIC_LIBS=1
 
     - name: Upload release bundle artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: cb_macos_amd64
+        name: cb_macos_arm64
         path: dist
 
   release:
-    needs: [build_linux_amd64, build_linux_aarch64, build_macos_amd64]
+    needs: [build_linux_amd64, build_linux_aarch64, build_macos_amd64, build_macos_arm64]
     runs-on: ubuntu-latest
     steps:
     - name: Determine version
       id: version
-      run: "echo ::set-output name=version::${GITHUB_REF:11}"
+      run: echo "version=${GITHUB_REF:11}" >> $GITHUB_OUTPUT
 
     - name: Download cb_linux_amd64.zip artifact
       id: download_linux_amd64
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: cb_linux_amd64
         path: dist-linux-amd64
 
     - name: Download cb_linux_aarch64.zip artifact
       id: download_linux_aarch64
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: cb_linux_aarch64
         path: dist-linux-aarch64
 
     - name: Download cb_macos_amd64.zip artifact
       id: download_macos_amd64
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: cb_macos_amd64
         path: dist-macos-amd64
