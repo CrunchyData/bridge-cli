@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Add Crystal repos
       run: curl -sSL https://crystal-lang.org/install.sh | sudo bash
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Add Crystal repos
       run: curl -sSL https://crystal-lang.org/install.sh | sudo bash
@@ -71,7 +71,7 @@ jobs:
     runs-on: macos-13
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Install crystal
       run: brew install crystal
@@ -98,7 +98,7 @@ jobs:
     runs-on: macos-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Install crystal
       run: brew install crystal
