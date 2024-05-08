@@ -29,22 +29,20 @@ module CB
       validate
 
       c = client.get_cluster cluster_id[:cluster]
+      team = client.get_team c.team_id
 
-      uri = if @role == "user"
-              client.create_role(cluster_id[:cluster]).uri
-            else
-              client.get_role(cluster_id[:cluster], @role.to_s).uri
-            end
-
-      raise Error.new "null uri" if uri.nil?
+      client.create_role(cluster_id[:cluster]) if @role == "user"
+      uri = client.get_role(cluster_id[:cluster], @role.to_s).uri
+      raise Error.new "unable to obtain uri for cluster" if uri.nil?
 
       database.tap { |db| uri.path = db if db }
 
       output << "connecting to "
-      team_name = print_team_slash_cluster c
+      output << team.name.colorize.t_alt << "/" if team.name
+      output << c.name.colorize.t_name << "\n"
 
       cert_path = ensure_cert c.team_id
-      psqlrc_path = build_psqlrc c, team_name
+      psqlrc_path = build_psqlrc c, team.name
 
       args = ARGV.skip 1
 
@@ -90,9 +88,9 @@ module CB
       end
     end
 
-    private def build_psqlrc(c, team_name) : String
+    private def build_psqlrc(c : Model::Cluster, team_name : String) : String
       psqlpromptname = String.build do |s|
-        s << "%[%033[32m%]#{escape(team_name.to_s)}%[%033m%]" << "/" if team_name
+        s << "%[%033[32m%]#{escape(team_name)}%[%033m%]" << "/" if team_name
         s << "%[%033[36m%]#{c.name}%[%033m%]"
       end
 

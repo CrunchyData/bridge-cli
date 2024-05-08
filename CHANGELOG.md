@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - `cb config-param set` issue truncating values with multiple `=` characters.
+- `cb psql` prompt line wrapping issue.
 - `cb uri` retrieving correct `user` role credentials for a replica.
 
 ## [3.5.0] - 2024-01-31
