@@ -15,11 +15,8 @@ class CB::ClusterURI < CB::APIAction
   def run
     validate
 
-    role = if @role == "user"
-             client.create_role(@cluster_id[:cluster])
-           else
-             client.get_role(@cluster_id[:cluster], @role.to_s)
-           end
+    client.create_role(@cluster_id[:cluster]) if @role == "user"
+    role = client.get_role(@cluster_id[:cluster], @role.to_s)
 
     uri = role.uri
     raise Error.new "There is no URI available for this cluster." unless uri

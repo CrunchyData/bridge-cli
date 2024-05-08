@@ -31,6 +31,7 @@ Spectator.describe CB::ClusterURI do
       action.role = "user"
 
       expect(client).to receive(:create_role).and_return(role)
+      expect(client).to receive(:get_role).and_return(role)
 
       action.call
 
@@ -48,6 +49,7 @@ Spectator.describe CB::ClusterURI do
       action.role = "user"
 
       expect(client).to receive(:create_role).and_return(role)
+      expect(client).to receive(:get_role).and_return(role)
 
       action.call
 
