@@ -147,7 +147,10 @@ Spectator.describe ConfigurationParameterSet do
 
   describe "#call" do
     before_each {
-      action.args = ["postgres:max_connections=100"]
+      action.args = [
+        "postgres:max_connections=100",
+      ]
+
       action.cluster_id = cluster.id
     }
 
