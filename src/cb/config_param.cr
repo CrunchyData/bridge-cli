@@ -126,7 +126,7 @@ module CB
       super
 
       updated_parameters = @args.map do |arg|
-        parts = arg.split('=')
+        parts = arg.split(separator: '=', limit: 2)
         {"name" => parts[0], "value" => parts[1]}
       rescue IndexError
         raise Error.new("Invalid argument: #{arg}). Make sure that it has the following format <component>:<name>=<value>.")
