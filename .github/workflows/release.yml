@@ -150,6 +150,13 @@ jobs:
         name: cb_macos_amd64
         path: dist-macos-amd64
 
+    - name: Download cb_macos_arm64.zip artifact
+      id: download_macos_arm64
+      uses: actions/download-artifact@v4
+      with:
+        name: cb_macos_arm64
+        path: dist-macos-arm64
+
     - name: Create release
       id: create_release
       uses: actions/create-release@v1
@@ -189,4 +196,14 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: dist-macos-amd64/cb.zip
         asset_name: cb-v${{ steps.version.outputs.version }}_macos_amd64.zip
+        asset_content_type: application/zip
+
+    - name: Update release zip from macos arm64
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist-macos-arm64/cb.zip
+        asset_name: cb-v${{ steps.version.outputs.version }}_macos_arm64.zip
         asset_content_type: application/zip
