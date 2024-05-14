@@ -280,8 +280,13 @@ class CB::Completion
       return team_suggestions
     end
 
+    if last_arg?("--format")
+      return [CB::Format::Table, CB::Format::Tree].map(&.to_s.downcase)
+    end
+
     suggest = [] of String
     suggest << "--team\tteam id" unless has_full_flag? :team
+    suggest << "--format\tchoose output format" unless has_full_flag? :format
     suggest
   end
 

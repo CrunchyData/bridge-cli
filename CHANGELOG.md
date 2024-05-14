@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- `cb list` completion to include `--format`.
+
 ## [3.5.1] - 2024-05-09
 ### Fixed
 - `cb config-param set` issue truncating values with multiple `=` characters.
