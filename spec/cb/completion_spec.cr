@@ -9,6 +9,10 @@ private class CompletionTestClient < CB::Client
     [Factory.team(name: "my team", role: "manager")]
   end
 
+  def get_networks(team)
+    [Factory.network]
+  end
+
   def get_firewall_rules(id)
     [Factory.firewall_rule(id: "f1", rule: "1.2.3.4/32"), Factory.firewall_rule(id: "f2", rule: "4.5.6.7/24")]
   end
@@ -663,9 +667,44 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "network"
 
     result = parse("cb network ")
+    expect(result).to have_option "add-firewall-rule"
     expect(result).to have_option "info"
     expect(result).to have_option "list"
+    expect(result).to have_option "list-firewall-rules"
+    expect(result).to have_option "remove-firewall-rule"
+    expect(result).to have_option "update-firewall-rule"
 
+    # Network Firewall Rule Management
+    result = parse("cb network add-firewall-rule")
+    expect(result).to have_option "--format"
+    expect(result).to have_option "--network"
+    expect(result).to have_option "--rule"
+
+    result = parse("cb network list-firewall-rules")
+    expect(result).to have_option "--format"
+    expect(result).to have_option "--network"
+
+    result = parse("cb network remove-firewall-rule")
+    expect(result).to have_option "--format"
+    expect(result).to have_option "--network"
+    expect(result).to have_option "--firewall-rule"
+
+    result = parse("cb network remove-firewall-rule --network abc ")
+    expect(result).to have_option "--firewall-rule"
+
+    result = parse("cb network update-firewall-rule")
+    expect(result).to have_option "--description"
+    expect(result).to have_option "--firewall-rule"
+    expect(result).to have_option "--format"
+    expect(result).to have_option "--network"
+    expect(result).to have_option "--rule"
+
+    result = parse("cb network update-firewall-rule --network abc ")
+    expect(result).to have_option "--description"
+    expect(result).to have_option "--firewall-rule"
+    expect(result).to have_option "--rule"
+
+    # Network Management
     result = parse("cb network info ")
     expect(result).to have_option "--network"
     expect(result).to have_option "--format"

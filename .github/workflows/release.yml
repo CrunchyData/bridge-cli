@@ -198,7 +198,7 @@ jobs:
         asset_name: cb-v${{ steps.version.outputs.version }}_macos_amd64.zip
         asset_content_type: application/zip
 
-    - name: Update release zip from macos arm64
+    - name: Upload release zip from macos arm64
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

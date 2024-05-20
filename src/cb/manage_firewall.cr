@@ -58,14 +58,14 @@ class CB::ManageFirewall < CB::APIAction
   end
 
   def remove_rule(rule : CB::Model::FirewallRule)
-    @client.delete_firewall_rule @network_id, rule.id
+    @client.destroy_firewall_rule @network_id, rule.id
     "done".colorize.t_success
   rescue e : Client::Error
     output.print e
   end
 
   def add_rule(cidr : String)
-    @client.add_firewall_rule @network_id, cidr
+    @client.create_firewall_rule @network_id, CB::Client::FirewallRuleCreateParams.new(rule: cidr)
     "done".colorize.t_success
   rescue e : Client::Error
     output.print e

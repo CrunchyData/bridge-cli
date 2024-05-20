@@ -115,8 +115,9 @@ module Factory
 
   def firewall_rule(**params)
     params = {
-      id:   "shofthj3fzaipie44lt6a5i3de",
-      rule: "1.2.3.0/24",
+      description: "Example Description",
+      id:          "shofthj3fzaipie44lt6a5i3de",
+      rule:        "1.2.3.0/24",
     }.merge(params)
     CB::Model::FirewallRule.new **params
   end
