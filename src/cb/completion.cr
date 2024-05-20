@@ -155,6 +155,21 @@ class CB::Completion
     end
   end
 
+  def network_suggestions
+    teams = client.get_teams
+    networks = client.get_networks(teams)
+
+    networks.map do |n|
+      team_name = teams.find { |t| t.id == n.team_id }.try(&.name) || "unknown_team"
+      "#{n.id}\t#{n.name}"
+    end
+  end
+
+  def firewall_rule_suggestions(network_id : String?)
+    rules = client.get_firewall_rules(network_id)
+    rules.map { |r| "#{r.id}\t#{r.description}" }
+  end
+
   def teams
     client.get_teams.map { |t| "#{t.id}\t#{t.name}" }
   end
@@ -311,8 +326,8 @@ class CB::Completion
     end
   end
 
-  def firewall_rules(cluster_id)
-    rules = client.get_firewall_rules(cluster_id)
+  def firewall_rules(network_id)
+    rules = client.get_firewall_rules(network_id)
     rules.map(&.rule) - @args
   rescue Client::Error
     [] of String
@@ -549,16 +564,81 @@ class CB::Completion
 
   def network
     case @args[1]
+    when "add-firewall-rule"
+      network_add_firewall_rule
+    when "list-firewall-rules"
+      network_list_firewall_rules
+    when "remove-firewall-rule"
+      network_remove_firewall_rule
+    when "update-firewall-rule"
+      network_update_firewall_rule
     when "info"
       network_info
     when "list"
       network_list
     else
       [
+        "add-firewall-rule\tadd firewall rule",
+        "remove-firewall-rule\tremove firewall rule",
+        "list-firewall-rules\tlist firewall rules",
+        "update-firewall-rule\tupdate firewall rule",
         "info\tdetailed network information",
         "list\tlist available networks",
       ]
     end
+  end
+
+  def network_add_firewall_rule
+    return ["table", "json"] if last_arg?("--format")
+    return network_suggestions if last_arg?("--network")
+    suggest = [] of String
+    suggest << "--description\tdescription of rule to add" unless has_full_flag? :description
+    suggest << "--format\tchoose output format" unless has_full_flag? :format
+    suggest << "--network\tnetwork id" unless has_full_flag? :network
+    suggest << "--rule\tcidr of rule to add" unless has_full_flag? :rule
+    suggest
+  end
+
+  def network_remove_firewall_rule
+    if last_arg?("--firewall-rule") && has_full_flag?(:network)
+      network = find_arg_value "--network"
+      return firewall_rule_suggestions(network)
+    end
+
+    return ["table", "json"] if last_arg?("--format")
+    return network_suggestions if last_arg?("--network")
+    suggest = [] of String
+    suggest << "--firewall-rule\tchoose firewall rule" unless has_full_flag?(:firewall_rule)
+    suggest << "--format\tchoose output format" unless has_full_flag? :format
+    suggest << "--network\tchoose network" unless has_full_flag? :network
+    suggest
+  end
+
+  def network_list_firewall_rules
+    return ["table", "json"] if last_arg?("--format")
+    return network_suggestions if last_arg?("--network")
+    suggest = [] of String
+    suggest << "--format\tchoose output format" unless has_full_flag? :format
+    suggest << "--network\tchoose network" unless has_full_flag? :network
+    suggest
+  end
+
+  def network_update_firewall_rule
+    if last_arg?("--firewall-rule") && has_full_flag?(:network)
+      network = find_arg_value "--network"
+      return firewall_rule_suggestions(network)
+    end
+
+    return ["table", "json"] if last_arg?("--format")
+    return network_suggestions if last_arg?("--network")
+
+    suggest = [] of String
+    suggest << "--description\tdescription of the rule" unless has_full_flag? :description
+    suggest << "--firewall-rule\tchoose firewall rule" unless has_full_flag?(:firewall_rule)
+    suggest << "--format\tchoose output format" unless has_full_flag? :format
+    suggest << "--network\tchoose network" unless has_full_flag? :network
+    suggest << "--rule\tcidr of the rule" unless has_full_flag? :rule
+    suggest
   end
 
   def network_info

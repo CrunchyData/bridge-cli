@@ -126,7 +126,8 @@ op = OptionParser.new do |parser|
     positional_args psql.cluster_id
   end
 
-  parser.on("firewall", "Manage firewall rules") do
+  parser.on("firewall") do
+    show_deprecated("Prefer use of #{"cb network".colorize.bold} instead")
     manage = set_action ManageFirewall
     parser.banner = "cb firewall <--cluster> [--add] [--remove]"
 
@@ -493,13 +494,99 @@ op = OptionParser.new do |parser|
   parser.on("network", "Manage networks") do
     parser.banner = "cb network <info|list>"
 
+    parser.on("add-firewall-rule", "Add a firewall rule to a network") do
+      add = set_action FirewallRuleAdd
+
+      parser.banner = "cb network add-firewall-rule <--network> <--rule>"
+
+      parser.on("--description DESC", "A description for the rule") { |arg| add.description = arg }
+      parser.on("--format FORMAT", "Output format (default: table)") { |arg| add.format = arg }
+      parser.on("--network ID", "The target network for the rule") { |arg| add.network_id = arg }
+      parser.on("--no-header", "Do not display table header") { add.no_header = true }
+      parser.on("--rule CIDR", "A firewall rule") { |arg| add.rule = arg }
+
+      parser.examples = <<-EXAMPLES
+      Add a firewall rule. Output: table
+      $ cb network add-firewall-rule --network <ID> --rule <CIDR>
+
+      Add a firewall rule. Output: table without header
+      $ cb network add-firewall-rule --network <ID> --rule <CIDR> --no-header
+
+      Add a firewall rule with a description. Output: table
+      $ cb network add-firewall-rule --network <ID> --rule <CIDR> --description <DESC>
+
+      Add a firewall rule. Output: json
+      $ cb network add-firewall-rule --network <ID> --rule <CIDR> --format json
+      EXAMPLES
+    end
+
+    parser.on("list-firewall-rules", "List all firewall rules for a network") do
+      list = set_action FirewallRuleList
+
+      parser.on("--format FORMAT", "Output format (default: table)") { |arg| list.format = arg }
+      parser.on("--network ID", "The target network") { |arg| list.network_id = arg }
+      parser.on("--no-header", "Do not display table header") { list.no_header = true }
+
+      parser.examples = <<-EXAMPLES
+      List all firewall rules. Output: table
+      $ cb network list-firewall-rules --network <ID>
+
+      List all firewall rules. Output: table without header
+      $ cb network list-firewall-rules --network <ID> --no-header
+
+      List all firewall rules. Output: json
+      $ cb network list-firewall-rules --network <ID> --format json
+      EXAMPLES
+    end
+
+    parser.on("remove-firewall-rule", "Remove a firewall rule from a network") do
+      remove = set_action FirewallRuleRemove
+
+      parser.banner = "cb network remove-firewall-rule <--network> <--firewall-rule>"
+
+      parser.on("--firewall-rule ID", "The id of the rule to remove") { |arg| remove.firewall_rule_id = arg }
+      parser.on("--format FORMAT", "Output format (default: table)") { |arg| remove.format = arg }
+      parser.on("--network ID", "The target network") { |arg| remove.network_id = arg }
+
+      parser.examples = <<-EXAMPLES
+      Remove firewall rule. Output: table
+      $ cb network remove-firewall-rule --network <ID> --firewall-rule <ID>
+
+      Remove firewall rule. Output: table without header
+      $ cb network remove-firewall-rule --network <ID> --firewall-rule <ID> --no-header
+
+      Remove firewall rule. Ouptut: json
+      $ cb network remove-firewall-rule --network <ID> --firewall-rule <ID> --format json
+      EXAMPLES
+    end
+
+    parser.on("update-firewall-rule", "Update a network firewall rule") do
+      update = set_action FirewallRuleUpdate
+
+      parser.banner = "cb network update-firewall-rule <--network> <--firewall-rule>"
+
+      parser.on("--description DESC", "The description for the rule") { |arg| update.description = arg }
+      parser.on("--firewall-rule ID", "The id of the rule to remove") { |arg| update.firewall_rule_id = arg }
+      parser.on("--format FORMAT", "Output format (default: table)") { |arg| update.format = arg }
+      parser.on("--network ID", "The target network") { |arg| update.network_id = arg }
+      parser.on("--rule CIDR", "The firewall rule") { |arg| update.rule = arg }
+
+      parser.examples = <<-EXAMPLES
+      Update rule.
+      $ cb network update-firewall-rule --network <ID> --firewall-rule <ID> --rule <CIDR>
+
+      Update description.
+      $ cb network update-firewall-rule --network <ID> --firewall-rule <ID> --description <DESC>
+      EXAMPLES
+    end
+
     parser.on("info", "Detailed network information") do
       info = set_action NetworkInfo
 
       parser.banner = "cb network info <--network>"
 
-      parser.on("--network ID", "Choose network") { |arg| info.network_id = arg }
       parser.on("--format FORMAT", "Choose output format (default: table)") { |arg| info.format = arg }
+      parser.on("--network ID", "Choose network") { |arg| info.network_id = arg }
       parser.on("--no-header", "Do not display table header") { info.no_header = true }
 
       parser.examples = <<-EXAMPLES

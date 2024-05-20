@@ -25,8 +25,13 @@ module CB
              else
                get "networks"
              end
-
       Array(CB::Model::Network).from_json resp.body, root: "networks"
+    end
+
+    def get_networks(teams : Array(CB::Model::Team))
+      networks = [] of CB::Model::Network
+      teams.each { |team| networks.concat get_networks(Identifier.new team.id.to_s) }
+      networks
     end
 
     private def get_network_by_name(id : Identifier)
