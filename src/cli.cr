@@ -492,7 +492,7 @@ op = OptionParser.new do |parser|
   #
 
   parser.on("network", "Manage networks") do
-    parser.banner = "cb network <info|list>"
+    parser.banner = "cb network"
 
     parser.on("add-firewall-rule", "Add a firewall rule to a network") do
       add = set_action FirewallRuleAdd
@@ -517,6 +517,99 @@ op = OptionParser.new do |parser|
 
       Add a firewall rule. Output: json
       $ cb network add-firewall-rule --network <ID> --rule <CIDR> --format json
+      EXAMPLES
+    end
+
+    parser.on("create-peering", "Create a new peering for a network") do
+      create = set_action PeeringCreate
+
+      parser.banner = "cb network create-peering <--network> <--platform>"
+
+      parser.on("--platform NAME", "Cloud provider") { |arg| create.platform = arg }
+
+      # AWS peering options.
+      parser.on("--aws-account-id ID", "The AWS account id") { |arg| create.aws_account_id = arg }
+      parser.on("--aws-vpc-id ID", "The AWS VPC id") { |arg| create.aws_vpc_id = arg }
+
+      # GCP peering options.
+      parser.on("--gcp-project-id ID", "The GCP project id") { |arg| create.gcp_project_id = arg }
+      parser.on("--gcp-vpc-name NAME", "The GCP VPC name") { |arg| create.gcp_vpc_name = arg }
+
+      parser.on("--format FORMAT", "Output format (default: table)") { |arg| create.format = arg }
+      parser.on("--network ID", "The target network") { |arg| create.network_id = arg }
+      parser.on("--no-header", "Do not display table header") { create.no_header = true }
+
+      parser.examples = <<-EXAMPLES
+      Create a new peering with AWS VPC.
+      $ cb network create-peering --platform aws --network <ID> --aws-account-id <ID> --aws-vpc-id <ID>
+
+      Create a new peering with GCP VPC.
+      $ cb network create-peering --platform gcp --network <ID> --gcp-project-id <ID> --gcp-vpc-name <NAME>
+      EXAMPLES
+    end
+
+    parser.on("delete-peering", "Delete an existing peering for a network") do
+      delete = set_action PeeringDelete
+
+      parser.banner = "cb network delete-peering <--network> <--peering>"
+
+      parser.on("--format FORMAT", "Output format (default: table)") { |arg| delete.format = arg }
+      parser.on("--network ID", "The target network") { |arg| delete.network_id = arg }
+      parser.on("--no-header", "Do not display table header") { delete.no_header = true }
+      parser.on("--peering ID", "The ID of the peering") { |arg| delete.peering_id = arg }
+
+      parser.examples = <<-EXAMPLES
+      Delete an existing peering.
+      $ cb network delete-peering --network <ID> --peering <ID>
+      EXAMPLES
+    end
+
+    parser.on("get-peering", "Get an existing peering for a network") do
+      get = set_action PeeringGet
+
+      parser.banner = "cb network get-peering <--network> <--peering>"
+
+      parser.on("--format FORMAT", "Output format (default: table)") { |arg| get.format = arg }
+      parser.on("--network ID", "The target network") { |arg| get.network_id = arg }
+      parser.on("--no-header", "Do not display table header") { get.no_header = true }
+      parser.on("--peering ID", "The ID of the peering") { |arg| get.peering_id = arg }
+
+      parser.examples = <<-EXAMPLES
+      Get an existing peering. Output: table
+      $ cb network get-peering --network <ID> --peering <ID>
+
+      Get an existing peering. Output: table without header
+      $ cb network get-peering --network <ID> --peering <ID> --no-header
+
+      Get an existing peering. Output: list
+      $ cb network get-peering --network <ID> --peering <ID> --format list
+
+      Get an existing peering. Output: json
+      $ cb network get-peering --network <ID> --peering <ID> --format json
+      EXAMPLES
+    end
+
+    parser.on("list-peerings", "List existing peerings for a network") do
+      list = set_action PeeringList
+
+      parser.banner = "cb network list-peerings <--network>"
+
+      parser.on("--format FORMAT", "Output format (default: table)") { |arg| list.format = arg }
+      parser.on("--network ID", "The target network") { |arg| list.network_id = arg }
+      parser.on("--no-header", "Do not display table header") { list.no_header = true }
+
+      parser.examples = <<-EXAMPLES
+      List existing peerings. Output: table
+      $ cb network list-peerings --network <ID>
+
+      List existing peerings. Output: table without header
+      $ cb network list-peerings --network <ID> --no-header
+
+      List existing peerings. Output: list
+      $ cb network list-peerings --network <ID> --format list
+
+      List existing peerings. Output: json
+      $ cb network list-peerings --network <ID> --format json
       EXAMPLES
     end
 

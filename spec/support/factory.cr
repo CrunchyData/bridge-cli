@@ -157,6 +157,20 @@ module Factory
     CB::Model::Operation.new **params
   end
 
+  def peering(**params)
+    params = {
+      id:                 "yydi4alkebgsfldibaoo4kliii",
+      cidr4:              "10.0.0.0/24",
+      name:               "Example Peering",
+      network_id:         "oap3kavluvgm7cwtzgaaixzfoi",
+      network_identifier: "arn:aws:ec2:us-east-1:0123456789:vpc/vpc-0123456789",
+      peer_identifier:    "arn:aws:ec2:us-east-1:0123456789:vpc/vpc-0123456789",
+      status:             "active",
+    }.merge(params)
+
+    CB::Model::Peering.new **params
+  end
+
   def plan(**params)
     params = {
       id:           "jkon7qbrzzccrgwn346w3niloe",

@@ -5,16 +5,23 @@ private class CompletionTestClient < CB::Client
     [Factory.cluster]
   end
 
-  def get_teams
-    [Factory.team(name: "my team", role: "manager")]
+  def get_firewall_rules(id)
+    [Factory.firewall_rule(id: "f1", rule: "1.2.3.4/32"), Factory.firewall_rule(id: "f2", rule: "4.5.6.7/24")]
+  end
+
+  def get_log_destinations(id)
+    [
+      Factory.log_destination(id: "logid", host: "host", port: 2020,
+        template: "template", description: "logdest descr"),
+    ]
   end
 
   def get_networks(team)
     [Factory.network]
   end
 
-  def get_firewall_rules(id)
-    [Factory.firewall_rule(id: "f1", rule: "1.2.3.4/32"), Factory.firewall_rule(id: "f2", rule: "4.5.6.7/24")]
+  def list_peerings(network)
+    [Factory.peering]
   end
 
   def get_providers
@@ -40,11 +47,8 @@ private class CompletionTestClient < CB::Client
     ]
   end
 
-  def get_log_destinations(id)
-    [
-      Factory.log_destination(id: "logid", host: "host", port: 2020,
-        template: "template", description: "logdest descr"),
-    ]
+  def get_teams
+    [Factory.team(name: "my team", role: "manager")]
   end
 end
 
@@ -703,6 +707,55 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--description"
     expect(result).to have_option "--firewall-rule"
     expect(result).to have_option "--rule"
+
+    # Network Peering Managments
+    result = parse("cb network create-peering ")
+    expect(result).to have_option "--format"
+    expect(result).to have_option "--network"
+    expect(result).to have_option "--platform"
+
+    result = parse("cb network create-peering --platform ")
+    expect(result).to eq ["aws", "gcp"]
+
+    result = parse("cb network create-peering --network abc --platform aws ")
+    expect(result).to have_option "--aws-account-id"
+    expect(result).to have_option "--aws-vpc-id"
+
+    result = parse("cb network create-peering --network abc --platform gcp ")
+    expect(result).to have_option "--gcp-project-id"
+    expect(result).to have_option "--gcp-vpc-name"
+
+    result = parse("cb network delete-peering ")
+    expect(result).to have_option "--format"
+    expect(result).to have_option "--network"
+    expect(result).to have_option "--peering"
+
+    result = parse("cb network delete-peering --network abc ")
+    expect(result).to have_option "--peering"
+
+    result = parse("cb network delete-peering --network abc --peering ")
+    expect(result).to eq ["yydi4alkebgsfldibaoo4kliii\tExample Peering"]
+
+    result = parse("cb network delete-peering --network abc --peering abc --format json ")
+    expect(result).to eq [] of String
+
+    result = parse("cb network get-peering ")
+    expect(result).to have_option "--format"
+    expect(result).to have_option "--network"
+    expect(result).to have_option "--peering"
+
+    result = parse("cb network get-peering --network abc ")
+    expect(result).to have_option "--peering"
+
+    result = parse("cb network get-peering --network abc --peering abc --format json ")
+    expect(result).to eq [] of String
+
+    result = parse("cb network list-peerings ")
+    expect(result).to have_option "--format"
+    expect(result).to have_option "--network"
+
+    result = parse("cb network list-peerings --network abc --format json ")
+    expect(result).to eq [] of String
 
     # Network Management
     result = parse("cb network info ")
