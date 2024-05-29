@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `cb network` now manages firewall rules and supports the following
   subcommands: `add-firewall-rule`, `list-firewall-rules`,
-  `remove-firewall-rule` and `update-firewall-rule`
+  `remove-firewall-rule` and `update-firewall-rule`.
+- `cb network` now manages VPC peerings and supports the following subcommands:
+  `create-peering`, `delete-peering`, `get-peering` and `list-peerings`.
 
 ### Deprecated
 - `cb firewall` deprecated in favor of `cb network`.

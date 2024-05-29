@@ -157,12 +157,17 @@ class CB::Completion
 
   def network_suggestions
     teams = client.get_teams
-    networks = client.get_networks(teams)
+    networks = client.get_networks(nil)
 
     networks.map do |n|
       team_name = teams.find { |t| t.id == n.team_id }.try(&.name) || "unknown_team"
       "#{n.id}\t#{n.name}"
     end
+  end
+
+  def peering_suggestions(network_id : String?)
+    peerings = client.list_peerings(network_id)
+    peerings.map { |p| "#{p.id}\t#{p.name}" }
   end
 
   def firewall_rule_suggestions(network_id : String?)
@@ -571,8 +576,16 @@ class CB::Completion
     case @args[1]
     when "add-firewall-rule"
       network_add_firewall_rule
+    when "create-peering"
+      network_create_peering
+    when "delete-peering"
+      network_delete_peering
+    when "get-peering"
+      network_get_peering
     when "list-firewall-rules"
       network_list_firewall_rules
+    when "list-peerings"
+      network_list_peerings
     when "remove-firewall-rule"
       network_remove_firewall_rule
     when "update-firewall-rule"
@@ -584,8 +597,12 @@ class CB::Completion
     else
       [
         "add-firewall-rule\tadd firewall rule",
+        "create-peering\tcreate vpc peering",
+        "delete-peering\tdelete vpc peering",
+        "get-peering\tget vpc peering details",
         "remove-firewall-rule\tremove firewall rule",
         "list-firewall-rules\tlist firewall rules",
+        "list-peerings\tlist vpc peerings",
         "update-firewall-rule\tupdate firewall rule",
         "info\tdetailed network information",
         "list\tlist available networks",
@@ -601,6 +618,71 @@ class CB::Completion
     suggest << "--format\tchoose output format" unless has_full_flag? :format
     suggest << "--network\tnetwork id" unless has_full_flag? :network
     suggest << "--rule\tcidr of rule to add" unless has_full_flag? :rule
+    suggest
+  end
+
+  def network_create_peering
+    return ["json", "list", "table"] if last_arg?("--format")
+    return ["aws", "gcp"] if last_arg?("--platform")
+    return network_suggestions if last_arg?("--network")
+
+    suggest = [] of String
+    suggest << "--format\tchoose output format" unless has_full_flag? :format
+    suggest << "--network\tnetwork id" unless has_full_flag? :network
+    suggest << "--platform\tcloud provider" unless has_full_flag? :platform
+
+    if has_full_flag?(:platform)
+      case find_arg_value("--platform")
+      when "aws"
+        suggest << "--aws-account-id" unless has_full_flag? :aws_account_id
+        suggest << "--aws-vpc-id" unless has_full_flag? :aws_vpc_id
+      when "gcp"
+        suggest << "--gcp-project-id" unless has_full_flag? :gcp_project_id
+        suggest << "--gcp-vpc-name" unless has_full_flag? :gcp_vpc_name
+      end
+    end
+
+    suggest
+  end
+
+  def network_delete_peering
+    return ["json", "list", "table"] if last_arg?("--format")
+    return network_suggestions if last_arg?("--network")
+
+    if last_arg?("--peering") && has_full_flag?(:network)
+      network = find_arg_value "--network"
+      return peering_suggestions(network)
+    end
+
+    suggest = [] of String
+    suggest << "--format\tchoose output format" unless has_full_flag? :format
+    suggest << "--network\tchoose network" unless has_full_flag? :network
+    suggest << "--peering\tchoose peering" unless has_full_flag? :peering
+    suggest
+  end
+
+  def network_get_peering
+    return ["json", "list", "table"] if last_arg?("--format")
+    return network_suggestions if last_arg?("--network")
+
+    if last_arg?("--peering") && has_full_flag?(:network)
+      network = find_arg_value "--network"
+      return peering_suggestions(network)
+    end
+
+    suggest = [] of String
+    suggest << "--format\tchoose output format" unless has_full_flag? :format
+    suggest << "--network\tchoose network" unless has_full_flag? :network
+    suggest << "--peering\tchoose peering" unless has_full_flag? :peering
+    suggest
+  end
+
+  def network_list_peerings
+    return ["json", "list", "table"] if last_arg?("--format")
+    return network_suggestions if last_arg?("--network")
+    suggest = [] of String
+    suggest << "--format\tchoose output format" unless has_full_flag? :format
+    suggest << "--network\tchoose network" unless has_full_flag? :network
     suggest
   end
 
@@ -1261,7 +1343,12 @@ class CB::Completion
   def find_full_flags
     full = Set(Symbol).new
     full << :allow_restart if has_full_flag? "--allow-restart"
+    full << :aws_account_id if has_full_flag? "--aws-account-id"
+    full << :aws_vpc_id if has_full_flag? "--aws-vpc-id"
+    full << :gcp_project_id if has_full_flag? "--gcp-project-id"
+    full << :gcp_vpc_name if has_full_flag? "--gcp-vpc-name"
     full << :ha if has_full_flag? "--ha"
+    full << :ha if has_full_flag? "--peering"
     full << :plan if has_full_flag? "--plan"
     full << :name if has_full_flag? "--name", "-n"
     full << :team if has_full_flag? "--team", "-t"
@@ -1295,6 +1382,7 @@ class CB::Completion
     full << :now if has_full_flag? "--now"
     full << :use_cluster_maintenance_window if has_full_flag? "use-cluster-maintenance-window"
     full << :no_header if has_full_flag? "--no-header"
+    full << :peering if has_full_flag? "--peering"
     full
   end
 
