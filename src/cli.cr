@@ -1006,14 +1006,9 @@ rescue e : CB::Program::Error
 
   exit 1
 rescue e : CB::Client::Error
-  if e.unauthorized?
-    # if PROG.ensure_token_still_good
-    #   STDERR << "error".colorize.t_warn << ": Token had expired, but has been refreshed. Please try again.\n"
-    #   exit 1
-    # end
-  end
-  STDERR.puts e
-  exit 2
+  STDERR << "error".colorize.red.bold << ": #{e.message}\n"
+  exit 2 unless e.unauthorized?
+  CB::Login.new.run
 rescue e
   capture_error e
   exit 3

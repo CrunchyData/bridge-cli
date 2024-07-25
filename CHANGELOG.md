@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `cb firewall` deprecated in favor of `cb network`.
 
 ### Fixed
+- Expired session handling not prompting for new login.
 - `cb list` completion to include `--format`.
 
 ## [3.5.1] - 2024-05-09
