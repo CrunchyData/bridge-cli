@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- `cb info` now displays `tailscale` status.
 - `cb network` now manages firewall rules and supports the following
   subcommands: `add-firewall-rule`, `list-firewall-rules`,
   `remove-firewall-rule` and `update-firewall-rule`.

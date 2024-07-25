@@ -28,6 +28,7 @@ class CB::ClusterInfo < CB::APIAction
       "platform"           => c.provider_id,
       "region"             => c.region_id,
       "maintenance window" => MaintenanceWindow.new(c.maintenance_window_start).explain,
+      "tailscale active"   => c.tailscale_active,
     }
 
     if source = c.source_cluster_id

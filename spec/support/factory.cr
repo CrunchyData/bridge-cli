@@ -87,6 +87,7 @@ module Factory
       maintenance_window_start: nil,
       network_id:               "nfpvoqooxzdrriu6w3bhqo55c4",
       storage:                  1234,
+      tailscale_active:         false,
     }.merge(params)
 
     CB::Model::Cluster.new **params

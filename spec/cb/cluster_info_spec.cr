@@ -42,6 +42,7 @@ Spectator.describe CB::ClusterInfo do
                   platform: aws
                     region: us-east-2
         maintenance window: no window set. Default to: 00:00-23:59
+          tailscale active: false
                    network: nfpvoqooxzdrriu6w3bhqo55c4
                   firewall: no rules\n
       EXPECTED
