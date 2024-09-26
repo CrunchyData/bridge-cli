@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `cb config-param list-supported` now returns `min_value`, `max_value`, and
+  `enum` constraints for each parameters, if applicable.
 
 ## [3.6.0] - 2024-07-26
 ### Added

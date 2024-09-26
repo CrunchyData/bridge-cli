@@ -109,6 +109,9 @@ module Factory
       parameter_name:   "max_connections",
       requires_restart: false,
       value:            "100",
+      enum:             [] of String,
+      min_value:        "100",
+      max_value:        "2000",
     }.merge(params)
 
     CB::Model::ConfigurationParameter.new **params

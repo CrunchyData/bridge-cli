@@ -93,11 +93,19 @@ module CB
             add "Component"
             add "Name"
             add "Requires Restart"
+            add "Constraints"
           end
 
           header unless no_header
 
-          rows parameters.map { |p| [p.component, p.parameter_name, p.requires_restart ? "yes" : "no"] }
+          rows parameters.map { |p|
+            constraints = [] of String
+            constraints << "enum: #{p.enum.join(", ")}" if p.enum.size > 0
+            constraints << "min: #{p.min_value}" if p.min_value && p.min_value != ""
+            constraints << "max: #{p.max_value}" if p.max_value && p.max_value != ""
+
+            [p.component, p.parameter_name, p.requires_restart ? "yes" : "no", constraints.join(", ")]
+          }
         end
 
         output << table.render << '\n'
@@ -106,6 +114,9 @@ module CB
           "parameters": parameters.map do |p|
             {
               "component":       p.component,
+              "enum":            p.enum,
+              "min_value":       p.min_value,
+              "max_value":       p.max_value,
               "name":            p.name,
               "parameter_name":  p.parameter_name,
               "require_restart": p.requires_restart,
