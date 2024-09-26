@@ -76,6 +76,9 @@ Spectator.describe ConfigurationParameterGet do
         "parameters": [
           {
             "component": "postgres",
+            "enum": [],
+            "min_value": "100",
+            "max_value": "2000",
             "name": "postgres:max_connections",
             "parameter_name": "max_connections",
             "requires_restart": false,
@@ -104,9 +107,21 @@ Spectator.describe ConfigurationParameterListSupported do
         Factory.configuration_parameter(value: nil),
         Factory.configuration_parameter(
           component: "pgbouncer",
-          name: "pgbouncer:default_pool_size",
-          parameter_name: "default_pool_size",
-          value: nil
+          name: "pgbouncer:auth_type",
+          parameter_name: "auth_type",
+          value: nil,
+          min_value: nil,
+          max_value: nil,
+          enum: ["cert", "md5", "trust"]
+        ),
+        Factory.configuration_parameter(
+          component: "pgbouncer",
+          name: "pgbouncer:fake",
+          parameter_name: "fake",
+          value: nil,
+          min_value: nil,
+          max_value: nil,
+          enum: [] of String
         ),
       ]
     }
@@ -115,9 +130,10 @@ Spectator.describe ConfigurationParameterListSupported do
       action.call
 
       expected = <<-EXPECTED
-        Component   Name                Requires Restart
-        postgres    max_connections     no
-        pgbouncer   default_pool_size   no
+        Component   Name              Requires Restart   Constraints
+        postgres    max_connections   no                 min: 100, max: 2000
+        pgbouncer   auth_type         no                 enum: cert, md5, trust
+        pgbouncer   fake              no
       EXPECTED
 
       expect(&.output).to look_like expected
@@ -128,8 +144,8 @@ Spectator.describe ConfigurationParameterListSupported do
       action.call
 
       expected = <<-EXPECTED
-        Component   Name              Requires Restart
-        postgres    max_connections   no
+        Component   Name              Requires Restart   Constraints
+        postgres    max_connections   no                 min: 100, max: 2000
       EXPECTED
 
       expect(&.output).to look_like expected
@@ -179,6 +195,9 @@ Spectator.describe ConfigurationParameterSet do
           "parameters": [
             {
               "component": "postgres",
+              "enum": [],
+              "min_value": "100",
+              "max_value": "2000",
               "name": "postgres:max_connections",
               "parameter_name": "max_connections",
               "requires_restart": false,
@@ -242,6 +261,9 @@ Spectator.describe ConfigurationParameterReset do
           "parameters": [
             {
               "component": "postgres",
+              "enum": [],
+              "min_value": "100",
+              "max_value": "2000",
               "name": "postgres:max_connections",
               "parameter_name": "max_connections",
               "requires_restart": false,
