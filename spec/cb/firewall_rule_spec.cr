@@ -96,11 +96,13 @@ Spectator.describe FirewallRuleList do
     }
 
     it "outputs table with header" do
+      expect(client).to receive(:get_firewall_rules).and_return [Factory.firewall_rule(description: nil)]
+
       action.call
 
       expected = <<-EXPECTED
         ID                           Rule         Description
-        shofthj3fzaipie44lt6a5i3de   1.2.3.0/24   Example Description
+        shofthj3fzaipie44lt6a5i3de   1.2.3.0/24
       EXPECTED
 
       expect(&.output.to_s).to look_like expected

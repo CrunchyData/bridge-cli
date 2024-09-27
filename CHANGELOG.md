@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `cb config-param list-supported` now returns `min_value`, `max_value`, and
   `enum` constraints for each parameters, if applicable.
+### Fixed
+- `cb info` now correctly handles firewall rules with an empty description.
 
 ## [3.6.0] - 2024-07-26
 ### Added
