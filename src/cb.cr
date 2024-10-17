@@ -14,6 +14,8 @@ module CB
 
   DASHBOARD_HOST = ENV["CB_DASHBOARD_HOST"]? || HOST.gsub(/\Aapi\./, "")
 
+  PSQLRC = File.expand_path(ENV["PSQLRC"]? || "~/.psqlrc", home: true)
+
   # Release constants.
   BUILD_RELEASE  = {{ flag?(:release) }}
   SHARDS_VERSION = {{ `shards version "#{__DIR__}"`.chomp.stringify }}

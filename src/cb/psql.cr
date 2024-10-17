@@ -95,7 +95,7 @@ module CB
       end
 
       psqlrc = File.tempfile(c.id, "psqlrc")
-      File.copy("~/.psqlrc", psqlrc.path) if File.exists?("~/.psqlrc")
+      File.copy(CB::PSQLRC, psqlrc.path) if File.exists?(CB::PSQLRC)
       File.open(psqlrc.path, "a") do |f|
         f.puts "\\set ON_ERROR_ROLLBACK interactive"
         f.puts "\\set PROMPT1 '#{psqlpromptname}/%[%033[33;1m%]%x%x%x%[%033[0m%]%[%033[1m%]%/%[%033[0m%]%R%# '"
