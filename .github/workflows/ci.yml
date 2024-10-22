@@ -15,8 +15,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Install Nix
-        uses: cachix/install-nix-action@v26
-      - uses: cachix/cachix-action@v14
+        uses: cachix/install-nix-action@v30
+      - uses: cachix/cachix-action@v15
         with:
           name: crunchy-public
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
