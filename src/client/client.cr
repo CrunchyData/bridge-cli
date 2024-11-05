@@ -75,7 +75,7 @@ module CB
       resp = http.exec method, "http://#{@host}/#{path}", headers: headers, body: body
       Log.info &.emit("API Call", status: resp.status.code, path: path, method: method)
       if resp.body && ENV["HTTP_DEBUG"]?
-        body = mabye_json_parse resp.body
+        body = maybe_json_parse resp.body
         status = resp.status.code
         pp! [method, path, status, body] # ameba:disable Lint/DebugCalls
       end
@@ -91,7 +91,7 @@ module CB
       end
     end
 
-    private def mabye_json_parse(str)
+    private def maybe_json_parse(str)
       JSON.parse str
     rescue
       str
