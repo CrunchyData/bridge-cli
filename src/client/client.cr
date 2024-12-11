@@ -3,6 +3,7 @@ require "json"
 require "log"
 require "promise"
 require "../ext/stdlib_ext"
+require "./pagination"
 
 module CB
   class Client

@@ -13,12 +13,30 @@ module CB
       CB::Model::TeamMember.from_json resp.body
     end
 
+    struct TeamMemberListResponse
+      include JSON::Serializable
+      pagination_properties
+      property team_members : Array(CB::Model::TeamMember)
+    end
+
     # List the memebers of a team.
     #
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/teamsteamidmembers/list-team-members
     def list_team_members(team_id)
-      resp = get "teams/#{team_id}/members"
-      Array(CB::Model::TeamMember).from_json resp.body, root: "team_members"
+      team_members = [] of CB::Model::TeamMember
+      query_params = Hash(String, String | Array(String)).new.tap do |params|
+        params["order_field"] = "email"
+      end
+
+      loop do
+        resp = get "teams/#{team_id}/members?#{HTTP::Params.encode(query_params)}"
+        data = TeamMemberListResponse.from_json resp.body
+        team_members.concat(data.team_members)
+        break unless data.has_more
+        query_params["cursor"] = data.next_cursor.to_s
+      end
+
+      team_members
     end
 
     # Retrieve details about a team member.

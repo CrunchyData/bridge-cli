@@ -21,9 +21,28 @@ module CB
       result
     end
 
+    struct ClusterListResponse
+      include JSON::Serializable
+      pagination_properties
+      property clusters : Array(CB::Model::Cluster) = [] of CB::Model::Cluster
+    end
+
     def get_clusters(team_id)
-      resp = get "clusters?order_field=name&team_id=#{team_id}&limit=200"
-      Array(CB::Model::Cluster).from_json resp.body, root: "clusters"
+      clusters : Array(CB::Model::Cluster) = [] of CB::Model::Cluster
+      query_params = Hash(String, String | Array(String)).new.tap do |params|
+        params["team_id"] = team_id.to_s
+        params["order_field"] = "name"
+      end
+
+      loop do
+        resp = get "clusters?#{HTTP::Params.encode(query_params)}"
+        data = ClusterListResponse.from_json resp.body
+        clusters.concat(data.clusters)
+        break unless data.has_more
+        query_params["cursor"] = data.next_cursor.to_s
+      end
+
+      clusters
     end
 
     # Retrieve the cluster by id or by name.
