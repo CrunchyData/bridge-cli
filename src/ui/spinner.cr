@@ -4,7 +4,7 @@ module CB
 
     def initialize(@text : String = "", @io : IO = IO::Memory.new)
       @chars = ["|", "/", "-", "\\"].map { |c| "#{c.colorize.blue}" }
-      @delay = 0.2
+      @delay = 200.milliseconds
       @running = false
 
       # Control Sequence to allow overwriting the line so that the spinner can
