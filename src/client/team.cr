@@ -10,12 +10,30 @@ module CB
       CB::Model::Team.from_json resp.body
     end
 
+    struct TeamListResponse
+      include JSON::Serializable
+      pagination_properties
+      property teams : Array(CB::Model::Team)
+    end
+
     # List available teams.
     #
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/teams/list-teams
     def get_teams
-      resp = get "teams?order_field=name"
-      Array(CB::Model::Team).from_json resp.body, root: "teams"
+      teams = [] of CB::Model::Team
+      query_params = Hash(String, String | Array(String)).new.tap do |params|
+        params["order_field"] = "name"
+      end
+
+      loop do
+        resp = get "teams?#{HTTP::Params.encode(query_params)}"
+        data = TeamListResponse.from_json resp.body
+        teams.concat(data.teams)
+        break unless data.has_more
+        query_params["cursor"] = data.next_cursor.to_s
+      end
+
+      teams
     end
 
     # Update a team.

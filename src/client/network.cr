@@ -15,17 +15,31 @@ module CB
       CB::Model::Network.from_json resp.body
     end
 
+    struct NetworkListResponse
+      include JSON::Serializable
+      pagination_properties
+      property networks : Array(CB::Model::Network)
+    end
+
     # Get all networks for a team.
     #
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/networks/list-networks
     def get_networks(team : Identifier?)
-      resp = if team
-               team_id = team.eid? ? team.to_s : get_team_by_name(team).id
-               get "networks?team_id=#{team_id}"
-             else
-               get "networks"
-             end
-      Array(CB::Model::Network).from_json resp.body, root: "networks"
+      networks = [] of CB::Model::Network
+      query_params = Hash(String, String | Array(String)).new.tap do |params|
+        params["order_field"] = "id"
+        params["team_id"] = team.eid? ? team.to_s : get_team_by_name(team).id if team
+      end
+
+      loop do
+        resp = get "networks?#{HTTP::Params.encode(query_params)}"
+        data = NetworkListResponse.from_json resp.body
+        networks.concat(data.networks)
+        break unless data.has_more
+        query_params["cursor"] = data.next_cursor.to_s
+      end
+
+      networks
     end
 
     def get_networks(teams : Array(CB::Model::Team))
