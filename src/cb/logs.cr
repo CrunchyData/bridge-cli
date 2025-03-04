@@ -18,8 +18,7 @@ module CB
 
       tk = Tempkey.for_cluster cluster_id[:cluster], client: client
 
-      host = "p.#{cluster_id[:cluster]}.db.postgresbridge.com"
-      socket = TCPSocket.new(host, 22, connect_timeout: 1)
+      socket = TCPSocket.new(tk.host, 22, connect_timeout: 1)
       ssh = SSH2::Session.new(socket)
       ssh.login_with_data("cormorant", tk.private_key, tk.public_key)
 
