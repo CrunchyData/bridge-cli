@@ -7,12 +7,16 @@ module CB::Model
     enum State
       Creating
       Destroying
-      Unknown
+      Finalizing
       Ready
+      Replaying
       Restarting
+      Restoring
       Resuming
+      Starting
       Suspended
       Suspending
+      Unknown
 
       def to_s(io : IO)
         io << self.to_s.downcase
