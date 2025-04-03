@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.3] - 2025-04-03
+### Fixed
+- Missing values from cluster state enum.
+- `cb logs` now defaults to tempkey host value, instead of `CB_HOST`.
+
 ## [3.6.2] - 2024-12-11
 ### Fixed
 - Pagination limit on `cb list`, `cb network list`, `cb team list` and

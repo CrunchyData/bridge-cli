@@ -1,5 +1,5 @@
 name: cb
-version: 3.6.2
+version: 3.6.3
 
 dependencies:
   # TODO (abrightwell): Work this back in after initial browser login flow
