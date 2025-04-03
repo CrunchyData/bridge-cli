@@ -17,6 +17,7 @@ Spectator.describe CB::Open do
 
     it "creates a session and executes open" do
       ENV["CB_API_KEY"] = nil
+      ENV["CB_REDIRECT_URL"] = nil
 
       open_args : Array(String)? = nil
 
@@ -27,7 +28,38 @@ Spectator.describe CB::Open do
 
       expect(client).to receive(:create_session)
         .with(
-          Client::SessionCreateParams.new(generate_one_time_token: true)
+          Client::SessionCreateParams.new(
+            generate_one_time_token: true,
+            redirect_url: nil
+          )
+        )
+        .and_return(
+          CB::Model::Session.new(id: session_id, one_time_token: session_one_time_token)
+        )
+
+      action.call
+
+      expected_login_url = "https://#{client_host}/sessions/#{session_id}/actions/login?one_time_token=#{session_one_time_token}"
+      expect(open_args).to eq([expected_login_url])
+    end
+
+    it "redirects to a URL based on env var" do
+      ENV["CB_API_KEY"] = nil
+      ENV["CB_REDIRECT_URL"] = "https://my-custom-url.crunchybridge.com"
+
+      open_args : Array(String)? = nil
+
+      action.open = ->(args : Array(String), _env : Process::Env) do
+        open_args = args
+        nil
+      end
+
+      expect(client).to receive(:create_session)
+        .with(
+          Client::SessionCreateParams.new(
+            generate_one_time_token: true,
+            redirect_url: "https://my-custom-url.crunchybridge.com"
+          )
         )
         .and_return(
           CB::Model::Session.new(id: session_id, one_time_token: session_one_time_token)
