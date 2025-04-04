@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `cb open` can now take a non-default redirect URL using `CB_REDIRECT_URL`.
+
 ## [3.6.3] - 2025-04-03
 ### Fixed
 - Missing values from cluster state enum.

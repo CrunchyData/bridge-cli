@@ -14,7 +14,10 @@ module CB
     def run
       raise Error.new "Cannot open browser session with #{"CB_API_KEY".colorize.red.bold} set." if ENV["CB_API_KEY"]?
 
-      session = client.create_session Client::SessionCreateParams.new(generate_one_time_token: true)
+      session = client.create_session Client::SessionCreateParams.new(
+        redirect_url: ENV["CB_REDIRECT_URL"]?,
+        generate_one_time_token: true,
+      )
       # A one-time token is sent via query string since we don't have any choice
       # while using an executable like `open`, which means that there is some
       # potential danger of it leaking to logs. To protect against this, tokens
