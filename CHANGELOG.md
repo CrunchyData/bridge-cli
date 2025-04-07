@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.4] - 2025-04-07
 ### Added
 - `cb open` can now take a non-default redirect URL using `CB_REDIRECT_URL`.
 
