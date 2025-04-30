@@ -19,13 +19,20 @@ module CB::Model
     enum State
       Canceling
       Creating
+      Destroying
       DisablingHA
       EnablingHA
       FailingOver
+      Finalizing
       InProgress
       Ready
-      ReplayingWAL
-      Scheduled
+      Replaying
+      Restarting
+      Restoring
+      Resuming
+      Starting
+      Suspended
+      Suspending
       WaitingForHAStandby
 
       def to_s(io : IO) : Nil
