@@ -13,9 +13,24 @@ class CB::ClusterCreate < CB::APIAction
   eid_setter replica, "replica id"
   eid_setter fork, "fork id"
   property at : Time?
+  i32_setter maintenance_window_start
+
+  private def validate_fork_and_replica
+    raise Error.new "Cannot use both '--fork' and '--replica' at the same time." if fork && replica
+  end
+
+  private def validate_maintenance_window_with_fork_or_replica
+    raise Error.new "Cannot use '--maintenance-window-start' with '--fork' or '--replica'" if maintenance_window_start && (fork || replica)
+  end
+
+  private def validate_maintenance_window_range
+    raise Error.new "Invalid value for '--maintenance-window-start', valid values: 0 - 23" if (start = maintenance_window_start) && !start.in?(0..23)
+  end
 
   def pre_validate
-    raise Error.new "Cannot use both '--fork' and '--replica' at the same time." if fork && replica
+    validate_fork_and_replica
+    validate_maintenance_window_with_fork_or_replica
+    validate_maintenance_window_range
 
     if id = fork || replica
       source = client.get_cluster id
@@ -69,9 +84,10 @@ class CB::ClusterCreate < CB::APIAction
               else
                 @client.create_cluster CB::Client::ClusterCreateParams.new(**params.merge(
                   is_ha: @ha,
+                  maintenance_window_start: @maintenance_window_start,
+                  postgres_version_id: @postgres_version,
                   storage: @storage,
                   team_id: @team.to_s,
-                  postgres_version_id: @postgres_version,
                 ))
               end
 

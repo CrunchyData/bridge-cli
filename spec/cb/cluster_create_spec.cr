@@ -92,6 +92,28 @@ Spectator.describe CB::ClusterCreate do
     end
   end
 
+  describe "#maintenance_window_start=" do
+    sample [nil, 0, 23] do |start|
+      it "allows valid values" do
+        expect(&.maintenance_window_start = start).to_not raise_error
+      end
+    end
+
+    it "does not allow `--maintenance-window-start` with `--fork`" do
+      action.fork = cluster.id
+      action.maintenance_window_start = 0
+
+      expect(&.pre_validate).to raise_error(Program::Error, "Cannot use '--maintenance-window-start' with '--fork' or '--replica'")
+    end
+
+    it "does not allow `--maintenance-window-start` with `--replica`" do
+      action.fork = cluster.id
+      action.maintenance_window_start = 0
+
+      expect(&.pre_validate).to raise_error(Program::Error, "Cannot use '--maintenance-window-start' with '--fork' or '--replica'")
+    end
+  end
+
   describe "#team=" do
     sample invalid_ids do |team|
       it "does not allow invalid values" do
@@ -163,6 +185,14 @@ Spectator.describe CB::ClusterCreate do
 
       expect(client).to receive(:get_network).and_return network
       expect(&.call).to raise_error(CB::Program::Error, "Must also specify '--region' for a 'gcp' based network.")
+    end
+
+    it "raises error when maintenance_window_start is invalid" do
+      action.plan = "hobby-2"
+      action.platform = "aws"
+      action.region = "east"
+      action.maintenance_window_start = 24
+      expect(&.call).to raise_error(CB::Program::Error, "Invalid value for '--maintenance-window-start', valid values: 0 - 23")
     end
 
     it "raises error when region or provider given with non-gcp network" do
