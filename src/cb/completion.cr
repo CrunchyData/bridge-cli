@@ -223,6 +223,7 @@ class CB::Completion
     suggest << "--fork\tcluster to fork" unless has_full_flag?(:fork) || has_full_flag?(:replica)
     suggest << "--ha\thigh availability" unless has_full_flag?(:ha) || has_full_flag?(:replica)
     suggest << "--help\tshow help" if args.size == 2
+    suggest << "--maintenance-window-start\tstart hour for maintenance window" unless has_full_flag? :maintenance_window_start
     suggest << "--name\tcluster name" unless has_full_flag? :name
     suggest << "--network\tnetwork id" unless has_full_flag? :network
     suggest << "--platform\tcloud provider" unless has_full_flag? :platform
@@ -240,6 +241,7 @@ class CB::Completion
     return suggest_none if last_arg? "-n", "--name"
     return suggest_none if last_arg? "--network"
     return suggest_none if last_arg? "-v", "--version"
+    return suggest_none if last_arg? "--maintenance-window-start"
 
     create_fork_suggest.tap { |s| return s if s } if args.includes? "--fork"
     create_replica_suggest.tap { |s| return s if s } if args.includes? "--replica"
@@ -1383,6 +1385,7 @@ class CB::Completion
     full << :use_cluster_maintenance_window if has_full_flag? "use-cluster-maintenance-window"
     full << :no_header if has_full_flag? "--no-header"
     full << :peering if has_full_flag? "--peering"
+    full << :maintenance_window_start if has_full_flag? "--maintenance-window-start"
     full
   end
 

@@ -89,6 +89,7 @@ module CB
     struct ClusterCreateParams < CommonCreateParams
       property environment : String?
       property is_ha : Bool?
+      property maintenance_window_start : Int32?
       property postgres_version_id : Int32?
       property storage : Int32?
       property team_id : String
@@ -97,6 +98,7 @@ module CB
         @name, @plan_id, @provider_id, @region_id, @team_id,
         @environment = nil,
         @is_ha = nil,
+        @maintenance_window_start = nil,
         @postgres_version_id = nil,
         @storage = nil,
         @network_id = nil

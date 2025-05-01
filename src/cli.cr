@@ -152,6 +152,7 @@ op = OptionParser.new do |parser|
     parser.on("-v VERSION", "--version VERSION", "Postgres major version") { |arg| create.postgres_version = arg }
     parser.on("-s GiB", "--storage GiB", "Storage size (default: 100GiB, or same as source)") { |arg| create.storage = arg }
     parser.on("-t ID", "--team ID", "Team") { |arg| create.team = arg }
+    parser.on("--maintenance-window-start START", "Maintenance window start hour (Valid values: 0 - 23)") { |arg| create.maintenance_window_start = arg }
     parser.on("--network network", "Network") { |arg| create.network = arg }
 
     parser.on("--replica ID", "Choose source cluster for read-replica") { |arg| create.replica = arg }
