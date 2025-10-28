@@ -20,7 +20,12 @@ module CB
 
       socket = TCPSocket.new(tk.host, 22, connect_timeout: 1)
       ssh = SSH2::Session.new(socket)
-      ssh.login_with_data("cormorant", tk.private_key, tk.public_key)
+
+      if tk.certificate.presence
+        ssh.login_with_data("cormorant", tk.private_key, tk.certificate.to_s)
+      else
+        ssh.login_with_data("cormorant", tk.private_key, tk.public_key)
+      end
 
       ch = ssh.open_session
       ch.shell
