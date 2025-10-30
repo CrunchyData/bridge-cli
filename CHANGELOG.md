@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.7] - 2025-10-30
+### Changed
+- `cb logs` and `cb scope` now make use of certificates when available for
+  establishing SSH connections.
+
 ## [3.6.6] - 2024-05-01
 ### Added
 - `cb create` now accepts `--maintenance-window-start`.
