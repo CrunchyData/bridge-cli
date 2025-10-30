@@ -81,7 +81,7 @@ module CB
         @network_id = nil,
         @plan_id = nil,
         @provider_id = nil,
-        @region_id = nil
+        @region_id = nil,
       )
       end
     end
@@ -101,7 +101,7 @@ module CB
         @maintenance_window_start = nil,
         @postgres_version_id = nil,
         @storage = nil,
-        @network_id = nil
+        @network_id = nil,
       )
       end
     end
@@ -138,7 +138,7 @@ module CB
         @provider_id = nil,
         @region_id = nil,
         @storage = nil,
-        @target_time = nil
+        @target_time = nil,
       )
       end
     end
@@ -199,7 +199,7 @@ module CB
         @network_id = nil,
         @plan_id = nil,
         @provider_id = nil,
-        @region_id = nil
+        @region_id = nil,
       )
       end
     end

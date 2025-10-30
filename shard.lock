@@ -6,27 +6,27 @@ shards:
 
   backtracer:
     git: https://github.com/sija/backtracer.cr.git
-    version: 1.2.2
+    version: 1.2.4
 
   db:
     git: https://github.com/crystal-lang/crystal-db.git
-    version: 0.11.0
+    version: 0.13.1
 
   pg:
     git: https://github.com/will/crystal-pg.git
-    version: 0.26.0
+    version: 0.29.0
 
   promise:
     git: https://github.com/spider-gazelle/promise.git
-    version: 3.0.0
+    version: 3.2.0
 
   raven:
     git: https://github.com/sija/raven.cr.git
-    version: 1.9.2
+    version: 1.9.5
 
   retriable:
     git: https://github.com/sija/retriable.cr.git
-    version: 0.2.4
+    version: 0.2.5
 
   spectator:
     git: https://gitlab.com/arctic-fox/spectator.git
@@ -34,7 +34,7 @@ shards:
 
   ssh2:
     git: https://github.com/spider-gazelle/ssh2.cr.git
-    version: 1.7.0
+    version: 1.7.2
 
   tallboy:
     git: https://github.com/epoch/tallboy.git
