@@ -9,7 +9,9 @@ RUN \
     openssl-libs-static \
     zlib-static \
     crystal shards \
-    libssh2 libssh2-dev libssh2-static
+    libssh2 libssh2-dev libssh2-static \
+	gc-static \
+	pcre2-static
 
 # RUN apk add --update --no-cache --force-overwrite --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main llvm12-libs
 
