@@ -9,7 +9,7 @@ module CB::QueryMenu
     private property path : String = ""
 
     def render(cluster : CB::Model::Cluster) : String
-      temp_dir = "/tmp/crunchy/cli/#{cluster.name}-#{cluster.id}-queries"
+      temp_dir = "#{Dir.tempdir}/crunchy/cli/#{cluster.name}-#{cluster.id}-queries"
       FileUtils.mkdir_p(temp_dir) unless File.exists? temp_dir
 
       # Aggregate all queries and group them by category in alphabetical order.
