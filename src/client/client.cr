@@ -38,14 +38,37 @@ module CB
         "client_secret" => secret,
       }
 
-      resp = HTTP::Client.post("https://#{host}/access-tokens", form: req, tls: tls)
+      use_tls = use_tls?
+      scheme = use_tls ? "https" : "http"
+      tls_ctx = use_tls ? self.tls : nil
+      resp = HTTP::Client.post("#{scheme}://#{host}/access-tokens", form: req, tls: tls_ctx)
       raise Error.new("post", "token", resp) unless resp.status.success?
 
       CB::Model::AccessToken.from_json(resp.body)
     end
 
     def http : HTTP::Client
-      HTTP::Client.new(@host, tls: self.tls)
+      host_str, port_val = parse_host_port(@host)
+      tls_ctx = use_tls? ? self.tls : nil
+      if port_val
+        HTTP::Client.new(host_str, port_val, tls: tls_ctx)
+      else
+        HTTP::Client.new(host_str, tls: tls_ctx)
+      end
+    end
+
+    # Parse "host" or "host:port" so HTTP::Client gets host and port separately.
+    private def parse_host_port(host)
+      if host.includes?(":")
+        parts = host.split(":", 2)
+        {parts[0], parts[1].to_i}
+      else
+        {host, nil.as(Int32?)}
+      end
+    end
+
+    private def use_tls?
+      ENV["CB_TLS"]? != "false"
     end
 
     def get(path)
