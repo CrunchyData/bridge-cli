@@ -283,4 +283,19 @@ module Factory
 
     CB::Tempkey.new **params
   end
+
+  def saved_query(**params)
+    params = {
+      id:                    "sqpvoqooxzdrriu6w3bhqo55c4",
+      name:                  "Test Query",
+      sql:                   "SELECT 1",
+      cluster_id:            "pkdpq6yynjgjbps4otxd7il2u4",
+      team_id:               "l2gnkxjv3beifk6abkraerv7de",
+      saved_query_folder_id: nil,
+      created_at:            Time.utc(2023, 1, 1, 0, 0, 0),
+      updated_at:            Time.utc(2023, 1, 1, 0, 0, 0),
+    }.merge(params)
+
+    CB::Model::SavedQuery.new **params
+  end
 end
