@@ -15,7 +15,7 @@ module CB
 
     def run
       validate
-      queries = client.get_saved_queries cluster_id.not_nil!
+      queries = client.get_saved_queries cluster_id
 
       if queries.empty?
         output.puts "no saved queries"
@@ -65,7 +65,7 @@ module CB
 
     def run
       validate
-      query = client.get_saved_query query_id.not_nil!
+      query = client.get_saved_query query_id
 
       filename = @file || "#{query.name.gsub(/[^a-zA-Z0-9_\-]/, "_")}.sql"
       File.write(filename, query.sql)
@@ -88,11 +88,11 @@ module CB
 
     def run
       validate
-      sql = File.read(@file.not_nil!)
+      sql = File.read(@file.to_s)
 
       query = client.create_saved_query({
-        cluster_id:   cluster_id.not_nil!,
-        name:         @name.not_nil!,
+        cluster_id:   cluster_id,
+        name:         @name,
         sql:          sql,
         skip_enqueue: true,
       })
@@ -114,7 +114,7 @@ module CB
 
     def run
       validate
-      client.destroy_saved_query query_id.not_nil!
+      client.destroy_saved_query query_id
       output << "saved query destroyed" << '\n'
     end
   end

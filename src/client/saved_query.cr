@@ -8,10 +8,10 @@ module CB
       property saved_queries : Array(CB::Model::SavedQuery) = [] of CB::Model::SavedQuery
     end
 
-    def get_saved_queries(cluster_id : String)
+    def get_saved_queries(cluster_id)
       saved_queries = [] of CB::Model::SavedQuery
       query_params = Hash(String, String).new
-      query_params["cluster_id"] = cluster_id
+      query_params["cluster_id"] = cluster_id.to_s
       query_params["order_field"] = "name"
 
       loop do
@@ -25,7 +25,7 @@ module CB
       saved_queries
     end
 
-    def get_saved_query(saved_query_id : String)
+    def get_saved_query(saved_query_id)
       resp = get "saved-queries/#{saved_query_id}"
       CB::Model::SavedQuery.from_json resp.body
     end
@@ -35,7 +35,7 @@ module CB
       CB::Model::SavedQuery.from_json resp.body
     end
 
-    def destroy_saved_query(saved_query_id : String)
+    def destroy_saved_query(saved_query_id)
       resp = delete "saved-queries/#{saved_query_id}"
       resp.body
     end
