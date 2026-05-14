@@ -53,4 +53,26 @@ Spectator.describe CB::LogDestinationAdd do
     lda.host = "logs.zam.com"
     lda.description.should eq "already set dont change"
   end
+
+  it "accepts tls and connection log flags as true or false strings" do
+    lda = make_lda
+    lda.tls_verify_disabled = "true"
+    lda.tls_verify_disabled.should be_true
+    lda.tls_verify_disabled = "false"
+    lda.tls_verify_disabled.should be_false
+    lda.forward_connection_logs = "TRUE"
+    lda.forward_connection_logs.should be_true
+    lda.forward_connection_logs = "false"
+    lda.forward_connection_logs.should be_false
+  end
+
+  it "rejects invalid boolean strings for tls_verify_disabled" do
+    lda = make_lda
+    expect { lda.tls_verify_disabled = "yes" }.to raise_error(CB::Program::Error, /Invalid/)
+  end
+
+  it "rejects invalid boolean strings for forward_connection_logs" do
+    lda = make_lda
+    expect { lda.forward_connection_logs = "1" }.to raise_error(CB::Program::Error, /Invalid/)
+  end
 end

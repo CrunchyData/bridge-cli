@@ -7,14 +7,18 @@ module CB
     property host : String?
     property template : String?
     property description : String?
+    bool_setter tls_verify_disabled
+    bool_setter forward_connection_logs
 
     def run
       validate
       client.add_log_destination(cluster_id, {
-        "host":        host,
-        "port":        port,
-        "template":    template,
-        "description": description,
+        "host":                      host,
+        "port":                      port,
+        "template":                  template,
+        "description":               description,
+        "tls_verify_disabled":       tls_verify_disabled,
+        "forward_connection_logs":   forward_connection_logs,
       })
 
       output << "added new log destination for "

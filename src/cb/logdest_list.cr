@@ -22,6 +22,8 @@ module CB
         output << "  " << d.description.colorize.t_name
         output << " (" << d.host << ":" << d.port << ")\n"
         output << "  " << d.template << "\n"
+        output << "  " << "TLS verify disabled: " << yes_no(d.tls_verify_disabled) << "\n"
+        output << "  " << "Forward connection logs: " << yes_no(d.forward_connection_logs) << "\n"
       end
     end
 
@@ -31,8 +33,14 @@ module CB
         output << d.description << "\t"
         output << d.host << "\t"
         output << d.port << "\t"
-        output << d.template << "\n"
+        output << d.template << "\t"
+        output << d.tls_verify_disabled << "\t"
+        output << d.forward_connection_logs << "\n"
       end
+    end
+
+    private def yes_no(value : Bool) : String
+      value ? "yes" : "no"
     end
   end
 end
