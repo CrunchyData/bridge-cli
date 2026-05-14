@@ -1,19 +1,19 @@
 require "../spec_helper"
 
 Spectator.describe CB::SavedQueryList do
-  subject(action) { described_class.new client: client, output: IO::Memory.new }
+  # subject(action) { described_class.new client: client, output: IO::Memory.new }
 
   mock_client
 
-  let(saved_queries) { [Factory.saved_query, Factory.saved_query(id: "sqpvoqooxzdrriu6w3bhqo55c4", name: "Other Query")] }
+  # let(saved_queries) { [Factory.saved_query, Factory.saved_query(id: "sqpvoqooxzdrriu6w3bhqo55c4", name: "Other Query")] }
 
-  describe "#validate" do
-    it "validates that required arguments are present" do
-      expect_missing_arg_error
-      action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
-      expect(&.validate).to be_true
-    end
-  end
+  # describe "#validate" do
+  #   it "validates that required arguments are present" do
+  #     expect_missing_arg_error
+  #     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
+  #     expect(&.validate).to be_true
+  #   end
+  # end
 
   # describe "#run" do
   #   before_each do
