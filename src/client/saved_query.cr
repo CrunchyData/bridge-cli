@@ -30,7 +30,18 @@ module CB
       CB::Model::SavedQuery.from_json resp.body
     end
 
-    def create_saved_query(params)
+    struct SavedQueryCreateParams
+      include JSON::Serializable
+      property cluster_id : String?
+      property name : String?
+      property sql : String?
+      property skip_enqueue : Bool = true
+
+      def initialize(@cluster_id, @name, @sql, @skip_enqueue = true)
+      end
+    end
+
+    def create_saved_query(params : SavedQueryCreateParams)
       resp = post "saved-queries", params
       CB::Model::SavedQuery.from_json resp.body
     end

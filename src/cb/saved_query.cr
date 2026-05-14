@@ -90,12 +90,11 @@ module CB
       validate
       sql = File.read(@file.to_s)
 
-      query = client.create_saved_query({
-        cluster_id:   cluster_id,
-        name:         @name,
-        sql:          sql,
-        skip_enqueue: true,
-      })
+      query = client.create_saved_query(Client::SavedQueryCreateParams.new(
+        cluster_id: cluster_id,
+        name: @name,
+        sql: sql,
+      ))
 
       output << "created saved query " << query.id << '\n'
     end
