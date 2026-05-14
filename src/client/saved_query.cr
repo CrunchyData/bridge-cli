@@ -35,7 +35,7 @@ module CB
       property cluster_id : String?
       property name : String?
       property sql : String?
-      property skip_enqueue : Bool = true
+      property? skip_enqueue : Bool = true
 
       def initialize(@cluster_id, @name, @sql, @skip_enqueue = true)
       end
