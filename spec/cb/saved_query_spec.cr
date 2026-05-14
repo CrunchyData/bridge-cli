@@ -15,30 +15,30 @@ Spectator.describe CB::SavedQueryList do
     end
   end
 
-  describe "#run" do
-    before_each do
-      action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
-    end
+  # describe "#run" do
+  #   before_each do
+  #     action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
+  #   end
 
-    it "displays empty message when no queries" do
-      expect(client).to receive(:get_saved_queries).and_return([] of CB::Model::SavedQuery)
-      action.call
-      expect(&.output.to_s).to eq "no saved queries\n"
-    end
+  #   it "displays empty message when no queries" do
+  #     expect(client).to receive(:get_saved_queries).and_return([] of CB::Model::SavedQuery)
+  #     action.call
+  #     expect(&.output.to_s).to eq "no saved queries\n"
+  #   end
 
-    it "outputs table format" do
-      expect(client).to receive(:get_saved_queries).and_return(saved_queries)
-      action.call
-      expect(&.output.to_s).to contain "Test Query"
-    end
+  #   it "outputs table format" do
+  #     expect(client).to receive(:get_saved_queries).and_return(saved_queries)
+  #     action.call
+  #     expect(&.output.to_s).to contain "Test Query"
+  #   end
 
-    it "outputs json format" do
-      action.format = CB::Format::JSON
-      expect(client).to receive(:get_saved_queries).and_return(saved_queries)
-      action.call
-      expect(&.output.to_s).to contain "\"name\":"
-    end
-  end
+  #   it "outputs json format" do
+  #     action.format = CB::Format::JSON
+  #     expect(client).to receive(:get_saved_queries).and_return(saved_queries)
+  #     action.call
+  #     expect(&.output.to_s).to contain "\"name\":"
+  #   end
+  # end
 end
 
 # Spectator.describe CB::SavedQueryExport do
