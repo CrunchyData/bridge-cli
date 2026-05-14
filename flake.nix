@@ -82,7 +82,7 @@
               name = "specs";
               src = specSrc;
               buildInputs = [ pkgs.libssh2 ];
-              installPhase = "mkdir $out && HOME=$TMP crystal spec --progress";
+              installPhase = "mkdir $out && HOME=$TMP crystal spec --progress --threads 1";
               shardsFile = specSrc + "/shards.nix";
               doCheck = false;
               dontPatch = true;
