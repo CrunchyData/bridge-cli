@@ -13,8 +13,9 @@ module CB
 
     def run
       validate
-      cid = cluster_id.not_nil!
-      lid = logdest_id.not_nil!
+      cid = cluster_id
+      lid = logdest_id
+      raise Error.new "Missing required arguments: cluster, logdest" if cid.nil? || lid.nil?
 
       existing = client.get_log_destinations(cid).find { |d| d.id == lid }
       unless existing
@@ -35,6 +36,10 @@ module CB
       end
     end
 
+    private def merged_bool(override : Bool?, existing : Bool) : Bool
+      override.nil? ? existing : override
+    end
+
     private def update_body(existing : CB::Model::LogDestination) : Hash(String, String | Int32 | Bool)
       eff_host = host || existing.host
       eff_port = port || existing.port
@@ -46,8 +51,8 @@ module CB
       body["port"] = eff_port
       body["template"] = eff_template
       body["description"] = eff_description
-      body["tls_verify_disabled"] = tls_verify_disabled.nil? ? existing.tls_verify_disabled : tls_verify_disabled.not_nil!
-      body["forward_connection_logs"] = forward_connection_logs.nil? ? existing.forward_connection_logs : forward_connection_logs.not_nil!
+      body["tls_verify_disabled"] = merged_bool(tls_verify_disabled, existing.tls_verify_disabled)
+      body["forward_connection_logs"] = merged_bool(forward_connection_logs, existing.forward_connection_logs)
       body
     end
 
