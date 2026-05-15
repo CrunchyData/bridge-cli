@@ -128,13 +128,13 @@ module Factory
 
   def log_destination(**params)
     params = {
-      id:                       "pxbcigcufjdqje6drled4rj6p4",
-      host:                     "host",
-      port:                     2020,
-      template:                 "template",
-      description:              "logdest descr",
-      tls_verify_disabled:      false,
-      forward_connection_logs:  false,
+      id:                      "pxbcigcufjdqje6drled4rj6p4",
+      host:                    "host",
+      port:                    2020,
+      template:                "template",
+      description:             "logdest descr",
+      tls_verify_disabled:     false,
+      forward_connection_logs: false,
     }.merge(params)
 
     CB::Model::LogDestination.new **params

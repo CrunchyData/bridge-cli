@@ -83,12 +83,12 @@ Spectator.describe CB::LogDestinationUpdate do
       act.logdest_id = row.id
       act.call
       tracking.body_sent.should eq({
-        "host"                      => "host",
-        "port"                      => 2020,
-        "template"                  => "template",
-        "description"               => "logdest descr",
-        "tls_verify_disabled"       => false,
-        "forward_connection_logs"   => false,
+        "host"                    => "host",
+        "port"                    => 2020,
+        "template"                => "template",
+        "description"             => "logdest descr",
+        "tls_verify_disabled"     => false,
+        "forward_connection_logs" => false,
       })
     end
 
@@ -100,12 +100,12 @@ Spectator.describe CB::LogDestinationUpdate do
       act.forward_connection_logs = true
       act.call
       tracking.body_sent.should eq({
-        "host"                      => "host",
-        "port"                      => 2020,
-        "template"                  => "template",
-        "description"               => "logdest descr",
-        "tls_verify_disabled"       => false,
-        "forward_connection_logs"   => true,
+        "host"                    => "host",
+        "port"                    => 2020,
+        "template"                => "template",
+        "description"             => "logdest descr",
+        "tls_verify_disabled"     => false,
+        "forward_connection_logs" => true,
       })
     end
 
