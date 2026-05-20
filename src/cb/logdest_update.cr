@@ -13,16 +13,13 @@ module CB
 
     def run
       validate
-      cid = cluster_id
-      lid = logdest_id
-      raise Error.new "Missing required arguments: cluster, logdest" if cid.nil? || lid.nil?
 
-      existing = client.get_log_destinations(cid).find { |d| d.id == lid }
+      existing = client.get_log_destinations(cluster_id).find { |d| d.id == logdest_id }
       unless existing
-        raise Program::Error.new "log destination #{lid.colorize.t_id} was not found for this cluster."
+        raise Program::Error.new "log destination #{logdest_id.colorize.t_id} was not found for this cluster."
       end
 
-      client.update_log_destination(cid, lid, update_body(existing))
+      client.update_log_destination(cluster_id, logdest_id, update_body(existing))
 
       output << "updated log destination "
       output << "#{logdest_id}".colorize.t_id << " for "

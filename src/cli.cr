@@ -412,7 +412,7 @@ op = OptionParser.new do |parser|
 
     parser.on("update", "Update an existing log destination on a cluster") do
       update = set_action LogDestinationUpdate
-      parser.banner = "cb logdest update <--cluster> <--logdest> [--host HOST] [--port PORT] [--template STR] [--desc STR] [--tls-verify-disabled <true|false>] [--forward-connection-logs <true|false>)]\n    (Optional options keep the destination's current value when omitted.)"
+      parser.banner = "cb logdest update <--cluster> <--logdest> [--host HOST] [--port PORT] [--template STR] [--desc STR] [--tls-verify-disabled <true|false>] [--forward-connection-logs <true|false>]\n    (Optional options keep the destination's current value when omitted.)"
       parser.on("--cluster ID", "Cluster ID (required)") { |arg| update.cluster_id = arg }
       parser.on("--logdest ID", "Log destination ID (required)") { |arg| update.logdest_id = arg }
       parser.on("--host HOST", "Hostname (optional)") { |arg| update.host = arg }
