@@ -4,5 +4,7 @@ module CB::Model
     host : String,
     port : Int32,
     template : String,
-    description : String
+    description : String,
+    tls_verify_disabled : Bool = false,
+    forward_connection_logs : Bool = false
 end

@@ -401,9 +401,13 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "list"
     expect(result).to have_option "destroy"
     expect(result).to have_option "add"
+    expect(result).to have_option "update"
 
     result = parse("cb logdest l")
     expect(result).to have_option "list"
+
+    result = parse("cb logdest u")
+    expect(result).to have_option "update"
 
     result = parse("cb logdest list ")
     expect(result).to have_option "--cluster"
@@ -451,6 +455,8 @@ Spectator.describe CB::Completion do
     expect(result).to have_option "--desc"
     expect(result).to have_option "--template"
     expect(result).to have_option "--host"
+    expect(result).to have_option "--tls-verify-disabled"
+    expect(result).to have_option "--forward-connection-logs"
 
     result = parse("cb logdest add --port 3 ")
     expect(result).to_not have_option "--port"
@@ -467,6 +473,39 @@ Spectator.describe CB::Completion do
     result = parse("cb logdest add --host something.com ")
     expect(result).to_not have_option "--host"
     expect(result).to have_option "--cluster"
+
+    result = parse("cb logdest update ")
+    expect(result).to have_option "--cluster"
+    expect(result).to have_option "--logdest"
+    expect(result).to have_option "--port"
+    expect(result).to have_option "--desc"
+    expect(result).to have_option "--template"
+    expect(result).to have_option "--host"
+
+    result = parse("cb logdest update --cluster ")
+    expect(result).to eq expected_cluster_suggestion
+
+    result = parse("cb logdest update --cluster abc ")
+    expect(result).to_not have_option "--cluster"
+    expect(result).to have_option "--logdest"
+
+    result = parse("cb logdest update --cluster abc --logdest ")
+    expect(result).to eq ["logid\tlogdest descr"]
+
+    result = parse("cb logdest update --cluster abc --logdest logid ")
+    expect(result).to have_option "--port"
+    expect(result).to have_option "--host"
+    expect(result).to have_option "--tls-verify-disabled"
+    expect(result).to have_option "--forward-connection-logs"
+
+    result = parse("cb logdest add --cluster abc --tls-verify-disabled ")
+    expect(result).to eq ["false", "true"]
+
+    result = parse("cb logdest update --cluster abc --logdest logid --tls-verify-disabled ")
+    expect(result).to eq ["false", "true"]
+
+    result = parse("cb logdest update --cluster abc --logdest logid --forward-connection-logs ")
+    expect(result).to eq ["false", "true"]
   end
 
   it "completes psql" do

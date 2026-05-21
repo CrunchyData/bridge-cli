@@ -16,10 +16,6 @@ macro expect_missing_arg_error
   expect(&.validate).to raise_error(CB::Program::Error, /Missing required argument/)
 end
 
-macro expect_invalid_arg_error
-  expect({{yield}}).to raise_error(CB::Program::Error, /Invalid/)
-end
-
 macro mock_client
   mock Client do
     def initialize(@token : Token = TEST_TOKEN)

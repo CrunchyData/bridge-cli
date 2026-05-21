@@ -353,11 +353,14 @@ class CB::Completion
       logdest_destroy
     when "add"
       logdest_add
+    when "update"
+      logdest_update
     else
       [
         "list\tlist all log destinations for a cluster",
         "add\tadd a new log destination to a cluster",
-        "destroy\tremove a new destination from a cluster",
+        "update\tupdate an existing log destination on a cluster",
+        "destroy\tremove an existing log destination from a cluster",
       ]
     end
   end
@@ -896,6 +899,9 @@ class CB::Completion
       return cluster_suggestions
     end
 
+    suggest_bool if last_arg?("--tls-verify-disabled")
+    suggest_bool if last_arg?("--forward-connection-logs")
+
     # return missing args
     suggest = [] of String
     suggest << "--help\tshow help" if args.size == 3
@@ -904,6 +910,37 @@ class CB::Completion
     suggest << "--port\tport number" unless has_full_flag? :port
     suggest << "--desc\tdescription" unless has_full_flag? :desc
     suggest << "--template\ttemplate" unless has_full_flag? :template
+    suggest << "--tls-verify-disabled\ttrue or false (default false)" unless has_full_flag? :tls_verify_disabled
+    suggest << "--forward-connection-logs\ttrue or false (default false)" unless has_full_flag? :forward_connection_logs
+    suggest
+  end
+
+  def logdest_update
+    cluster = find_arg_value "--cluster"
+    logdest = find_arg_value "--logdest"
+
+    if last_arg?("--cluster")
+      return cluster.nil? ? cluster_suggestions : [] of String
+    end
+
+    if last_arg?("--logdest")
+      return [] of String unless logdest.nil? && cluster
+      return client.get_log_destinations(cluster).map { |d| "#{d.id}\t#{d.description}" }
+    end
+
+    suggest_bool if last_arg?("--tls-verify-disabled")
+    suggest_bool if last_arg?("--forward-connection-logs")
+
+    suggest = [] of String
+    suggest << "--help\tshow help" if args.size == 3
+    suggest << "--cluster\tcluster id" unless has_full_flag? :cluster
+    suggest << "--logdest\tlog destination id" unless has_full_flag? :logdest
+    suggest << "--host\thostname" unless has_full_flag? :host
+    suggest << "--port\tport number" unless has_full_flag? :port
+    suggest << "--desc\tdescription" unless has_full_flag? :desc
+    suggest << "--template\ttemplate" unless has_full_flag? :template
+    suggest << "--tls-verify-disabled\ttrue or false (default false)" unless has_full_flag? :tls_verify_disabled
+    suggest << "--forward-connection-logs\ttrue or false (default false)" unless has_full_flag? :forward_connection_logs
     suggest
   end
 
@@ -1359,6 +1396,7 @@ class CB::Completion
     full << :storage if has_full_flag? "--storage", "-s"
     full << :platform if has_full_flag? "--platform", "-p"
     full << :port if has_full_flag? "--port"
+    full << :logdest if has_full_flag? "--logdest"
     full << :desc if has_full_flag? "--desc"
     full << :template if has_full_flag? "--template"
     full << :header if has_full_flag? "-H"
@@ -1386,6 +1424,8 @@ class CB::Completion
     full << :no_header if has_full_flag? "--no-header"
     full << :peering if has_full_flag? "--peering"
     full << :maintenance_window_start if has_full_flag? "--maintenance-window-start"
+    full << :tls_verify_disabled if has_full_flag? "--tls-verify-disabled"
+    full << :forward_connection_logs if has_full_flag? "--forward-connection-logs"
     full
   end
 
