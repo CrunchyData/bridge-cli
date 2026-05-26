@@ -65,12 +65,13 @@ Spectator.describe CB::SavedQueryExport do
     end
 
     it "exports to specified file" do
-      action.file = "/tmp/test_export.sql"
+      export_path = File.join(Dir.tempdir, "test_export.sql")
+      action.file = export_path
       expect(client).to receive(:get_saved_query).and_return(saved_query)
       action.call
-      expect(File.read("/tmp/test_export.sql")).to eq "SELECT 1"
+      expect(File.read(export_path)).to eq "SELECT 1"
       expect(&.output.to_s).to contain "exported"
-      File.delete("/tmp/test_export.sql")
+      File.delete(export_path)
     end
 
     it "uses sanitized name as default filename" do
@@ -95,7 +96,7 @@ Spectator.describe CB::SavedQueryImport do
       expect_missing_arg_error
       action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
       expect_missing_arg_error
-      action.file = "/tmp/test_import.sql"
+      action.file = File.join(Dir.tempdir, "test_import.sql")
       expect_missing_arg_error
       action.name = "My Query"
       expect(&.validate).to be_true
@@ -105,13 +106,14 @@ Spectator.describe CB::SavedQueryImport do
   describe "#run" do
     before_each do
       action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
-      action.file = "/tmp/test_import.sql"
+      action.file = File.join(Dir.tempdir, "test_import.sql")
       action.name = "My Query"
-      File.write("/tmp/test_import.sql", "SELECT 42")
+      File.write(File.join(Dir.tempdir, "test_import.sql"), "SELECT 42")
     end
 
     after_each do
-      File.delete("/tmp/test_import.sql") if File.exists?("/tmp/test_import.sql")
+      path = File.join(Dir.tempdir, "test_import.sql")
+      File.delete(path) if File.exists?(path)
     end
 
     it "imports from file and prints confirmation" do

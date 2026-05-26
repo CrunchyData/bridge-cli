@@ -68,7 +68,11 @@ module CB
       query = client.get_saved_query query_id
 
       filename = @file || "#{query.name.gsub(/[^a-zA-Z0-9_\-]/, "_")}.sql"
-      File.write(filename, query.sql)
+      begin
+        File.write(filename, query.sql)
+      rescue e : IO::Error
+        raise Error.new "Failed to write file '#{filename}': #{e.message}"
+      end
       output << "exported " << query.name << " to " << filename << '\n'
     end
   end
@@ -88,14 +92,19 @@ module CB
 
     def run
       validate
-      sql = File.read(@file.to_s)
+      begin
+        sql = File.read(@file.to_s)
+      rescue e : IO::Error
+        raise Error.new "Failed to read file '#{@file}': #{e.message}"
+      end
 
-      query = client.create_saved_query({
-        cluster_id:   cluster_id,
-        name:         @name,
-        sql:          sql,
-        skip_enqueue: true,
-      })
+      query = client.create_saved_query(
+        Client::SavedQueryCreateParams.new(
+          cluster_id: cluster_id,
+          name: @name,
+          sql: sql,
+        )
+      )
 
       output << "created saved query " << query.id << '\n'
     end
