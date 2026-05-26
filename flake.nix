@@ -82,6 +82,8 @@
               name = "specs";
               src = specSrc;
               buildInputs = [ pkgs.libssh2 ];
+              # Cap compiler threads: very high CPU counts on CI can trigger
+              # "BUG: a codegen process failed" during crystal spec (codegen OOM / LLVM flake).
               installPhase = "mkdir $out && HOME=$TMP crystal spec --progress --threads 1";
               shardsFile = specSrc + "/shards.nix";
               doCheck = false;

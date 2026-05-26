@@ -390,7 +390,7 @@ op = OptionParser.new do |parser|
   end
 
   parser.on("logdest", "Manage log destinations") do
-    parser.banner = "cb logdest <list|add|destroy>"
+    parser.banner = "cb logdest <list|add|update|destroy>"
 
     parser.on("list", "List log destinations for a cluster") do
       list = set_action LogDestinationList
@@ -400,12 +400,27 @@ op = OptionParser.new do |parser|
 
     parser.on("add", "Add a new log destination to a cluster") do
       add = set_action LogDestinationAdd
-      parser.banner = "cb logdest add <--cluster> <--host> <--port> <--template> [--desc]"
+      parser.banner = "cb logdest add <--cluster> <--host> <--port> <--template> [--desc] [--tls-verify-disabled <true|false> (default false)] [--forward-connection-logs <true|false> (default false)]"
       parser.on("--cluster ID", "Choose cluster") { |arg| add.cluster_id = arg }
       parser.on("--host HOST", "Hostname") { |arg| add.host = arg }
       parser.on("--port PORT", "Port number") { |arg| add.port = arg }
       parser.on("--template STR", "Log template") { |arg| add.template = arg }
       parser.on("--desc STR", "Description") { |arg| add.description = arg }
+      parser.on("--tls-verify-disabled BOOL", "Whether TLS certificate verification is disabled (true|false). Defaults to false if omitted.") { |arg| add.tls_verify_disabled = arg }
+      parser.on("--forward-connection-logs BOOL", "Whether to forward connection logs (true|false). Defaults to false if omitted.") { |arg| add.forward_connection_logs = arg }
+    end
+
+    parser.on("update", "Update an existing log destination on a cluster") do
+      update = set_action LogDestinationUpdate
+      parser.banner = "cb logdest update <--cluster> <--logdest> [--host HOST] [--port PORT] [--template STR] [--desc STR] [--tls-verify-disabled <true|false>] [--forward-connection-logs <true|false>]\n    (Optional options keep the destination's current value when omitted.)"
+      parser.on("--cluster ID", "Cluster ID (required)") { |arg| update.cluster_id = arg }
+      parser.on("--logdest ID", "Log destination ID (required)") { |arg| update.logdest_id = arg }
+      parser.on("--host HOST", "Hostname (optional)") { |arg| update.host = arg }
+      parser.on("--port PORT", "Port number (optional)") { |arg| update.port = arg }
+      parser.on("--template STR", "Log template (optional)") { |arg| update.template = arg }
+      parser.on("--desc STR", "Description (optional)") { |arg| update.description = arg }
+      parser.on("--tls-verify-disabled BOOL", "Whether TLS certificate verification is disabled (optional)") { |arg| update.tls_verify_disabled = arg }
+      parser.on("--forward-connection-logs BOOL", "Whether to forward connection logs (optional)") { |arg| update.forward_connection_logs = arg }
     end
 
     parser.on("destroy", "Remove an existing log destination from a cluster") do

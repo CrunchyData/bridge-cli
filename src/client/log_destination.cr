@@ -18,6 +18,14 @@ module CB
       resp.body
     end
 
+    # Update an existing logger on a cluster.
+    #
+    # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridloggersloggerid/update-logger
+    def update_log_destination(cluster_id, logdest_id, ld)
+      resp = put "clusters/#{cluster_id}/loggers/#{logdest_id}", ld
+      resp.body
+    end
+
     # Remove a logger from a cluster.
     #
     # https://crunchybridgeapi.docs.apiary.io/#reference/0/clustersclusteridloggersloggerid/destroy-logger
