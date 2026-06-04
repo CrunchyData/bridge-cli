@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.7.0] - 2026-06-04
+### Added
+- `cb saved-query` command to manage saved queries.
+- `cb logdest add` now accepts `--tls-verify-disabled` and
+  `--forward-connection-logs`
+- `cb logdest update` command.
+
 ## [3.6.7] - 2025-10-30
 ### Changed
 - `cb logs` and `cb scope` now make use of certificates when available for
