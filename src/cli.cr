@@ -928,6 +928,41 @@ op = OptionParser.new do |parser|
     end
   end
 
+  parser.on("saved-query", "Manage saved queries") do
+    parser.banner = "cb saved-query <list|export|import|destroy>"
+
+    parser.on("list", "List saved queries for a cluster") do
+      list = set_action SavedQueryList
+      parser.banner = "cb saved-query list <--cluster>"
+      parser.on("--cluster ID", "Choose cluster") { |arg| list.cluster_id = arg }
+      parser.on("--format FORMAT", "Choose output format (default: table)") { |arg| list.format = arg }
+      parser.on("--no-header", "Do not display table header") { list.no_header = true }
+    end
+
+    parser.on("export", "Export a saved query to a .sql file") do
+      export = set_action SavedQueryExport
+      parser.banner = "cb saved-query export <--cluster> <--query>"
+      parser.on("--cluster ID", "Choose cluster") { |arg| export.cluster_id = arg }
+      parser.on("--query ID", "Saved query ID") { |arg| export.query_id = arg }
+      parser.on("--file PATH", "Output file path (default: <name>.sql)") { |arg| export.file = arg }
+    end
+
+    parser.on("import", "Import a saved query from a .sql file") do
+      import = set_action SavedQueryImport
+      parser.banner = "cb saved-query import <--cluster> <--file> <--name>"
+      parser.on("--cluster ID", "Choose cluster") { |arg| import.cluster_id = arg }
+      parser.on("--file PATH", "Path to .sql file") { |arg| import.file = arg }
+      parser.on("--name NAME", "Name for the saved query") { |arg| import.name = arg }
+    end
+
+    parser.on("destroy", "Destroy a saved query") do
+      destroy = set_action SavedQueryDestroy
+      parser.banner = "cb saved-query destroy <--cluster> <--query>"
+      parser.on("--cluster ID", "Choose cluster") { |arg| destroy.cluster_id = arg }
+      parser.on("--query ID", "Saved query ID") { |arg| destroy.query_id = arg }
+    end
+  end
+
   parser.on("suspend", "Temporarily turn off a cluster") do
     parser.banner = "cb suspend <cluster id>"
     suspend = set_action ClusterSuspend
