@@ -68,38 +68,6 @@ jobs:
         name: cb_linux_aarch64
         path: dist
 
-  build_macos_amd64:
-    runs-on: macos-13
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Install crystal
-      uses: crystal-lang/install-crystal@v1
-      with:
-        crystal: ${{ env.CRYSTAL_VERSION }}
-
-    - name: Install boehmgc via homebrew
-      run: brew install bdw-gc
-
-    - name: Install gon via homebrew for code signing and app notarization
-      run: |
-        brew tap mitchellh/gon
-        brew install mitchellh/gon/gon
-
-    - name: Install dependencies
-      run: shards install
-
-    - name: Build
-      run: |
-        make release RELEASE=1 STATIC_LIBS=1
-
-    - name: Upload release bundle artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: cb_macos_amd64
-        path: dist
-
   build_macos_arm64:
     runs-on: macos-latest
     steps:
@@ -111,8 +79,8 @@ jobs:
       with:
         crystal: ${{ env.CRYSTAL_VERSION }}
 
-    - name: Install boehmgc via homebrew
-      run: brew install bdw-gc
+    - name: Install dependencies via homebrew
+      run: brew install bdw-gc libevent
 
     - name: Install gon via homebrew for code signing and app notarization
       run: |
@@ -133,7 +101,7 @@ jobs:
         path: dist
 
   release:
-    needs: [build_linux_amd64, build_linux_aarch64, build_macos_amd64, build_macos_arm64]
+    needs: [build_linux_amd64, build_linux_aarch64, build_macos_arm64]
     runs-on: ubuntu-latest
     steps:
     - name: Determine version
@@ -153,13 +121,6 @@ jobs:
       with:
         name: cb_linux_aarch64
         path: dist-linux-aarch64
-
-    - name: Download cb_macos_amd64.zip artifact
-      id: download_macos_amd64
-      uses: actions/download-artifact@v4
-      with:
-        name: cb_macos_amd64
-        path: dist-macos-amd64
 
     - name: Download cb_macos_arm64.zip artifact
       id: download_macos_arm64
@@ -199,17 +160,7 @@ jobs:
         asset_name: cb-v${{ steps.version.outputs.version }}_linux_aarch64.zip
         asset_content_type: application/zip
 
-    - name: Upload release zip for macos amd64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dist-macos-amd64/cb.zip
-        asset_name: cb-v${{ steps.version.outputs.version }}_macos_amd64.zip
-        asset_content_type: application/zip
-
-    - name: Upload release zip from macos arm64
+    - name: Upload release zip for macos arm64
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

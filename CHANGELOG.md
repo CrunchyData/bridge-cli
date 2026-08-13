@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.7.1] - 2026-08-13
+### Fixed
+- Release build failure on macOS ARM64 due to missing `libevent` on runner.
+
 ## [3.7.0] - 2026-06-04
 ### Added
 - `cb saved-query` command to manage saved queries.
