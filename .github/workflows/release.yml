@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Install crystal
       uses: crystal-lang/install-crystal@v1
@@ -28,7 +28,7 @@ jobs:
         make release RELEASE=1 STATIC=1
 
     - name: Upload release bundle artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: cb_linux_amd64
         path: dist
@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Install crystal
       uses: crystal-lang/install-crystal@v1
@@ -48,13 +48,13 @@ jobs:
       run: shards install
 
     - name: Set up QEMU
-      uses: docker/setup-qemu-action@v3
+      uses: docker/setup-qemu-action@v4
       with:
         image: tonistiigi/binfmt:latest
         platforms: arm64
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      uses: docker/setup-buildx-action@v4
       with:
         version: latest
 
@@ -63,7 +63,7 @@ jobs:
         make release RELEASE=1 STATIC=1 TARGET_ARCH=aarch64
 
     - name: Upload release bundle artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: cb_linux_aarch64
         path: dist
@@ -72,7 +72,7 @@ jobs:
     runs-on: macos-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     - name: Install crystal
       uses: crystal-lang/install-crystal@v1
@@ -95,7 +95,7 @@ jobs:
         make release RELEASE=1 STATIC_LIBS=1
 
     - name: Upload release bundle artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: cb_macos_arm64
         path: dist
@@ -110,21 +110,21 @@ jobs:
 
     - name: Download cb_linux_amd64.zip artifact
       id: download_linux_amd64
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v5
       with:
         name: cb_linux_amd64
         path: dist-linux-amd64
 
     - name: Download cb_linux_aarch64.zip artifact
       id: download_linux_aarch64
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v5
       with:
         name: cb_linux_aarch64
         path: dist-linux-aarch64
 
     - name: Download cb_macos_arm64.zip artifact
       id: download_macos_arm64
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v5
       with:
         name: cb_macos_arm64
         path: dist-macos-arm64
