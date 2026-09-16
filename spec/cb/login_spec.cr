@@ -36,6 +36,8 @@ Spectator.describe CB::Login do
 
       result = action.call
       expect(result).to_not be_empty
+      expect(action.output.to_s).to contain "#code="
+      expect(action.output.to_s).to_not contain "?code="
       expect(action.output.to_s.ends_with?("Logged in as #{account.email}\n")).to be_true
     end
 
@@ -49,6 +51,8 @@ Spectator.describe CB::Login do
 
       result = action.call
       expect(result).to_not be_empty
+      expect(action.output.to_s).to contain "#code="
+      expect(action.output.to_s).to_not contain "?code="
       expect(action.output.to_s.ends_with?("Logged in as #{account.email}\n")).to be_true
     end
 

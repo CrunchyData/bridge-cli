@@ -60,7 +60,8 @@ module CB
       # Request a session intent.
       si_params = Client::SessionIntentCreateParams.new(agent_name: "cb #{CB::VERSION}")
       session_intent = @client.create_session_intent si_params
-      login_url = "https://#{DASHBOARD_HOST}/account/verify-cli/#{session_intent.id}?code=#{session_intent.code}"
+      # Fragment (`#code=`) is not sent to the server or written to access logs.
+      login_url = "https://#{DASHBOARD_HOST}/account/verify-cli/#{session_intent.id}#code=#{session_intent.code}"
 
       # Start polling for completion of session authentication.
       poll_login_channel = Channel(LoginResult).new
