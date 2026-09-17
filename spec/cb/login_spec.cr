@@ -15,6 +15,7 @@ Spectator.describe CB::Login do
     let(process_mock) { class_mock(Process) }
 
     let(account) { Factory.account }
+    let(session_intent) { Factory.session_intent }
 
     before_each {
       ENV["CB_API_KEY"] = nil
@@ -24,9 +25,11 @@ Spectator.describe CB::Login do
     }
 
     it "creates and stores a new session (browser)" do
+      expected_url = "https://#{CB::DASHBOARD_HOST}/account/verify-cli/#{session_intent.id}#code=#{session_intent.code}"
+
       expect(lib_open_mock).to receive(:can_open_browser?).and_return(true)
-      expect(lib_open_mock).to receive(:run).and_return(true)
-      expect(client).to receive(:create_session_intent).and_return(Factory.session_intent)
+      expect(lib_open_mock).to receive(:run).with([expected_url]).and_return(true)
+      expect(client).to receive(:create_session_intent).and_return(session_intent)
       expect(client).to receive(:get_account).and_return(account)
       expect(client).to receive(:get_session_intent).and_return(
         Factory.session_intent(expires_at: Time.utc + 1.day, session: Factory.session)
@@ -36,14 +39,15 @@ Spectator.describe CB::Login do
 
       result = action.call
       expect(result).to_not be_empty
-      expect(action.output.to_s).to contain "#code="
-      expect(action.output.to_s).to_not contain "?code="
+      expect(action.output.to_s).to contain expected_url
       expect(action.output.to_s.ends_with?("Logged in as #{account.email}\n")).to be_true
     end
 
     it "creates and stores a new session (headless)" do
+      expected_url = "https://#{CB::DASHBOARD_HOST}/account/verify-cli/#{session_intent.id}#code=#{session_intent.code}"
+
       expect(lib_open_mock).to receive(:can_open_browser?).and_return(false)
-      expect(client).to receive(:create_session_intent).and_return(Factory.session_intent)
+      expect(client).to receive(:create_session_intent).and_return(session_intent)
       expect(client).to receive(:get_account).and_return(account)
       expect(client).to receive(:get_session_intent).and_return(
         Factory.session_intent(expires_at: Time.utc + 1.day, session: Factory.session)
@@ -51,8 +55,7 @@ Spectator.describe CB::Login do
 
       result = action.call
       expect(result).to_not be_empty
-      expect(action.output.to_s).to contain "#code="
-      expect(action.output.to_s).to_not contain "?code="
+      expect(action.output.to_s).to contain expected_url
       expect(action.output.to_s.ends_with?("Logged in as #{account.email}\n")).to be_true
     end
 
