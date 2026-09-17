@@ -7,8 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - `cb login` now puts the activation code in the URL fragment (`#code=`)
-  instead of the query string, so it is not sent to the server or written
-  to access logs.
+  instead of the query string.
 
 ## [3.7.1] - 2026-08-13
 ### Fixed
