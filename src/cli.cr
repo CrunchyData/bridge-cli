@@ -740,13 +740,72 @@ op = OptionParser.new do |parser|
   #
 
   parser.on("tailscale", "Manage Tailscale") do
-    parser.banner = "cb tailscale <connect|disconnect>"
+    parser.banner = "cb tailscale <connect|disconnect|client>"
+
+    parser.on("client", "Manage Tailscale OAuth clients") do
+      parser.banner = "cb tailscale client <create|list|destroy>"
+
+      parser.on("create", "Register a Tailscale OAuth client for a team") do
+        create = set_action TailscaleClientCreate
+        parser.banner = "cb tailscale client create <--team> <--name> <--tailscale-client-id> <--tailscale-client-secret> <--tag>"
+        parser.on("--name NAME", "Name for the OAuth client") { |arg| create.name = arg }
+        parser.on("--tag TAG", "ACL tag from the Tailscale client (repeat for more than one)") { |arg| create.tags << arg }
+        parser.on("--tailscale-client-id ID", "Client ID from Tailscale") { |arg| create.tailscale_client_id = arg }
+        parser.on("--tailscale-client-secret SECRET", "Client secret from Tailscale") { |arg| create.tailscale_client_secret = arg }
+        parser.on("--team ID", "Choose team") { |arg| create.team_id = arg }
+
+        parser.examples = <<-EXAMPLES
+        Register a Tailscale OAuth client. The client must have Write permission on Devices - Core and Auth Keys.
+        $ cb tailscale client create --team <TEAM> --name production --tailscale-client-id <TAILSCALE_CLIENT_ID> --tailscale-client-secret <SECRET> --tag tag:production
+        EXAMPLES
+      end
+
+      parser.on("list", "List Tailscale OAuth clients for a team") do
+        list = set_action TailscaleClientList
+        parser.banner = "cb tailscale client list <--team>"
+        parser.on("--format FORMAT", "Choose output format (default: table)") { |arg| list.format = arg }
+        parser.on("--no-header", "Do not display table header") { list.no_header = true }
+        parser.on("--team ID", "Choose team") { |arg| list.team_id = arg }
+
+        parser.examples = <<-EXAMPLES
+        List Tailscale OAuth clients. Output: table
+        $ cb tailscale client list --team <TEAM>
+
+        List Tailscale OAuth clients. Output: table without header
+        $ cb tailscale client list --team <TEAM> --no-header
+
+        List Tailscale OAuth clients. Output: json
+        $ cb tailscale client list --team <TEAM> --format=json
+        EXAMPLES
+      end
+
+      parser.on("destroy", "Remove a Tailscale OAuth client from a team") do
+        destroy = set_action TailscaleClientDestroy
+        parser.banner = "cb tailscale client destroy <--team> <--client>"
+        parser.on("--client ID", "Bridge OAuth client ID") { |arg| destroy.client_id = arg }
+        parser.on("--team ID", "Choose team") { |arg| destroy.team_id = arg }
+
+        parser.examples = <<-EXAMPLES
+        Remove a Tailscale OAuth client. This does not disconnect clusters that already joined.
+        $ cb tailscale client destroy --team <TEAM> --client <ID>
+        EXAMPLES
+      end
+    end
 
     parser.on("connect", "Add a cluster to Tailscale") do
       connect = set_action TailscaleConnect
-      parser.banner = "cb tailscale connect <--cluster> <--authkey>"
-      parser.on("--cluster ID", "Choose cluster") { |arg| connect.cluster_id = arg }
+      parser.banner = "cb tailscale connect <--cluster> <--authkey|--client>"
       parser.on("--authkey KEY", "Pre-authentication key") { |arg| connect.auth_key = arg }
+      parser.on("--client ID", "Bridge OAuth client ID") { |arg| connect.client_id = arg }
+      parser.on("--cluster ID", "Choose cluster") { |arg| connect.cluster_id = arg }
+
+      parser.examples = <<-EXAMPLES
+      Connect with a pasted auth key.
+      $ cb tailscale connect --cluster <CLUSTER> --authkey <AUTHKEY>
+
+      Connect with a Tailscale OAuth client registered for the cluster's team.
+      $ cb tailscale connect --cluster <CLUSTER> --client <ID>
+      EXAMPLES
     end
 
     parser.on("disconnect", "Remove a cluster from Tailscale") do
