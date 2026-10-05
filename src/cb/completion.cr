@@ -367,16 +367,70 @@ class CB::Completion
 
   def tailscale
     case @args[1]
+    when "client"
+      tailscale_client
     when "connect"
       tailscale_connect
     when "disconnect"
       tailscale_disconnect
     else
       [
+        "client\tmanage tailscale oauth clients",
         "connect\tadd a cluster to tailscale",
         "disconnect\tremove a cluster from tailscale",
       ]
     end
+  end
+
+  def tailscale_client
+    case @args[2]
+    when "create"
+      tailscale_client_create
+    when "destroy"
+      tailscale_client_destroy
+    when "list"
+      tailscale_client_list
+    else
+      [
+        "create\tregister a tailscale oauth client",
+        "list\tlist tailscale oauth clients",
+        "destroy\tremove a tailscale oauth client",
+      ]
+    end
+  end
+
+  def tailscale_client_create
+    return team_suggestions if last_arg?("--team")
+    suggest_none if last_arg?("--name", "--tailscale-client-id", "--tailscale-client-secret", "--tag")
+
+    suggest = [] of String
+    suggest << "--name\tname for the oauth client" unless has_full_flag? :name
+    suggest << "--tag\tacl tag"
+    suggest << "--tailscale-client-id\tclient id from tailscale" unless has_full_flag? :tailscale_client_id
+    suggest << "--tailscale-client-secret\tclient secret from tailscale" unless has_full_flag? :tailscale_client_secret
+    suggest << "--team\tchoose team" unless has_full_flag? :team
+    suggest
+  end
+
+  def tailscale_client_list
+    return ["table", "json"] if last_arg?("--format")
+    return team_suggestions if last_arg?("--team")
+
+    suggest = [] of String
+    suggest << "--format\tchoose output format" unless has_full_flag? :format
+    suggest << "--no-header\tdo not display table header" unless has_full_flag? :no_header
+    suggest << "--team\tchoose team" unless has_full_flag? :team
+    suggest
+  end
+
+  def tailscale_client_destroy
+    return suggest_none if last_arg?("--client")
+    return team_suggestions if last_arg?("--team")
+
+    suggest = [] of String
+    suggest << "--client\tbridge oauth client id" unless has_full_flag? :client
+    suggest << "--team\tchoose team" unless has_full_flag? :team
+    suggest
   end
 
   def tailscale_connect : Array(String)
@@ -386,13 +440,14 @@ class CB::Completion
       return cluster.nil? ? cluster_suggestions : [] of String
     end
 
-    if last_arg?("--authkey")
+    if last_arg?("--authkey", "--client")
       suggest_none
     end
 
     suggest = [] of String
     suggest << "--cluster\tcluster id" unless has_full_flag? :cluster
-    suggest << "--authkey\tapreuthorization key" unless has_full_flag? :authkey
+    suggest << "--authkey\tpre-authentication key" unless has_full_flag?(:authkey) || has_full_flag?(:client)
+    suggest << "--client\tbridge oauth client id" unless has_full_flag?(:client) || has_full_flag?(:authkey)
     suggest
   end
 
@@ -1416,6 +1471,9 @@ class CB::Completion
     full << :full if has_full_flag? "--full"
     full << :format if has_full_flag? "--format"
     full << :authkey if has_full_flag? "--authkey"
+    full << :client if has_full_flag? "--client"
+    full << :tailscale_client_id if has_full_flag? "--tailscale-client-id"
+    full << :tailscale_client_secret if has_full_flag? "--tailscale-client-secret"
     full << :window_start if has_full_flag? "--window-start"
     full << :unset if has_full_flag? "--unset"
     full << :starting_from if has_full_flag? "--starting-from"
