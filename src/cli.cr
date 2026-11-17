@@ -929,7 +929,7 @@ op = OptionParser.new do |parser|
   end
 
   parser.on("saved-query", "Manage saved queries") do
-    parser.banner = "cb saved-query <list|export|import|destroy>"
+    parser.banner = "cb saved-query <list|export|import|run|destroy>"
 
     parser.on("list", "List saved queries for a cluster") do
       list = set_action SavedQueryList
@@ -953,6 +953,13 @@ op = OptionParser.new do |parser|
       parser.on("--cluster ID", "Choose cluster") { |arg| import.cluster_id = arg }
       parser.on("--file PATH", "Path to .sql file") { |arg| import.file = arg }
       parser.on("--name NAME", "Name for the saved query") { |arg| import.name = arg }
+    end
+
+    parser.on("run", "Run a saved query") do
+      run = set_action SavedQueryRun
+      parser.banner = "cb saved-query run <--cluster> <--query>"
+      parser.on("--cluster ID", "Choose cluster") { |arg| run.cluster_id = arg }
+      parser.on("--query ID", "Saved query ID") { |arg| run.query_id = arg }
     end
 
     parser.on("destroy", "Destroy a saved query") do
