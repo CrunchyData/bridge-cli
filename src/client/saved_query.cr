@@ -50,5 +50,10 @@ module CB
       resp = delete "saved-queries/#{saved_query_id}"
       resp.body
     end
+
+    def run_saved_query(saved_query_id)
+      resp = post "saved-queries/#{saved_query_id}/actions/run"
+      resp.body
+    end
   end
 end

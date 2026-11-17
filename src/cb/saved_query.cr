@@ -127,4 +127,22 @@ module CB
       output << "saved query destroyed" << '\n'
     end
   end
+
+  class SavedQueryRun < APIAction
+    eid_setter cluster_id
+    eid_setter query_id
+
+    def validate
+      check_required_args do |missing|
+        missing << "cluster" unless cluster_id
+        missing << "query" unless query_id
+      end
+    end
+
+    def run
+      validate
+      client.run_saved_query query_id
+      output << "saved query queued" << '\n'
+    end
+  end
 end

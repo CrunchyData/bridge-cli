@@ -152,3 +152,32 @@ Spectator.describe CB::SavedQueryDestroy do
     end
   end
 end
+
+Spectator.describe CB::SavedQueryRun do
+  subject(action) { described_class.new client: client, output: IO::Memory.new }
+
+  mock_client
+
+  describe "#validate" do
+    it "validates that required arguments are present" do
+      expect_missing_arg_error
+      action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
+      expect_missing_arg_error
+      action.query_id = "sqpvoqooxzdrriu6w3bhqo55c4"
+      expect(&.validate).to be_true
+    end
+  end
+
+  describe "#run" do
+    before_each do
+      action.cluster_id = "pkdpq6yynjgjbps4otxd7il2u4"
+      action.query_id = "sqpvoqooxzdrriu6w3bhqo55c4"
+    end
+
+    it "runs the saved query and prints confirmation" do
+      expect(client).to receive(:run_saved_query).with("sqpvoqooxzdrriu6w3bhqo55c4").and_return("")
+      action.call
+      expect(&.output.to_s).to eq "saved query queued\n"
+    end
+  end
+end
